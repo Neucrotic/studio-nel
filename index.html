@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Studio NEL — tools for creatives</title>
+<meta name="description" content="Studio NEL builds software that puts ownership, freedom, and creative expression back in the hands of the people who use it.">
+
+<!--
+  ============================================================================
+  Studio NEL — index.html
+  Single-file, static, GitHub Pages friendly. No server, no build step.
+
+  EDIT POINTS (search for "EDIT:"):
+    EDIT: values-line     – the studio one-liner under the title
+    EDIT: wl-description   – WriteLite card body copy
+    EDIT: product-list     – "more in development" placeholder / future products
+    EDIT: donate-href      – drop the Stripe link in when it's live
+    EDIT: donate-copy      – the support line
+
+  THEME: defaults to the visitor's system setting, falls back to dark.
+         A manual choice is remembered across visits via localStorage.
+  ============================================================================
+-->
+
+<!-- Set theme BEFORE first paint so there's no flash of the wrong colour -->
+<script>
+  (function () {
+    try {
+      var t = localStorage.getItem('studio-nel-theme');
+      if (t !== 'light' && t !== 'dark') {
+        t = (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches)
+          ? 'light' : 'dark';
+      }
+      document.documentElement.setAttribute('data-theme', t);
+    } catch (e) {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    }
+  })();
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  /* ---------- Tokens ---------------------------------------------------- */
+  :root {
+    --font-display: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
+    --font-body: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+
+    --maxw: 1080px;
+    --pad: clamp(1.25rem, 5vw, 4rem);
+    --radius: 18px;
+
+    --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+
+  /* Studio world — dark (default) */
+  [data-theme="dark"] {
+    --bg: #17181a;
+    --surface: #1f2124;
+    --text: #e9eaec;
+    --muted: #9a9ea4;
+    --line: rgba(255, 255, 255, 0.09);
+    --accent: #02942F;          /* brand green — fills */
+    --accent-ink: #ffffff;      /* text on green fills */
+    --accent-text: #35c46b;     /* green as text/links, lifted for dark */
+    --shadow: 0 24px 60px -24px rgba(0, 0, 0, 0.65);
+  }
+
+  /* Studio world — light */
+  [data-theme="light"] {
+    --bg: #f6f6f4;
+    --surface: #ffffff;
+    --text: #17181a;
+    --muted: #63666b;
+    --line: rgba(0, 0, 0, 0.10);
+    --accent: #02942F;
+    --accent-ink: #ffffff;
+    --accent-text: #02942F;
+    --shadow: 0 24px 50px -28px rgba(0, 0, 0, 0.20);
+  }
+
+  /* WriteLite island — amber lives ONLY inside .card--writelite */
+  [data-theme="dark"] .card--writelite {
+    --wl-card: #262521;         /* warm charcoal — a different temperature */
+    --wl-amber: #d4a030;
+    --wl-ink: #141412;          /* logo "paper" */
+    --wl-text: #ece8df;
+    --wl-muted: #a49e90;
+    --wl-line: rgba(212, 160, 48, 0.22);
+  }
+  [data-theme="light"] .card--writelite {
+    --wl-card: #fffdf8;
+    --wl-amber: #9c6f0a;
+    --wl-ink: #141412;
+    --wl-text: #1c1b17;
+    --wl-muted: #6d685e;
+    --wl-line: rgba(156, 111, 10, 0.26);
+  }
+
+  /* ---------- Base ------------------------------------------------------ */
+  * { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 17px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Colour transitions only after first paint (avoids animating the load) */
+  body.ready,
+  body.ready .card--writelite,
+  body.ready .toggle,
+  body.ready .btn {
+    transition: background-color 0.28s var(--ease), color 0.28s var(--ease),
+                border-color 0.28s var(--ease);
+  }
+
+  .wrap {
+    width: 100%;
+    max-width: var(--maxw);
+    margin-inline: auto;
+    padding-inline: var(--pad);
+  }
+
+  a { color: var(--accent-text); }
+
+  /* The NEL mark — consistent everywhere it appears */
+  .mark {
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+
+  /* ---------- Theme toggle (fixed, quiet) ------------------------------- */
+  .toggle {
+    position: fixed;
+    top: clamp(1rem, 3vw, 1.75rem);
+    right: clamp(1rem, 3vw, 1.75rem);
+    z-index: 50;
+    width: 44px;
+    height: 44px;
+    display: grid;
+    place-items: center;
+    border: 1px solid var(--line);
+    border-radius: 50%;
+    background: var(--surface);
+    color: var(--muted);
+    cursor: pointer;
+  }
+  .toggle:hover { color: var(--text); }
+  .toggle svg { width: 20px; height: 20px; display: block; }
+  .toggle .icon-sun { display: none; }
+  [data-theme="light"] .toggle .icon-moon { display: none; }
+  [data-theme="light"] .toggle .icon-sun { display: block; }
+
+  /* ---------- Hero ------------------------------------------------------ */
+  .hero {
+    min-height: 82vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-block: clamp(4rem, 12vh, 9rem);
+  }
+  .hero__title {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: clamp(3.4rem, 12vw, 8rem);
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    margin: 0;
+  }
+  .hero__title .mark { font-weight: 700; }
+
+  .hero__values {
+    margin: clamp(1.5rem, 4vh, 2.5rem) 0 0;
+    font-size: clamp(1.15rem, 2.4vw, 1.6rem);
+    color: var(--muted);
+    max-width: 34ch;
+    font-weight: 400;
+  }
+  .hero__values .accent { color: var(--accent-text); }
+
+  .hero__cue {
+    margin-top: clamp(2.5rem, 8vh, 5rem);
+    font-family: var(--font-display);
+    font-size: 0.8rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--muted);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    text-decoration: none;
+  }
+  .hero__cue::after {
+    content: "";
+    width: 1px; height: 34px;
+    background: linear-gradient(var(--muted), transparent);
+  }
+
+  /* ---------- Section header ------------------------------------------- */
+  .section { padding-block: clamp(3rem, 9vh, 6rem); }
+
+  .section__title {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: clamp(1.6rem, 4vw, 2.4rem);
+    letter-spacing: -0.01em;
+    margin: 0 0 clamp(1.75rem, 5vh, 3rem);
+  }
+  .section__title .mark { font-weight: 700; }
+
+  /* ---------- Product grid (holds up to 3, centres 1) ------------------ */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: clamp(1.5rem, 3vw, 2.25rem);
+    align-items: stretch;
+  }
+  /* When there's a single card, keep it from stretching the full width */
+  .grid.grid--solo { grid-template-columns: minmax(0, 760px); justify-content: start; }
+
+  /* ---------- Card ------------------------------------------------------ */
+  .card {
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+
+  .card--writelite {
+    background: var(--wl-card);
+    color: var(--wl-text);
+    min-height: 600px;
+    display: grid;
+    grid-template-columns: 1fr 1.25fr;
+    gap: clamp(1.5rem, 4vw, 3rem);
+    padding: clamp(1.75rem, 4vw, 3rem);
+    align-items: center;
+  }
+  .card--writelite:hover { transform: translateY(-3px); }
+  body.ready .card--writelite { transition: transform 0.3s var(--ease), background-color 0.28s var(--ease); }
+
+  .card__logo {
+    display: grid;
+    place-items: center;
+  }
+  .card__logo svg {
+    width: min(78%, 300px);
+    height: auto;
+  }
+  /* Logo colours are driven by the card's theme variables */
+  .card__logo .wl-amber { fill: var(--wl-amber); }
+  .card__logo .wl-amber-stroke { stroke: var(--wl-amber); }
+  .card__logo .wl-amber-fill-soft { fill: var(--wl-amber); fill-opacity: 0.22; }
+  .card__logo .wl-ink { fill: var(--wl-ink); }
+
+  .card__name {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: clamp(2rem, 4vw, 2.9rem);
+    letter-spacing: -0.02em;
+    margin: 0;
+  }
+  .card__tagline {
+    margin: 0.6rem 0 0;
+    font-size: clamp(1.05rem, 2vw, 1.25rem);
+    color: var(--wl-amber);
+    font-weight: 500;
+  }
+  .card__desc {
+    margin: 1.25rem 0 0;
+    color: var(--wl-text);
+    max-width: 46ch;
+  }
+  .card__foot {
+    margin-top: clamp(1.75rem, 4vh, 2.5rem);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem 1.5rem;
+  }
+  .card__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1rem;
+    text-decoration: none;
+    color: var(--wl-text);
+    padding: 0.7rem 1.3rem;
+    border: 1.5px solid var(--wl-amber);
+    border-radius: 999px;
+  }
+  .card__cta:hover { background: var(--wl-amber); color: var(--wl-ink); }
+  body.ready .card__cta { transition: background-color 0.2s var(--ease), color 0.2s var(--ease); }
+  .card__meta {
+    font-size: 0.9rem;
+    color: var(--wl-muted);
+    letter-spacing: 0.02em;
+  }
+
+  /* ---------- Product list (below the cards) --------------------------- */
+  .more {
+    margin-top: clamp(1.75rem, 4vh, 2.5rem);
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--line);
+    color: var(--muted);
+    font-size: 0.98rem;
+  }
+
+  /* ---------- Support / donate ----------------------------------------- */
+  .support {
+    text-align: center;
+    padding-block: clamp(4rem, 12vh, 7rem);
+    border-top: 1px solid var(--line);
+  }
+  .support__title {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: clamp(1.7rem, 4vw, 2.4rem);
+    letter-spacing: -0.01em;
+    margin: 0;
+  }
+  .support__title .mark { font-weight: 700; }
+  .support__copy {
+    margin: 1rem auto 2rem;
+    max-width: 46ch;
+    color: var(--muted);
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1.02rem;
+    text-decoration: none;
+    background: var(--accent);
+    color: var(--accent-ink);
+    padding: 0.85rem 1.7rem;
+    border-radius: 999px;
+    border: 0;
+  }
+  .btn:hover { filter: brightness(1.08); }
+
+  /* ---------- Footer ---------------------------------------------------- */
+  .foot {
+    padding-block: clamp(2rem, 5vh, 3rem);
+    border-top: 1px solid var(--line);
+    color: var(--muted);
+    font-size: 0.9rem;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .foot .mark { font-weight: 600; font-size: 0.95rem; }
+
+  /* ---------- Responsive ----------------------------------------------- */
+  @media (max-width: 720px) {
+    .card--writelite {
+      grid-template-columns: 1fr;
+      text-align: left;
+      min-height: 0;
+    }
+    .card__logo { justify-items: start; margin-bottom: 0.5rem; }
+    .card__logo svg { width: 160px; }
+  }
+
+  /* ---------- Accessibility -------------------------------------------- */
+  :focus-visible {
+    outline: 2px solid var(--accent-text);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    * { transition: none !important; animation: none !important; }
+    .card--writelite:hover { transform: none; }
+  }
+</style>
+</head>
+
+<body>
+
+  <!-- Theme toggle -->
+  <button class="toggle" id="themeToggle" type="button" aria-label="Switch colour theme" aria-pressed="false">
+    <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>
+    </svg>
+    <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="4.2"/>
+      <path d="M12 2v2.5M12 19.5V22M4.2 4.2l1.8 1.8M18 18l1.8 1.8M2 12h2.5M19.5 12H22M4.2 19.8 6 18M18 6l1.8-1.8"/>
+    </svg>
+  </button>
+
+  <!-- Hero -->
+  <header class="hero">
+    <div class="wrap">
+      <h1 class="hero__title">Studio&nbsp;<span class="mark">NEL</span></h1>
+      <!-- EDIT: values-line -->
+      <p class="hero__values">I build tools for <span class="accent">creatives</span>.</p>
+      <a class="hero__cue" href="#software">The software</a>
+    </div>
+  </header>
+
+  <main>
+    <!-- Software -->
+    <section class="section" id="software">
+      <div class="wrap">
+        <h2 class="section__title">software by&nbsp;<span class="mark">NEL</span></h2>
+
+        <!-- grid--solo centres a single card; remove "grid--solo" once a 2nd card lands -->
+        <div class="grid grid--solo">
+
+          <article class="card card--writelite">
+            <div class="card__logo">
+              <!-- WriteLite logo, inlined so it recolours with the theme -->
+              <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="WriteLite logo">
+                <path class="wl-ink" d="M695 126L829.234 261.75H560.766L695 126Z"/>
+                <rect class="wl-ink" x="153" y="101" width="499" height="191"/>
+                <rect class="wl-ink" x="153" y="259" width="697" height="660"/>
+                <path class="wl-amber-fill-soft wl-amber-stroke" d="M140 70H652L884.727 266.923V877.385C884.727 893.053 877.371 908.079 864.278 919.158C851.185 930.237 833.426 936.461 814.909 936.461H140V70Z" stroke-width="71" stroke-linejoin="round"/>
+                <path class="wl-amber" d="M509.578 620L482.978 463.06H481.458L454.098 620H400.898L364.038 354H414.958L425.598 432.28L433.578 520.44H435.478L449.538 432.66L461.318 354H504.258L515.658 432.66L530.098 520.44H531.998L539.598 432.28L550.238 354H601.158L564.298 620H509.578ZM623.029 620V354H675.089V575.92H754.129V620H623.029Z"/>
+                <path class="wl-amber-stroke" d="M397 815H762" stroke-width="68" stroke-linecap="square" stroke-linejoin="round"/>
+                <path class="wl-amber-stroke" d="M651.636 78.7692V275.692H884.364" stroke-width="71" stroke-linejoin="round"/>
+                <path class="wl-amber-stroke" d="M270 79V945.461" stroke-width="68" stroke-linejoin="round"/>
+                <path class="wl-amber-stroke" d="M394 700H580.182" stroke-width="68" stroke-linecap="square" stroke-linejoin="round"/>
+              </svg>
+            </div>
+
+            <div class="card__body">
+              <h3 class="card__name">WriteLite</h3>
+              <p class="card__tagline">A writing app engineered for speed, focus and flow.</p>
+              <!-- EDIT: wl-description -->
+              <p class="card__desc">
+                WriteLite opens in under a second and saves every document as plain,
+                open-format text on your own drive — no accounts, no telemetry, nothing
+                leaving your machine. Built by one writer who codes, for anyone who wants
+                the shortest possible gap between a thought and the page. Free to download
+                and keep; pay only what feels good.
+              </p>
+              <div class="card__foot">
+                <a class="card__cta" href="https://writelite.net" target="_blank" rel="noopener">
+                  Visit writelite.net
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg>
+                </a>
+                <span class="card__meta">Windows · macOS · Free</span>
+              </div>
+            </div>
+          </article>
+
+        </div>
+
+        <!-- EDIT: product-list — future products list beneath the cards -->
+        <p class="more">More software in development.</p>
+      </div>
+    </section>
+
+    <!-- Support -->
+    <section class="support">
+      <div class="wrap">
+        <h2 class="support__title">Support Studio&nbsp;<span class="mark">NEL</span></h2>
+        <!-- EDIT: donate-copy -->
+        <p class="support__copy">
+          The studio runs on support, not subscriptions. If something here mattered to
+          you, you can help keep it going.
+        </p>
+        <!-- EDIT: donate-href — replace # with the Stripe link once it's set up -->
+        <a class="btn" href="#" aria-label="Support Studio NEL (payment link coming soon)">
+          Support the studio
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot wrap">
+    <span><span class="mark">Studio NEL</span> — tools for creatives</span>
+    <span>© 2026</span>
+  </footer>
+
+  <script>
+    (function () {
+      var root = document.documentElement;
+      var btn = document.getElementById('themeToggle');
+
+      function sync() {
+        var isLight = root.getAttribute('data-theme') === 'light';
+        btn.setAttribute('aria-pressed', String(isLight));
+      }
+
+      btn.addEventListener('click', function () {
+        var next = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+        root.setAttribute('data-theme', next);
+        try { localStorage.setItem('studio-nel-theme', next); } catch (e) {}
+        sync();
+      });
+
+      sync();
+      // Enable colour transitions only after the first paint
+      requestAnimationFrame(function () { document.body.classList.add('ready'); });
+    })();
+  </script>
+
+</body>
+</html>
