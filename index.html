@@ -86,6 +86,7 @@
   [data-theme="dark"] .card--writelite {
     --wl-card: #262521;         /* warm charcoal — a different temperature */
     --wl-amber: #d4a030;
+    --wl-ink: #1f1e1a;          /* readable foreground on the amber fill */
     --wl-text: #ece8df;
     --wl-muted: #a49e90;
     --wl-line: rgba(212, 160, 48, 0.22);
@@ -93,6 +94,7 @@
   [data-theme="light"] .card--writelite {
     --wl-card: #e6e6e4;
     --wl-amber: #9c6f0a;
+    --wl-ink: #fdf7e8;          /* readable foreground on the amber fill */
     --wl-text: #1c1b17;
     --wl-muted: #6d685e;
     --wl-line: rgba(156, 111, 10, 0.26);
@@ -116,7 +118,6 @@
 
   /* Colour transitions only after first paint (avoids animating the load) */
   body.ready,
-  body.ready .card--writelite,
   body.ready .toggle,
   body.ready .btn {
     transition: background-color 0.28s var(--ease), color 0.28s var(--ease),
@@ -187,9 +188,9 @@
   .section__title {
     font-family: var(--font-display);
     font-weight: 500;
-    font-size: clamp(1.5rem, 3.5vw, 2.1rem);
+    font-size: clamp(1.15rem, 3vw, 1.5rem);
     letter-spacing: -0.01em;
-    margin: 0 0 clamp(1rem, 2.5vh, 1.5rem);
+    margin: 0 0 clamp(0.5rem, 1.25vh, 0.75rem);
   }
 
   /* ---------- Product grid (holds up to 3, centres 1) ------------------ */
@@ -219,7 +220,7 @@
     align-items: center;
   }
   .card--writelite:hover { transform: translateY(-3px); }
-  body.ready .card--writelite { transition: transform 0.3s var(--ease), background-color 0.28s var(--ease); }
+  body.ready .card--writelite { transition: transform 0.3s var(--ease), background-color 0.28s var(--ease), border-color 0.28s var(--ease); }
 
   .card__logo {
     display: grid;
@@ -298,12 +299,6 @@
     letter-spacing: -0.01em;
     margin: 0;
   }
-  .support__intro {
-    width: fit-content;
-    max-width: 100%;
-    margin-inline: auto;
-    text-align: left;
-  }
   .support__copy {
     margin: 0.75rem 0 1.25rem;
     color: var(--muted);
@@ -341,7 +336,6 @@
     .card--writelite {
       grid-template-columns: 1fr;
       text-align: left;
-      min-height: 0;
     }
     .card__logo { justify-items: start; margin-bottom: 0.5rem; }
     .card__logo img { width: 160px; }
