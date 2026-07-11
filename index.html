@@ -298,11 +298,15 @@
     letter-spacing: -0.01em;
     margin: 0;
   }
-  .support__copy {
-    margin: 0.75rem auto 1.25rem;
-    max-width: 56ch;
-    color: var(--muted);
+  .support__intro {
+    width: fit-content;
+    max-width: 100%;
+    margin-inline: auto;
     text-align: left;
+  }
+  .support__copy {
+    margin: 0.75rem 0 1.25rem;
+    color: var(--muted);
   }
   .btn {
     display: inline-flex;
@@ -426,13 +430,15 @@
     <!-- Support -->
     <section class="support">
       <div class="wrap">
-        <h2 class="support__title">Support Studio&nbsp;<strong>NEL</strong></h2>
-        <!-- EDIT: donate-copy -->
-        <p class="support__copy">
-          NEL builds software,<br>
-          NEL appreciates any and all support to this endeavour,<br>
-          NEL loves creatives
-        </p>
+        <div class="support__intro">
+          <h2 class="support__title">Support Studio&nbsp;<strong>NEL</strong></h2>
+          <!-- EDIT: donate-copy -->
+          <p class="support__copy">
+            NEL builds software,<br>
+            NEL appreciates any and all support to this endeavour,<br>
+            NEL loves creatives
+          </p>
+        </div>
         <!-- EDIT: donate-href — replace # with the Stripe link once it's set up -->
         <a class="btn" href="#" aria-label="Support Studio NEL (payment link coming soon)">
           Support the studio
