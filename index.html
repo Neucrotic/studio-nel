@@ -41,12 +41,12 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Public+Sans:wght@500;600;700&display=swap" rel="stylesheet">
 
 <style>
   /* ---------- Tokens ---------------------------------------------------- */
   :root {
-    --font-display: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
+    --font-display: 'Public Sans', ui-sans-serif, system-ui, sans-serif;
     --font-body: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
 
     --maxw: 1080px;
@@ -86,15 +86,13 @@
   [data-theme="dark"] .card--writelite {
     --wl-card: #262521;         /* warm charcoal — a different temperature */
     --wl-amber: #d4a030;
-    --wl-ink: #141412;          /* logo "paper" */
     --wl-text: #ece8df;
     --wl-muted: #a49e90;
     --wl-line: rgba(212, 160, 48, 0.22);
   }
   [data-theme="light"] .card--writelite {
-    --wl-card: #fffdf8;
+    --wl-card: #e6e6e4;
     --wl-amber: #9c6f0a;
-    --wl-ink: #141412;
     --wl-text: #1c1b17;
     --wl-muted: #6d685e;
     --wl-line: rgba(156, 111, 10, 0.26);
@@ -134,13 +132,6 @@
 
   a { color: var(--accent-text); }
 
-  /* The NEL mark — consistent everywhere it appears */
-  .mark {
-    font-family: var(--font-display);
-    font-weight: 700;
-    letter-spacing: 0.02em;
-  }
-
   /* ---------- Theme toggle (fixed, quiet) ------------------------------- */
   .toggle {
     position: fixed;
@@ -165,60 +156,41 @@
 
   /* ---------- Hero ------------------------------------------------------ */
   .hero {
-    min-height: 82vh;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    padding-block: clamp(4rem, 12vh, 9rem);
+    align-items: center;
+    text-align: center;
+    padding-block: clamp(1.5rem, 4vh, 2.5rem);
   }
   .hero__title {
-    font-family: var(--font-display);
+    font-family: 'Public Sans', var(--font-body);
     font-weight: 500;
-    font-size: clamp(3.4rem, 12vw, 8rem);
-    line-height: 0.95;
+    font-size: clamp(2.4rem, 6vw, 4.25rem);
+    line-height: 0.98;
     letter-spacing: -0.02em;
     margin: 0;
   }
-  .hero__title .mark { font-weight: 700; }
 
   .hero__values {
-    margin: clamp(1.5rem, 4vh, 2.5rem) 0 0;
-    font-size: clamp(1.15rem, 2.4vw, 1.6rem);
+    margin: clamp(0.75rem, 2vh, 1.25rem) auto 0;
+    font-size: clamp(1.1rem, 2.2vw, 1.45rem);
     color: var(--muted);
     max-width: 34ch;
     font-weight: 400;
   }
   .hero__values .accent { color: var(--accent-text); }
 
-  .hero__cue {
-    margin-top: clamp(2.5rem, 8vh, 5rem);
-    font-family: var(--font-display);
-    font-size: 0.8rem;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: var(--muted);
-    display: inline-flex;
-    align-items: center;
-    gap: 0.6rem;
-    text-decoration: none;
-  }
-  .hero__cue::after {
-    content: "";
-    width: 1px; height: 34px;
-    background: linear-gradient(var(--muted), transparent);
-  }
-
   /* ---------- Section header ------------------------------------------- */
-  .section { padding-block: clamp(3rem, 9vh, 6rem); }
+  .section { padding-block: clamp(1.25rem, 3vh, 2.5rem); }
 
   .section__title {
     font-family: var(--font-display);
     font-weight: 500;
-    font-size: clamp(1.6rem, 4vw, 2.4rem);
+    font-size: clamp(1.5rem, 3.5vw, 2.1rem);
     letter-spacing: -0.01em;
-    margin: 0 0 clamp(1.75rem, 5vh, 3rem);
+    margin: 0 0 clamp(1rem, 2.5vh, 1.5rem);
   }
-  .section__title .mark { font-weight: 700; }
 
   /* ---------- Product grid (holds up to 3, centres 1) ------------------ */
   .grid {
@@ -240,11 +212,10 @@
   .card--writelite {
     background: var(--wl-card);
     color: var(--wl-text);
-    min-height: 600px;
     display: grid;
     grid-template-columns: 1fr 1.25fr;
-    gap: clamp(1.5rem, 4vw, 3rem);
-    padding: clamp(1.75rem, 4vw, 3rem);
+    gap: clamp(1.25rem, 3vw, 2.25rem);
+    padding: clamp(1.25rem, 3vw, 2rem);
     align-items: center;
   }
   .card--writelite:hover { transform: translateY(-3px); }
@@ -254,15 +225,10 @@
     display: grid;
     place-items: center;
   }
-  .card__logo svg {
+  .card__logo img {
     width: min(78%, 300px);
     height: auto;
   }
-  /* Logo colours are driven by the card's theme variables */
-  .card__logo .wl-amber { fill: var(--wl-amber); }
-  .card__logo .wl-amber-stroke { stroke: var(--wl-amber); }
-  .card__logo .wl-amber-fill-soft { fill: var(--wl-amber); fill-opacity: 0.22; }
-  .card__logo .wl-ink { fill: var(--wl-ink); }
 
   .card__name {
     font-family: var(--font-display);
@@ -278,12 +244,12 @@
     font-weight: 500;
   }
   .card__desc {
-    margin: 1.25rem 0 0;
+    margin: 0.85rem 0 0;
     color: var(--wl-text);
     max-width: 46ch;
   }
   .card__foot {
-    margin-top: clamp(1.75rem, 4vh, 2.5rem);
+    margin-top: clamp(1rem, 2.5vh, 1.5rem);
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -312,8 +278,8 @@
 
   /* ---------- Product list (below the cards) --------------------------- */
   .more {
-    margin-top: clamp(1.75rem, 4vh, 2.5rem);
-    padding-top: 1.5rem;
+    margin-top: clamp(1rem, 2.5vh, 1.5rem);
+    padding-top: 1rem;
     border-top: 1px solid var(--line);
     color: var(--muted);
     font-size: 0.98rem;
@@ -322,7 +288,7 @@
   /* ---------- Support / donate ----------------------------------------- */
   .support {
     text-align: center;
-    padding-block: clamp(4rem, 12vh, 7rem);
+    padding-block: clamp(1.75rem, 4vh, 3rem);
     border-top: 1px solid var(--line);
   }
   .support__title {
@@ -332,11 +298,11 @@
     letter-spacing: -0.01em;
     margin: 0;
   }
-  .support__title .mark { font-weight: 700; }
   .support__copy {
-    margin: 1rem auto 2rem;
-    max-width: 46ch;
+    margin: 0.75rem auto 1.25rem;
+    max-width: 56ch;
     color: var(--muted);
+    text-align: left;
   }
   .btn {
     display: inline-flex;
@@ -356,7 +322,7 @@
 
   /* ---------- Footer ---------------------------------------------------- */
   .foot {
-    padding-block: clamp(2rem, 5vh, 3rem);
+    padding-block: clamp(1rem, 2.5vh, 1.5rem);
     border-top: 1px solid var(--line);
     color: var(--muted);
     font-size: 0.9rem;
@@ -365,7 +331,6 @@
     flex-wrap: wrap;
     gap: 0.5rem;
   }
-  .foot .mark { font-weight: 600; font-size: 0.95rem; }
 
   /* ---------- Responsive ----------------------------------------------- */
   @media (max-width: 720px) {
@@ -375,7 +340,7 @@
       min-height: 0;
     }
     .card__logo { justify-items: start; margin-bottom: 0.5rem; }
-    .card__logo svg { width: 160px; }
+    .card__logo img { width: 160px; }
   }
 
   /* ---------- Accessibility -------------------------------------------- */
@@ -409,10 +374,9 @@
   <!-- Hero -->
   <header class="hero">
     <div class="wrap">
-      <h1 class="hero__title">Studio&nbsp;<span class="mark">NEL</span></h1>
+      <h1 class="hero__title">Studio&nbsp;<strong>NEL</strong></h1>
       <!-- EDIT: values-line -->
       <p class="hero__values">I build tools for <span class="accent">creatives</span>.</p>
-      <a class="hero__cue" href="#software">The software</a>
     </div>
   </header>
 
@@ -420,25 +384,15 @@
     <!-- Software -->
     <section class="section" id="software">
       <div class="wrap">
-        <h2 class="section__title">software by&nbsp;<span class="mark">NEL</span></h2>
+        <h2 class="section__title">software by&nbsp;<strong>NEL</strong></h2>
 
         <!-- grid--solo centres a single card; remove "grid--solo" once a 2nd card lands -->
         <div class="grid grid--solo">
 
           <article class="card card--writelite">
             <div class="card__logo">
-              <!-- WriteLite logo, inlined so it recolours with the theme -->
-              <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="WriteLite logo">
-                <path class="wl-ink" d="M695 126L829.234 261.75H560.766L695 126Z"/>
-                <rect class="wl-ink" x="153" y="101" width="499" height="191"/>
-                <rect class="wl-ink" x="153" y="259" width="697" height="660"/>
-                <path class="wl-amber-fill-soft wl-amber-stroke" d="M140 70H652L884.727 266.923V877.385C884.727 893.053 877.371 908.079 864.278 919.158C851.185 930.237 833.426 936.461 814.909 936.461H140V70Z" stroke-width="71" stroke-linejoin="round"/>
-                <path class="wl-amber" d="M509.578 620L482.978 463.06H481.458L454.098 620H400.898L364.038 354H414.958L425.598 432.28L433.578 520.44H435.478L449.538 432.66L461.318 354H504.258L515.658 432.66L530.098 520.44H531.998L539.598 432.28L550.238 354H601.158L564.298 620H509.578ZM623.029 620V354H675.089V575.92H754.129V620H623.029Z"/>
-                <path class="wl-amber-stroke" d="M397 815H762" stroke-width="68" stroke-linecap="square" stroke-linejoin="round"/>
-                <path class="wl-amber-stroke" d="M651.636 78.7692V275.692H884.364" stroke-width="71" stroke-linejoin="round"/>
-                <path class="wl-amber-stroke" d="M270 79V945.461" stroke-width="68" stroke-linejoin="round"/>
-                <path class="wl-amber-stroke" d="M394 700H580.182" stroke-width="68" stroke-linecap="square" stroke-linejoin="round"/>
-              </svg>
+              <!-- Real WriteLite logo, fixed colours — does not recolour with the theme -->
+              <img src="wl_logo.svg" alt="WriteLite logo">
             </div>
 
             <div class="card__body">
@@ -472,11 +426,12 @@
     <!-- Support -->
     <section class="support">
       <div class="wrap">
-        <h2 class="support__title">Support Studio&nbsp;<span class="mark">NEL</span></h2>
+        <h2 class="support__title">Support Studio&nbsp;<strong>NEL</strong></h2>
         <!-- EDIT: donate-copy -->
         <p class="support__copy">
-          The studio runs on support, not subscriptions. If something here mattered to
-          you, you can help keep it going.
+          NEL builds software,<br>
+          NEL appreciates any and all support to this endeavour,<br>
+          NEL loves creatives
         </p>
         <!-- EDIT: donate-href — replace # with the Stripe link once it's set up -->
         <a class="btn" href="#" aria-label="Support Studio NEL (payment link coming soon)">
@@ -488,7 +443,7 @@
   </main>
 
   <footer class="foot wrap">
-    <span><span class="mark">Studio NEL</span> — tools for creatives</span>
+    <span><strong>Studio NEL</strong> — tools for creatives</span>
     <span>© 2026</span>
   </footer>
 
