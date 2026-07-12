@@ -201,7 +201,7 @@
     align-items: stretch;
   }
   /* When there's a single card, keep it from stretching the full width */
-  .grid.grid--solo { grid-template-columns: minmax(0, 760px); justify-content: start; }
+  .grid.grid--solo { grid-template-columns: 564px; justify-content: start; }
 
   /* ---------- Card ------------------------------------------------------ */
   .card {
@@ -214,9 +214,9 @@
     background: var(--wl-card);
     color: var(--wl-text);
     display: grid;
-    grid-template-columns: 1fr 1.25fr;
-    gap: clamp(1.25rem, 3vw, 2.25rem);
-    padding: clamp(1.25rem, 3vw, 2rem);
+    grid-template-columns: 144px 1fr;
+    gap: 20px;
+    padding: 16px;
     align-items: center;
   }
   .card--writelite:hover { transform: translateY(-3px); }
@@ -225,54 +225,55 @@
   .card__logo {
     display: grid;
     place-items: center;
+    align-self: start;
   }
   .card__logo img {
-    width: min(78%, 300px);
+    width: 144px;
     height: auto;
   }
 
   .card__name {
     font-family: var(--font-display);
     font-weight: 600;
-    font-size: clamp(2rem, 4vw, 2.9rem);
+    font-size: 46px;
     letter-spacing: -0.02em;
     margin: 0;
   }
   .card__tagline {
-    margin: 0.6rem 0 0;
-    font-size: clamp(1.05rem, 2vw, 1.25rem);
+    margin: 10px 0 0;
+    font-size: 20px;
     color: var(--wl-amber);
     font-weight: 500;
   }
   .card__desc {
-    margin: 0.85rem 0 0;
+    margin: 14px 0 0;
     color: var(--wl-text);
-    max-width: 46ch;
+    max-width: 460px;
   }
   .card__foot {
-    margin-top: clamp(1rem, 2.5vh, 1.5rem);
+    margin-top: 20px;
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 1rem 1.5rem;
+    gap: 16px 24px;
   }
   .card__cta {
     display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 8px;
     font-family: var(--font-display);
     font-weight: 600;
-    font-size: 1rem;
+    font-size: 16px;
     text-decoration: none;
     color: var(--wl-text);
-    padding: 0.7rem 1.3rem;
+    padding: 11px 21px;
     border: 1.5px solid var(--wl-amber);
     border-radius: 999px;
   }
   .card__cta:hover { background: var(--wl-amber); color: var(--wl-ink); }
   body.ready .card__cta { transition: background-color 0.2s var(--ease), color 0.2s var(--ease); }
   .card__meta {
-    font-size: 0.9rem;
+    font-size: 14px;
     color: var(--wl-muted);
     letter-spacing: 0.02em;
   }
@@ -333,12 +334,18 @@
 
   /* ---------- Responsive ----------------------------------------------- */
   @media (max-width: 720px) {
+    .grid.grid--solo { grid-template-columns: minmax(0, 1fr); }
     .card--writelite {
       grid-template-columns: 1fr;
+      gap: 14px;
+      padding: 14px;
       text-align: left;
     }
-    .card__logo { justify-items: start; margin-bottom: 0.5rem; }
-    .card__logo img { width: 160px; }
+    .card__logo { justify-items: start; margin-bottom: 8px; }
+    .card__logo img { width: 128px; }
+    .card__name { font-size: 32px; }
+    .card__tagline { font-size: 17px; }
+    .card__foot { margin-top: 19px; }
   }
 
   /* ---------- Accessibility -------------------------------------------- */
@@ -398,11 +405,8 @@
               <p class="card__tagline">A writing app engineered for speed, focus and flow.</p>
               <!-- EDIT: wl-description -->
               <p class="card__desc">
-                WriteLite opens in under a second and saves every document as plain,
-                open-format text on your own drive — no accounts, no telemetry, nothing
-                leaving your machine. Built by one writer who codes, for anyone who wants
-                the shortest possible gap between a thought and the page. Free to download
-                and keep; pay only what feels good.
+                Most writing software does too much, starts too slowly, or insists on keeping your files in a format it controls.
+                WriteLite will not.
               </p>
               <div class="card__foot">
                 <a class="card__cta" href="https://writelite.net" target="_blank" rel="noopener">

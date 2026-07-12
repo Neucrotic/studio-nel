@@ -33,3 +33,7 @@ still renders and the change actually works.
 
 If my request assumes something about the code that turns out to be false, surface
 it and ask before acting — don't quietly build on the wrong assumption.
+
+# Nelson Verifies Visual Changes
+If a change has been implemented, only verify the validity of the code, check for logic errors as well as syntax.
+Nelson can check the visual elements himself.
