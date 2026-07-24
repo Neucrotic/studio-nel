@@ -26,16 +26,20 @@
 <!-- Set theme BEFORE first paint so there's no flash of the wrong colour -->
 <script>
   (function () {
-    try {
-      var t = localStorage.getItem('studio-nel-theme');
-      if (t !== 'light' && t !== 'dark') {
-        t = (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches)
-          ? 'light' : 'dark';
-      }
-      document.documentElement.setAttribute('data-theme', t);
-    } catch (e) {
-      document.documentElement.setAttribute('data-theme', 'dark');
-    }
+    // THEME LOCK (temporary): force dark for everyone, ignore saved/system choice.
+    // Restore the block below to re-enable theme detection + the toggle button.
+    document.documentElement.setAttribute('data-theme', 'dark');
+
+    // try {
+    //   var t = localStorage.getItem('studio-nel-theme');
+    //   if (t !== 'light' && t !== 'dark') {
+    //     t = (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches)
+    //       ? 'light' : 'dark';
+    //   }
+    //   document.documentElement.setAttribute('data-theme', t);
+    // } catch (e) {
+    //   document.documentElement.setAttribute('data-theme', 'dark');
+    // }
   })();
 </script>
 
@@ -466,7 +470,8 @@
 
 <body>
 
-  <!-- Theme toggle -->
+  <!-- Theme toggle — TEMPORARILY DISABLED (site locked to dark). Uncomment to restore. -->
+  <!--
   <button class="toggle" id="themeToggle" type="button" aria-label="Switch colour theme" aria-pressed="false">
     <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
       <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>
@@ -476,6 +481,7 @@
       <path d="M12 2v2.5M12 19.5V22M4.2 4.2l1.8 1.8M18 18l1.8 1.8M2 12h2.5M19.5 12H22M4.2 19.8 6 18M18 6l1.8-1.8"/>
     </svg>
   </button>
+  -->
 
   <!-- Hero -->
   <header class="hero">
@@ -534,22 +540,25 @@
 
   <script>
     (function () {
-      var root = document.documentElement;
-      var btn = document.getElementById('themeToggle');
+      // THEME TOGGLE — TEMPORARILY DISABLED (site locked to dark).
+      // Uncomment the block below to restore the light/dark switch.
+      // var root = document.documentElement;
+      // var btn = document.getElementById('themeToggle');
+      //
+      // function sync() {
+      //   var isLight = root.getAttribute('data-theme') === 'light';
+      //   btn.setAttribute('aria-pressed', String(isLight));
+      // }
+      //
+      // btn.addEventListener('click', function () {
+      //   var next = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+      //   root.setAttribute('data-theme', next);
+      //   try { localStorage.setItem('studio-nel-theme', next); } catch (e) {}
+      //   sync();
+      // });
+      //
+      // sync();
 
-      function sync() {
-        var isLight = root.getAttribute('data-theme') === 'light';
-        btn.setAttribute('aria-pressed', String(isLight));
-      }
-
-      btn.addEventListener('click', function () {
-        var next = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
-        root.setAttribute('data-theme', next);
-        try { localStorage.setItem('studio-nel-theme', next); } catch (e) {}
-        sync();
-      });
-
-      sync();
       // Enable colour transitions only after the first paint
       requestAnimationFrame(function () { document.body.classList.add('ready'); });
     })();
