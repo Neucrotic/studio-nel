@@ -45,7 +45,7 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Public+Sans:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Public+Sans:wght@500;600;700&family=Cinzel:wght@500;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
 
 <style>
   /* ---------- Tokens ---------------------------------------------------- */
@@ -53,8 +53,6 @@
     --font-display: 'Public Sans', ui-sans-serif, system-ui, sans-serif;
     --font-body: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
 
-    --maxw: 1080px;
-    --pad: clamp(1.25rem, 5vw, 4rem);
     --radius: 18px;
 
     --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
@@ -80,9 +78,14 @@
     --patina-bright: #5fc2a4;    /* lifted, reads on dark granite */
     --patina-deep: #216350;      /* darker, AA-safe text on light limestone (~5.4:1) */
 
+    /* Cornflower — the site accent */
+    --blue-fill: #4d8dff;   /* solid fill / buttons / title glow; reads on dark granite */
+    --blue-deep: #14509c;   /* darker, AA-safe as link text on light limestone (~6:1) */
+    --blue-kaku: #1c4bd9;   /* kaku's own energy accent — drives its glow, circuit + rim */
+
     /* Hero subheading words — fixed colours, do NOT follow the theme */
-    --subheading-accent: #39e6b0;      /* "artists" — teal */
-    --subheading-accent-alt: #b06bff;  /* "thinkers" — purple */
+    --accent-artists: #39e6b0;      /* "artists" — teal */
+    --accent-thinkers: #b06bff;  /* "thinkers" — purple */
   }
 
   /* Studio world — dark (default). granite + patina */
@@ -92,9 +95,9 @@
     --text: var(--granite-ink);
     --muted: var(--granite-muted);
     --line: rgba(255, 255, 255, 0.09);
-    --accent: var(--patina-fill);       /* patina — fills */
-    --accent-ink: #ffffff;              /* text on patina fills */
-    --accent-text: var(--patina-bright);/* patina as text/links, lifted for dark */
+    --accent: var(--blue-fill);         /* site accent — fills */
+    --accent-ink: #ffffff;              /* text on accent fills */
+    --accent-text: var(--blue-fill);    /* accent as text/links; reads on dark granite */
     --shadow: 0 24px 60px -24px rgba(0, 0, 0, 0.65);
   }
 
@@ -105,15 +108,15 @@
     --text: var(--limestone-ink);
     --muted: var(--limestone-muted);
     --line: rgba(0, 0, 0, 0.10);
-    --accent: var(--patina-fill);
+    --accent: var(--blue-fill);
     --accent-ink: #ffffff;
-    --accent-text: var(--patina-deep);  /* darker patina for contrast on limestone */
+    --accent-text: var(--blue-deep);    /* darker blue for contrast on limestone */
     --shadow: 0 24px 50px -28px rgba(0, 0, 0, 0.20);
   }
 
-  /* Product-card palette is fixed-dark and lives on .product-card itself
+  /* WriteLite-card palette is fixed-dark and lives on .writelite-card itself
      (an intentional dark "island" that does NOT follow the page theme) —
-     see the "Product card" section below. */
+     see the "WriteLite card" section below. */
 
   /* ---------- Base ------------------------------------------------------ */
   * { box-sizing: border-box; }
@@ -139,6 +142,10 @@
   */
   body {
     margin: 0;
+    display: flex;                   /* sticky-footer column */
+    flex-direction: column;
+    min-height: 100vh;               /* fallback */
+    min-height: 100dvh;              /* mobile dynamic viewport */
     background-color: var(--bg);
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.5' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
     background-blend-mode: soft-light;
@@ -161,9 +168,6 @@
 
   .wrap {
     width: 100%;
-    max-width: var(--maxw);
-    margin-inline: auto;
-    padding-inline: var(--pad);
   }
 
   a { color: var(--accent-text); }
@@ -171,8 +175,8 @@
   /* ---------- Theme toggle (fixed, quiet) ------------------------------- */
   .toggle {
     position: fixed;
-    top: clamp(1rem, 3vw, 1.75rem);
-    right: clamp(1rem, 3vw, 1.75rem);
+    top: 28px;
+    right: 28px;
     z-index: 50;
     width: 44px;
     height: 44px;
@@ -197,60 +201,76 @@
     justify-content: center;
     align-items: center;
     text-align: center;
-    padding-block: clamp(1.5rem, 4vh, 2.5rem);
+    padding-top: 36px;                        /* space above the title */
+    padding-bottom: 0;                        /* gap below is owned by .section top */
   }
   .hero__title {
     font-family: 'Public Sans', var(--font-body);
     font-weight: 500;
-    font-size: clamp(2.4rem, 6vw, 4.25rem);
+    font-size: 68px;
     line-height: 0.98;
     letter-spacing: -0.02em;
     margin: 0;
+    text-shadow:
+      0 0 10px color-mix(in srgb, var(--accent) 45%, transparent),
+      0 0 24px color-mix(in srgb, var(--accent) 25%, transparent);
   }
 
   .hero__values {
-    margin: clamp(0.75rem, 2vh, 1.25rem) auto 0;
-    font-size: clamp(1.1rem, 2.2vw, 1.45rem);
+    margin: 18px auto 0;
+    font-size: 23px;
     color: var(--muted);
     max-width: 34ch;
     font-weight: 400;
   }
   .hero__values .accent {
-    color: var(--subheading-accent);
+    color: var(--accent-artists);
     text-shadow:
-      0 0 12px color-mix(in srgb, var(--subheading-accent) 60%, transparent),
-      0 0 30px color-mix(in srgb, var(--subheading-accent) 35%, transparent);
+      0 0 12px color-mix(in srgb, var(--accent-artists) 60%, transparent),
+      0 0 30px color-mix(in srgb, var(--accent-artists) 35%, transparent);
   }
   /* "thinkers" — swap the local token so colour AND glow both go purple */
-  .hero__values .accent--alt { --subheading-accent: var(--subheading-accent-alt); }
+  .hero__values .accent--alt { --accent-artists: var(--accent-thinkers); }
 
   /* ---------- Section header ------------------------------------------- */
-  .section { padding-block: clamp(1.25rem, 3vh, 2.5rem); }
+  main { flex: 1 0 auto; }           /* grow so the footer sits at the viewport bottom */
+
+  .section {
+    padding-block-start: 40px;                      /* fixed gap: subtitle → title */
+    padding-block-end: 27px;                        /* space above the footer */
+  }
+  /* Halve only the software → studio gap. That gap is the sum of two section
+     paddings meeting there (27px end + 40px start = 67px); these overrides cut
+     each in half without touching the hero→software or studio→footer gaps. */
+  #software { padding-block-end: 13.5px; }
+  #studio   { padding-block-start: 20px; }
+  /* Extra breathing room above the studio row (rune deck + contact card).
+     Scoped to #studio so the shared .grid base — and #software — stay untouched. */
+  #studio .grid { margin-top: 40px; }
 
   .section__title {
     font-family: var(--font-display);
     font-weight: 500;
-    font-size: clamp(1.15rem, 3vw, 1.5rem);
+    font-size: 24px;
     letter-spacing: -0.01em;
-    margin: 0 0 clamp(0.5rem, 1.25vh, 0.75rem);
+    text-align: center;
+    margin: 0 0 11px;
   }
 
   /* ---------- Product grid (holds up to 3, centres 1) ------------------ */
   .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: clamp(1.5rem, 3vw, 2.25rem);
-    align-items: stretch;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 36px;
+    align-items: stretch;            /* equal-height cards when paired */
   }
-  /* When there's a single card, keep it from stretching the full width */
-  .grid.grid--solo { grid-template-columns: 564px; justify-content: start; }
 
-  /* ---------- Product card (reusable dark-stone island) ----------------- */
-  /* Behaviour knobs + fixed-dark palette live on the base class.
-     To add another product: give it a modifier that sets ONLY --accent.
-     The card stays dark in both page themes — deliberate, like the reference. */
-  .product-card {
-    --accent: #d4a030;               /* neon rim / amber accent (overridden per product) */
+  /* ---------- WriteLite card (dark-stone island) ------------------------ */
+  /* Behaviour knobs + fixed-dark palette live on the class. The card stays
+     dark in both page themes — deliberate, like the reference. */
+  .writelite-card {
+    --accent: #d4a030;               /* neon rim / amber accent */
     --glow: 1;                        /* rim glow strength multiplier */
     --range: 24;                      /* px beyond the edge the magnet pull reaches */
     --pull: 5;                        /* peak magnet drift */
@@ -258,20 +278,23 @@
     --pc-muted: #a49e90;             /* meta line */
     --pc-ink: #1f1e1a;               /* text on an amber fill */
     perspective: 900px;
-    width: 100%;
+    flex: 0 0 564px;                  /* fixed 564px — never grows or shrinks to fill */
+    max-width: 100%;                  /* shrink only when the viewport is narrower than the card */
+    /* Drop the card so its top meets the kaku chip's top. The chip is centred in
+       the 434px stage and lifts to ~384px, so its top sits (434 − 384)/2 ≈ 25px
+       below the row top (where the circuit's top node sits). Zeroed once stacked. */
+    margin-top: 25px;
     /* starts off-screen-left (not invisible) via the animation's backwards fill,
        so it reads as a solid card flying in from outside the page */
     animation: pc-glide 2.2s var(--ease) both var(--glide-delay, 0ms);
   }
-  /* Per-product accent — the single line you change to spin up a new card */
-  .product-card--writelite { --accent: #d4a030; }   /* WriteLite amber */
 
-  /* Once the glide finishes we drop the animation so the JS can own the
-     transform (a still-filling animation would override inline transforms). */
-  .product-card.is-landed { animation: none; }
-  .product-card.is-landed .product-card__inner { animation: none; }
+  /* Once the glide finishes, the outer card hands off to the idle bob and the
+     inner drops its bank animation so JS can own the inner's pull/tilt transform. */
+  .writelite-card.is-landed { animation: writelite-bob 3.6s ease-in-out infinite; }
+  .writelite-card.is-landed .writelite-card__inner { animation: none; }
 
-  .product-card__inner {
+  .writelite-card__inner {
     position: relative;
     border-radius: var(--radius);
     display: grid;
@@ -289,11 +312,11 @@
   }
   /* Lazy cursor-follow: the pull + tilt ease toward each new pointer position
      over ~1.5s, so the card drafts after the mouse instead of snapping to it. */
-  body.ready .product-card,
-  body.ready .product-card__inner { transition: transform 1.5s var(--ease); }
+  body.ready .writelite-card,
+  body.ready .writelite-card__inner { transition: transform 1.5s var(--ease); }
 
   /* stone grain — baked feTurbulence data-URI (from the reference card) */
-  .product-card__inner::before {
+  .writelite-card__inner::before {
     content: ""; position: absolute;
     inset: 0; border-radius: var(--radius);
     pointer-events: none;
@@ -301,7 +324,7 @@
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='c'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23c)'/%3E%3C/svg%3E");
   }
   /* neon rim — driven entirely by --accent (no overflow:hidden or the glow clips) */
-  .product-card__inner::after {
+  .writelite-card__inner::after {
     content: ""; position: absolute; inset: 0; border-radius: var(--radius);
     pointer-events: none;
     border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
@@ -309,44 +332,44 @@
                 inset 0 0 0 1px color-mix(in srgb, var(--accent) 33%, transparent);
   }
   /* lift the real content above the grain/rim pseudo-layers so text stays crisp */
-  .product-card__inner > * { position: relative; z-index: 1; }
+  .writelite-card__inner > * { position: relative; z-index: 1; }
 
-  .card__logo {
+  .writelite-card__logo {
     display: grid;
     place-items: center;
     align-self: start;
   }
-  .card__logo img {
+  .writelite-card__logo img {
     width: 144px;
     height: auto;
   }
 
-  .card__name {
+  .writelite-card__name {
     font-family: var(--font-display);
     font-weight: 600;
     font-size: 46px;
     letter-spacing: -0.02em;
     margin: 0;
   }
-  .card__tagline {
+  .writelite-card__tagline {
     margin: 10px 0 0;
     font-size: 20px;
     color: var(--accent);
     font-weight: 500;
   }
-  .card__desc {
+  .writelite-card__desc {
     margin: 14px 0 0;
     color: var(--pc-text);
     max-width: 460px;
   }
-  .card__foot {
+  .writelite-card__foot {
     margin-top: 20px;
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     gap: 16px 24px;
   }
-  .card__cta {
+  .writelite-card__cta {
     display: inline-flex;
     align-items: center;
     gap: 8px;
@@ -359,9 +382,9 @@
     border: 1.5px solid var(--accent);
     border-radius: 999px;
   }
-  .card__cta:hover { background: var(--accent); color: var(--pc-ink); }
-  body.ready .card__cta { transition: background-color 0.2s var(--ease), color 0.2s var(--ease); }
-  .card__meta {
+  .writelite-card__cta:hover { background: var(--accent); color: var(--pc-ink); }
+  body.ready .writelite-card__cta { transition: background-color 0.2s var(--ease), color 0.2s var(--ease); }
+  .writelite-card__meta {
     font-size: 14px;
     color: var(--pc-muted);
     letter-spacing: 0.02em;
@@ -379,26 +402,325 @@
     from { transform: rotateY(24deg) rotateZ(-6deg); }
     to   { transform: rotateY(0) rotateZ(0); }
   }
-
-  /* ---------- Product list (below the cards) --------------------------- */
-  .more {
-    margin-top: clamp(1rem, 2.5vh, 1.5rem);
-    padding-top: 1rem;
-    border-top: 1px solid var(--line);
-    color: var(--muted);
-    font-size: 0.98rem;
+  /* Idle float once landed — the WriteLite twin of kaku's hoverbob. Lives on the
+     outer card so it never collides with the magnet pull/tilt on the inner. */
+  @keyframes writelite-bob {
+    0%,100% { transform: translateY(2px); }
+    50%     { transform: translateY(-9px); }
   }
 
+  /* ---------- kaku (self-booting circuit card) ------------------------- */
+  /* Vanilla port of the exported "chip" component. It does NOT fly in and has
+     no magnet — it powers up in place once WriteLite has landed (gated by the
+     kaku IIFE below). A fixed-dark island: ignores the page theme.
+       .kaku-stage  — the grid sibling; sized square to the WriteLite card's
+                      height (mirrored in JS) so the two sit level side by side.
+       .kaku-card   — the square that lifts + resizes (the "card" itself).
+       __circuit    — the SVG circuit board (injected by JS).
+       __rim        — WriteLite-style kaku-blue aura; flickers once then holds.
+     The phase engine mutates inline styles; base styles below = the `dormant`
+     look so nothing flashes before the boot starts. */
+  .kaku-stage {
+    --acc: var(--blue-kaku);           /* energy colour — drives glow, circuit, rim */
+    --glow: 1;                          /* glow-strength multiplier */
+    --range: 24;                        /* px beyond the edge the magnet pull reaches */
+    --pull: 5;                          /* peak magnet drift */
+    position: relative;
+    flex: 0 0 auto;
+    /* 434px → levitated chip ≈ 384px (chip = 52% of stage, JS scales it ×1.7).
+       The whole square animation system scales off this one size. */
+    width: min(434px, 90vw);
+    aspect-ratio: 1 / 1;
+    max-width: 100%;
+    perspective: 900px;                 /* depth for the magnet tilt (matches WriteLite) */
+    display: grid;
+    place-items: center;
+  }
+  .kaku-stage__inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: grid;
+    place-items: center;
+    /* the magnet's free transform layer — eases toward the pointer (matches
+       WriteLite's lazy cursor-follow). Untouched until the boot arms it. */
+    transition: transform 1.5s var(--ease);
+  }
+  .kaku-stage__shadow {
+    position: absolute; left: 50%; bottom: 15%;
+    width: 52%; height: 12%;
+    transform: translate(-50%, 0) scale(1);
+    border-radius: 50%;
+    background: radial-gradient(closest-side, #000000cc, transparent 78%);
+    filter: blur(8px);
+    opacity: .5;
+    transition: transform .95s cubic-bezier(.2,.8,.2,1), opacity .95s ease, filter .95s ease;
+    z-index: 1;
+  }
+  .kaku-stage__glow {
+    position: absolute; left: 50%; top: 48%;
+    width: 90%; height: 90%;
+    transform: translate(-50%, -50%) scale(.7);
+    border-radius: 50%;
+    background: radial-gradient(closest-side, var(--acc), transparent 72%);
+    opacity: 0;
+    filter: blur(6px);
+    mix-blend-mode: screen;
+    transition: opacity .8s ease, transform .8s cubic-bezier(.2,.8,.2,1);
+    z-index: 2;
+  }
+  .kaku-stage__circuit {
+    position: absolute; inset: 3%;
+    z-index: 3;
+    color: var(--acc);                  /* currentColor for the injected SVG traces */
+    filter: none;
+    transition: filter .6s ease;
+  }
+  .kaku-stage__lift {
+    position: relative;
+    z-index: 4;
+    width: 52%;
+    aspect-ratio: 1 / 1;
+    display: grid;
+    place-items: center;
+  }
+  .kaku-card {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    border-radius: 14px;
+    background: linear-gradient(135deg,#333842 0%,#20242c 40%,#14171d 72%,#0d0f14 100%),
+                repeating-linear-gradient(118deg, rgba(255,255,255,.05) 0 1px, transparent 1px 6px);
+    border: 1px solid #ffffff22;
+    box-shadow: inset 0 1px 0 #ffffff2e, inset 0 0 44px #0009, 0 22px 44px -22px #000d;
+    overflow: hidden;
+    transform: scale(1);
+    filter: brightness(.5) saturate(.55);   /* dormant look — matches the base phase */
+    transition: transform 1.1s cubic-bezier(.2,.8,.2,1), filter .6s ease;
+  }
+  /* WriteLite-style rim aura — overlays .kaku-card, mirrors its scale in JS. */
+  .kaku-stage__rim {
+    position: absolute; inset: 0;
+    border-radius: 14px;
+    pointer-events: none;
+    opacity: 0;                         /* off until the boot's flicker phase */
+    transform: scale(1);
+    border: 1px solid color-mix(in srgb, var(--acc) 40%, transparent);
+    box-shadow: 0 0 24px calc(var(--glow) * 2px) var(--acc),
+                inset 0 0 0 1px color-mix(in srgb, var(--acc) 33%, transparent);
+    transition: opacity .8s ease, transform 1.1s cubic-bezier(.2,.8,.2,1);
+  }
+  /* One-shot rim ignition: flickers, then the JS pins it steady at opacity 1. */
+  @keyframes kaku-rim-flicker {
+    0%   { opacity: 0; }
+    10%  { opacity: 1; }
+    22%  { opacity: .25; }
+    38%  { opacity: .95; }
+    54%  { opacity: .35; }
+    72%  { opacity: 1; }
+    86%  { opacity: .55; }
+    100% { opacity: 1; }
+  }
+  /* Ported from the export: the card's ignition flicker + the airborne bob. */
+  @keyframes kaku-flicker {
+    0%{opacity:.35} 8%{opacity:1} 14%{opacity:.45} 22%{opacity:.95} 30%{opacity:.28}
+    42%{opacity:1} 52%{opacity:.6} 64%{opacity:1} 76%{opacity:.55} 88%{opacity:.95} 100%{opacity:1}
+  }
+  @keyframes kaku-hoverbob {
+    0%,100%{ transform: translateY(2px); }
+    50%    { transform: translateY(-9px); }
+  }
+
+  /* ---------- Rune stack (interactive dark-stone island) --------------- */
+  /* Vanilla port of the standalone rune-stack demo. A fixed-dark island like
+     .writelite-card — deliberately does NOT follow the page theme. Click the
+     monolith to fan the deck; click a layer to open its inscription in the
+     slab. The deck collapses on its own only as it scrolls off-screen — the
+     rune-stack IIFE scrubs it closed between 120px and 8px from the edge. */
+  .rune-stack {
+    --vc: #ffb454;                 /* frame accent — the label */
+    --glow: 1;                     /* glow-strength multiplier */
+    position: relative;
+    /* Reserved stage width — the horizontal twin of --rune-stage below. The
+       deck's layers are position:absolute, so the stack has zero natural width;
+       this reserves the box the fan spreads from. Tunable: ~400px is snug to the
+       open fan's footprint. Was width:100%/max-width:560px, which oversized the
+       stack in the row. */
+    width: var(--rune-width, 400px);
+    /* Reserved stage height. The deck's layers are position:absolute, so the
+       stack has no natural height — this is what it reserves in flow. Kept as a
+       tunable token: lower = tighter closed layout + label rides up, but the
+       open fan spills further past the (invisible, transparent) box; raise it if
+       the open fan reaches the label. */
+    height: var(--rune-stage, 380px);
+    cursor: pointer;
+    border-radius: var(--radius);
+    overflow: visible;              /* box is transparent — let the open fan spill past it */
+    perspective: 2400px;
+    perspective-origin: 50% 50%;
+  }
+  .rune-stack__scene {
+    position: absolute;
+    inset: 0;
+    transform-style: preserve-3d;
+    transition: transform 1.2s cubic-bezier(0.3, 0.8, 0.2, 1);
+  }
+  .rune-stack__layer {
+    position: absolute;
+    left: 50%; top: 50%;
+    width: 132px; height: 132px;
+    margin: -66px;
+    transform-style: preserve-3d;
+    transition: transform 1.2s cubic-bezier(0.3, 0.8, 0.2, 1), opacity 0.9s;
+  }
+  /* While a scroll-scrub is in progress the layout is driven per-frame — kill
+     the tweens so the deck tracks the scroll instead of trailing behind it. */
+  .rune-stack.is-scrubbing .rune-stack__scene,
+  .rune-stack.is-scrubbing .rune-stack__layer,
+  .rune-stack.is-scrubbing .rune-stack__detail { transition: none; }
+
+  .rune-stack__face {
+    position: absolute; inset: 0;
+    border-radius: 12px;
+    background: linear-gradient(150deg, #3b404a, #191c22);
+    border: 1px solid rgba(255, 255, 255, 0.11);
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.67), inset 0 0 26px rgba(0, 0, 0, 0.44);
+    display: grid;
+    place-items: center;
+    font-family: 'Cinzel', serif;
+    font-size: 52px;
+    color: var(--lc);
+    text-shadow: 0 0 calc(var(--glow) * 18px) var(--lc);
+  }
+  .rune-stack__rim {
+    position: absolute; inset: 0;
+    border-radius: 12px;
+    border: 1px solid var(--lc);
+    opacity: 0.45;
+    pointer-events: none;
+  }
+  .rune-stack__tag {
+    position: absolute; left: 10px; top: 9px;
+    font-family: 'Space Grotesk', monospace;
+    font-size: 9px;
+    letter-spacing: 1px;
+    color: var(--lc);
+    opacity: 0.85;
+    text-transform: uppercase;
+  }
+
+  .rune-stack__detail {
+    position: absolute; left: 50%; top: 50%;
+    width: 64%;
+    max-width: 300px;
+    z-index: 70;
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.9);
+    pointer-events: none;
+    transition: opacity 0.9s ease, transform 1.2s cubic-bezier(0.3, 0.8, 0.2, 1);
+    padding: 28px 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 12px;
+    border-radius: 16px;
+    background: linear-gradient(150deg, #3b404a, #191c22);
+    border: 1px solid var(--rc, #ffb454);
+    box-shadow: 0 34px 66px -22px rgba(0, 0, 0, 0.93),
+                inset 0 0 46px rgba(0, 0, 0, 0.5),
+                0 0 calc(var(--glow) * 34px) -8px var(--rc, #ffb454);
+  }
+  .rune-stack__d-name {
+    font-family: 'Space Grotesk', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--rc, #ffb454);
+    text-transform: uppercase;
+  }
+  .rune-stack__d-rune {
+    font-family: 'Cinzel', serif;
+    font-size: 66px;
+    line-height: 1;
+    color: var(--rc, #ffb454);
+    text-shadow: 0 0 calc(var(--glow) * 24px) var(--rc, #ffb454);
+  }
+  .rune-stack__d-rule {
+    width: 48px; height: 1px;
+    background: var(--rc, #ffb454);
+    opacity: 0.6;
+  }
+  .rune-stack__d-head {
+    font-family: 'Cinzel', serif;
+    font-weight: 500;
+    font-size: 22px;
+    letter-spacing: 0.5px;
+    color: var(--rc, #ffb454);
+    text-shadow: 0 0 calc(var(--glow) * 12px) rgba(0, 0, 0, 0.33);
+  }
+  .rune-stack__d-body {
+    font-family: 'Space Grotesk', monospace;
+    font-size: 12.5px;
+    line-height: 1.65;
+    color: var(--rc, #ffb454);
+    opacity: 0.85;
+    text-wrap: pretty;
+  }
+
+  /* ---------- Contact card (static dark-stone island) ------------------ */
+  /* Shares the rune cards' cool stone gradient plus the product card's surface
+     treatment (border, drop shadow, grain) but is deliberately STATIC — no accent rim glow behind it and
+     none of the product card's motion (glide, bank, magnet, tilt). Its own
+     fixed-dark tokens keep it an island that ignores the page theme. */
+  .contact-card {
+    --pc-text: #ece8df;              /* foreground on stone (from the product card) */
+    --pc-muted: #a49e90;             /* muted meta */
+    flex: 0 0 720px;                 /* fixed 720px — never grows or shrinks to fill */
+    max-width: 100%;                 /* shrink only when the viewport is narrower */
+  }
+
+  .contact-card__inner {
+    position: relative;
+    border-radius: var(--radius);
+    padding: 28px;
+    color: var(--pc-text);
+    background: linear-gradient(150deg, #3b404a, #191c22);   /* same cool stone as the rune cards */
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 40px 60px -20px rgba(0, 0, 0, 0.8),        /* island drop shadow — no coloured rim */
+                inset 0 0 46px rgba(0, 0, 0, 0.5),           /* dark vignette — the rune cards' swept depth */
+                inset 0 0 0 1px rgba(255, 255, 255, 0.04);   /* faint inner hairline */
+  }
+
+  /* stone grain — same baked feTurbulence data-URI as the product card */
+  .contact-card__inner::before {
+    content: ""; position: absolute;
+    inset: 0; border-radius: var(--radius);
+    pointer-events: none;
+    opacity: 0.35; mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='c'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23c)'/%3E%3C/svg%3E");
+  }
+  /* keep real content crisp above the grain layer */
+  .contact-card__inner > * { position: relative; z-index: 1; }
+
+  .contact-card__title {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 32px;
+    letter-spacing: -0.02em;
+    margin: 0;
+  }
+
+  /* ---------- Product list (below the cards) --------------------------- */
   /* ---------- Support / donate ----------------------------------------- */
   .support {
     text-align: center;
-    padding-block: clamp(1.75rem, 4vh, 3rem);
+    padding-block: 36px;
     border-top: 1px solid var(--line);
   }
   .support__title {
     font-family: var(--font-display);
     font-weight: 500;
-    font-size: clamp(1.7rem, 4vw, 2.4rem);
+    font-size: 38px;
     letter-spacing: -0.01em;
     margin: 0;
   }
@@ -424,7 +746,8 @@
 
   /* ---------- Footer ---------------------------------------------------- */
   .foot {
-    padding-block: clamp(1rem, 2.5vh, 1.5rem);
+    padding-block: 23px;
+    padding-inline: 10%;
     border-top: 1px solid var(--line);
     color: var(--muted);
     font-size: 0.9rem;
@@ -436,18 +759,34 @@
 
   /* ---------- Responsive ----------------------------------------------- */
   @media (max-width: 720px) {
-    .grid.grid--solo { grid-template-columns: minmax(0, 1fr); }
-    .product-card__inner {
+    /* Restore the pre-fixed (small-screen) spacing + type. These were the
+       clamp minimums before the vw/vh values were frozen to the desktop
+       (13.6" Air) result — they keep narrow viewports from inheriting the
+       larger desktop numbers. */
+    .hero            { padding-top: 24px; }
+    .hero__title     { font-size: 38px; }
+    .hero__values    { margin-top: 12px; font-size: 18px; }
+    .section         { padding-block-end: 20px; }
+    .section__title  { font-size: 18px; margin-bottom: 8px; }
+    .grid            { gap: 24px; }
+    .foot            { padding-block: 16px; }
+
+    /* Stacked column — no kaku beside it to align to, so drop the 25px offset. */
+    .writelite-card { margin-top: 0; }
+
+    .writelite-card__inner {
       grid-template-columns: 1fr;
       gap: 14px;
       padding: 14px;
       text-align: left;
     }
-    .card__logo { justify-items: start; margin-bottom: 8px; }
-    .card__logo img { width: 128px; }
-    .card__name { font-size: 32px; }
-    .card__tagline { font-size: 17px; }
-    .card__foot { margin-top: 19px; }
+    .writelite-card__logo { justify-items: start; margin-bottom: 8px; }
+    .writelite-card__logo img { width: 128px; }
+    .writelite-card__name { font-size: 32px; }
+    .writelite-card__tagline { font-size: 17px; }
+    .writelite-card__foot { margin-top: 19px; }
+
+    .rune-stack { --rune-stage: 320px; }
   }
 
   /* ---------- Accessibility -------------------------------------------- */
@@ -462,8 +801,8 @@
     * { transition: none !important; animation: none !important; }
     /* Glide is off, so pin the card to its resting position (no off-screen
        fill) and keep it level — no glide, no tilt, no pull. */
-    .product-card { transform: none !important; }
-    .product-card__inner { transform: none !important; }
+    .writelite-card { transform: none !important; }
+    .writelite-card__inner { transform: none !important; }
   }
 </style>
 </head>
@@ -498,37 +837,86 @@
       <div class="wrap">
         <h2 class="section__title">software by&nbsp;<strong>NEL</strong></h2>
 
-        <!-- grid--solo centres a single card; remove "grid--solo" once a 2nd card lands -->
-        <div class="grid grid--solo">
+        <div class="grid">
 
-          <article class="product-card product-card--writelite" data-magnet>
-            <div class="product-card__inner">
-              <div class="card__logo">
+          <article class="writelite-card" data-magnet>
+            <div class="writelite-card__inner">
+              <div class="writelite-card__logo">
                 <!-- Real WriteLite logo, fixed colours — does not recolour with the theme -->
                 <img src="wl_logo.svg" alt="WriteLite logo">
               </div>
 
-              <div class="card__body">
-                <h3 class="card__name">WriteLite</h3>
-                <p class="card__tagline">A writing app engineered for speed, focus and flow.</p>
+              <div class="writelite-card__body">
+                <h3 class="writelite-card__name">WriteLite</h3>
+                <p class="writelite-card__tagline">A writing app engineered for speed, focus and flow.</p>
                 <!-- EDIT: wl-description -->
-                <p class="card__desc">
+                <p class="writelite-card__desc">
                   Most writing software does too much, starts too slowly, or insists on keeping your files in a format it controls.
                   WriteLite will not.
                 </p>
-                <div class="card__foot">
-                  <a class="card__cta" href="https://writelite.net" target="_blank" rel="noopener">
+                <div class="writelite-card__foot">
+                  <a class="writelite-card__cta" href="https://writelite.net" target="_blank" rel="noopener">
                     Visit writelite.net
                     <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg>
                   </a>
-                  <span class="card__meta">Windows · macOS · Free</span>
+                  <span class="writelite-card__meta">Windows · macOS · Free</span>
                 </div>
               </div>
             </div>
           </article>
+
+          <!-- kaku — a static square that boots itself once WriteLite has landed.
+               Not a .writelite-card and has no magnet: it never flies in, it just
+               powers up in place. The lifting/resizing square is .kaku-card; the
+               .kaku-stage wrapper is the equal-height grid sibling. The circuit
+               SVG is injected by the kaku IIFE below. -->
+          <article class="kaku-stage" aria-label="kaku">
+            <div class="kaku-stage__inner" data-phase="dormant">
+              <div class="kaku-stage__shadow"></div>
+              <div class="kaku-stage__glow"></div>
+              <div class="kaku-stage__circuit"><!-- circuit SVG injected by JS --></div>
+              <div class="kaku-stage__lift">
+                <div class="kaku-card"></div>
+                <div class="kaku-stage__rim"></div>
+              </div>
+            </div>
+          </article>
         </div>
-        <!-- EDIT: product-list — future products list beneath the cards -->
-        <p class="more">More software in development</p>
+      </div>
+    </section>
+
+    <!-- Studio / "as a developer" -->
+    <section class="section" id="studio">
+      <div class="wrap">
+        <!-- EDIT: studio-intro — section title/copy for the "as a developer" pitch (TBD) -->
+
+        <div class="grid">
+          <!-- Interactive rune stack. Layers are built by the rune-stack IIFE below;
+               the deck fans on click and collapses as it scrolls off-screen. -->
+          <div class="rune-stack" data-rune-stack data-state="init" data-sel="-1"
+               aria-label="Studio NEL — interactive rune stack">
+            <div class="rune-stack__scene" data-scene><!-- layers injected by JS --></div>
+
+            <div class="rune-stack__detail" data-detail>
+              <span class="rune-stack__d-name" data-d-name>// ORIGIN</span>
+              <div class="rune-stack__d-rune" data-d-rune>&#5792;</div>
+              <div class="rune-stack__d-rule"></div>
+              <div class="rune-stack__d-head" data-d-head>ORIGIN STONE</div>
+              <div class="rune-stack__d-body" data-d-body>First slab quarried before the machines woke.</div>
+            </div>
+          </div>
+
+          <!-- Contact card — static stone island. Form structure only; fields TBD. -->
+          <section class="contact-card" aria-label="Contact">
+            <div class="contact-card__inner">
+              <!-- EDIT: contact-heading -->
+              <h3 class="contact-card__title">Get in touch</h3>
+              <form class="contact-form">
+                <!-- EDIT: contact-fields — form structure goes here (out of scope for now) -->
+              </form>
+            </div>
+          </section>
+        </div>
       </div>
     </section>
   </main>
@@ -565,7 +953,7 @@
   </script>
 
   <script>
-    // Product-card behaviour: once each card's glide-in lands, enable the
+    // WriteLite-card behaviour: once each card's glide-in lands, enable the
     // edge-based magnet pull + 3D cursor tilt. Skipped entirely when the
     // visitor prefers reduced motion (no glide, no tilt, no pull).
     (function () {
@@ -585,7 +973,7 @@
         for (var i = 0; i < cards.length; i++) {
           var card = cards[i];
           if (!card.classList.contains('is-landed')) continue;   // still flying in
-          var inner = card.querySelector('.product-card__inner');
+          var inner = card.querySelector('.writelite-card__inner');
           var r = card.getBoundingClientRect();
           var cs = getComputedStyle(card);
           var range = parseFloat(cs.getPropertyValue('--range')) || 260;
@@ -594,12 +982,14 @@
           var inside = e.clientX >= r.left && e.clientX <= r.right &&
                        e.clientY >= r.top  && e.clientY <= r.bottom;
 
+          // Both pull and tilt drive the INNER element (the outer card owns the
+          // idle bob). Inside → tilt; outside → pull; they never coexist.
+
           // tilt toward the cursor while hovering
           if (inside) {
             var px = (e.clientX - r.left) / r.width  - 0.5;
             var py = (e.clientY - r.top)  / r.height - 0.5;
             inner.style.transform = 'rotateY(' + (px * 10) + 'deg) rotateX(' + (-py * 10) + 'deg) translateY(-6px)';
-            card.style.transform = 'translate(0,0)';
             continue;
           }
           inner.style.transform = '';
@@ -609,15 +999,481 @@
           var edgeY = Math.max(r.top  - e.clientY, 0, e.clientY - r.bottom);
           var edge  = Math.hypot(edgeX, edgeY);
 
-          if (edge >= range) { card.style.transform = 'translate(0,0)'; continue; }
+          if (edge >= range) continue;   // beyond reach — inner already reset above
 
           var cx = r.left + r.width / 2, cy = r.top + r.height / 2;
           var dx = e.clientX - cx, dy = e.clientY - cy;
           var dist = Math.hypot(dx, dy) || 1;
           // bell curve: 0 at edge, peak mid-range, 0 by `range`
           var f = Math.sin(Math.PI * (edge / range)) * pull;
-          card.style.transform = 'translate(' + ((dx / dist) * f) + 'px,' + ((dy / dist) * f) + 'px)';
+          inner.style.transform = 'translate(' + ((dx / dist) * f) + 'px,' + ((dy / dist) * f) + 'px)';
         }
+      }, { passive: true });
+    })();
+  </script>
+
+  <script>
+    // Rune stack — vanilla port of the standalone demo.
+    //   • click the monolith          → fan the deck
+    //   • click a layer               → lift it out + open its inscription
+    //   • click the open readout/layer → close it back into the deck
+    //   • scroll the card off-screen  → the deck scrubs itself closed
+    //                                    (120px → 8px from the exiting edge)
+    // The card is a fixed-dark island; layout transforms are all computed here.
+    (function () {
+      var container = document.querySelector('[data-rune-stack]');
+      if (!container) return;
+
+      var scene  = container.querySelector('[data-scene]');
+      var detail = container.querySelector('[data-detail]');
+      var dName  = detail.querySelector('[data-d-name]');
+      var dRune  = detail.querySelector('[data-d-rune]');
+      var dHead  = detail.querySelector('[data-d-head]');
+      var dBody  = detail.querySelector('[data-d-body]');
+
+      // ---- Deck data (ported from the demo's buildLayers) ------------------
+      var RUNES  = ['ᚠ','ᚦ','ᚨ','ᛉ','ᛟ','ᚹ','ᛝ','ᚱ'];
+      var COLS   = ['#39e6b0','#b06bff','#4d8dff','#ff5a6a','#ffb27a','#39d6e6','#c79bff','#5fe6a0'];
+      var NAMES  = ['origin','passage','ward','ember','pulse','tide','veil','root'];
+      var HEADS  = ['ORIGIN STONE','PASSAGE GATE','WARD CIRCUIT','EMBER CORE','PULSE RELAY','TIDE ENGINE','VEIL PROTOCOL','ROOT ANCHOR'];
+      var BODIES = [
+        'First slab quarried before the machines woke. Its lattice still hums with the boot-signal of the old builders.',
+        'A doorway cut for bodies that no longer exist. The servos remember the shape and open for no one.',
+        'Defensive glyph-array. Reroutes lightning into the monolith spine to keep the sleepers cold and dreaming.',
+        'Reactor-heart fused into basalt. It burns a slow red beneath ten tonnes of carved silence.',
+        'Signal-drum of the assembly. Each strike still schedules a task no worker survives to run.',
+        'Drew power from the moon-lock. Its gears turn on a calendar older than the coastline.',
+        'Cloaking rite etched in feldspar. Bends light and telemetry around the site so it reads as empty rock.',
+        'Foundation node driven into bedrock. Everything above it is negotiable; this is not.'
+      ];
+
+      var N = 4;                                   // layer count (demo default)
+      var DATA = [];
+      for (var i = 0; i < N; i++) {
+        DATA.push({
+          idx: i,
+          rune: RUNES[i % RUNES.length],
+          col:  COLS[i % COLS.length],
+          name: NAMES[i % NAMES.length],
+          head: HEADS[i % HEADS.length],
+          body: BODIES[i % BODIES.length]
+        });
+      }
+
+      // ---- Build the layer DOM into the scene ------------------------------
+      var layerEls = DATA.map(function (L) {
+        var layer = document.createElement('div');
+        layer.className = 'rune-stack__layer';
+        layer.dataset.idx = String(L.idx);
+        layer.style.setProperty('--lc', L.col);
+
+        var face = document.createElement('div');
+        face.className = 'rune-stack__face';
+        face.textContent = L.rune;
+
+        var rim = document.createElement('div');
+        rim.className = 'rune-stack__rim';
+
+        var tag = document.createElement('div');
+        tag.className = 'rune-stack__tag';
+        tag.textContent = L.name;
+
+        layer.appendChild(face);
+        layer.appendChild(rim);
+        layer.appendChild(tag);
+        scene.appendChild(layer);
+        return layer;
+      });
+
+      function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+
+      // ---- Layout ----------------------------------------------------------
+      // openness: 1 = fully fanned, 0 = stacked monolith (interpolated for the
+      // scroll-scrub). sel: index of the popped-out layer, or -1.
+      function applyLayout(openness, sel) {
+        scene.style.transform = openness > 0.0005
+          ? 'rotateX(' + (-58 * openness) + 'deg) rotateZ(' + (-45 * openness) + 'deg)'
+          : 'none';
+
+        var c = (N - 1) / 2;
+        for (var i = 0; i < layerEls.length; i++) {
+          var L = layerEls[i];
+          if (i === sel && openness > 0.0005) {
+            // popped card lifts toward the viewer, counter-rotating to face it
+            L.style.transform =
+              'rotateZ(' + (45 * openness) + 'deg) rotateX(' + (58 * openness) + 'deg) ' +
+              'translate3d(0px,0px,' + (320 * openness) + 'px) scale(' + (1 + 0.05 * openness) + ')';
+            L.style.opacity = '1';
+            L.style.zIndex = '60';
+          } else {
+            var o = i - c;
+            L.style.transform =
+              'translate3d(' + (-o * 72 * openness) + 'px,' + (o * 72 * openness) + 'px,0px)';
+            var deckOp = (sel >= 0 && sel !== i) ? 0.4 : 1;   // dim siblings while one is out
+            var initOp = (i === 0) ? 1 : 0;                    // monolith shows only the top face
+            L.style.opacity = String(initOp + (deckOp - initOp) * openness);
+            L.style.zIndex = String(i);
+          }
+        }
+      }
+
+      function updateDetail(openness, sel) {
+        var show = (container.dataset.state === 'deck') && sel >= 0 && sel < DATA.length;
+        if (show) {
+          var L = DATA[sel];
+          dName.textContent = '// ' + L.name.toUpperCase();
+          dRune.textContent = L.rune;
+          dHead.textContent = L.head;
+          dBody.textContent = L.body;
+          detail.style.setProperty('--rc', L.col);
+        }
+        detail.style.opacity = show ? String(openness) : '0';
+        detail.style.transform = 'translate(-50%,-50%) scale(' + (show ? (0.9 + 0.1 * openness) : 0.9) + ')';
+        detail.style.pointerEvents = (show && openness > 0.5) ? 'auto' : 'none';
+      }
+
+      // Snap the card to its committed state (deck/init) — used after clicks and
+      // when a scrub ends. Transitions are on here, so these changes animate.
+      function applyState() {
+        scrubbing = false;
+        container.classList.remove('is-scrubbing');
+        var deck = container.dataset.state === 'deck';
+        var sel = deck ? +container.dataset.sel : -1;
+        applyLayout(deck ? 1 : 0, sel);
+        updateDetail(deck ? 1 : 0, sel);
+      }
+
+      // ---- Click interaction (reset button removed) ------------------------
+      function inRect(e, b) {
+        return e.clientX >= b.left && e.clientX <= b.right &&
+               e.clientY >= b.top  && e.clientY <= b.bottom;
+      }
+
+      container.addEventListener('click', function (e) {
+        var state = container.dataset.state || 'init';
+
+        if (state !== 'deck') {                       // closed → fan the deck
+          container.dataset.state = 'deck';
+          container.dataset.sel = '-1';
+          applyState();
+          return;
+        }
+
+        var cur = +container.dataset.sel;
+
+        if (cur >= 0 && e.target.closest('[data-detail]')) {   // click readout → close
+          container.dataset.sel = '-1';
+          applyState();
+          return;
+        }
+
+        if (cur >= 0) {                               // a card is out — only it closes
+          var selL = layerEls[cur];
+          if (selL && inRect(e, selL.getBoundingClientRect())) {
+            container.dataset.sel = '-1';
+            applyState();
+          }
+          return;
+        }
+
+        // otherwise select the deck layer nearest the click
+        var best = null, bd = Infinity;
+        layerEls.forEach(function (l, i) {
+          var b = l.getBoundingClientRect();
+          var d = Math.hypot(e.clientX - (b.left + b.right) / 2, e.clientY - (b.top + b.bottom) / 2);
+          if (d < bd) { bd = d; best = i; }
+        });
+        if (best !== null) {
+          container.dataset.sel = String(best);
+          applyState();
+        }
+      });
+
+      // ---- Scroll-off collapse (replaces the reset button) -----------------
+      // As the card leaves the viewport, scrub the deck closed: fully open at
+      // 120px of the exiting edge still on-screen, fully collapsed at 8px.
+      var scrubbing = false;
+      var START = 120, END = 8;
+
+      function onScroll() {
+        if ((container.dataset.state || 'init') !== 'deck') {
+          if (scrubbing) { scrubbing = false; container.classList.remove('is-scrubbing'); }
+          return;
+        }
+
+        var r = container.getBoundingClientRect();
+        var vh = window.innerHeight || document.documentElement.clientHeight;
+        var remaining = Math.min(r.bottom, vh - r.top);   // nearest exiting edge
+        var t = clamp((START - remaining) / (START - END), 0, 1);
+
+        if (t <= 0) {                                  // safely in view — restore deck
+          if (scrubbing) { applyState(); }             // applyState clears is-scrubbing
+          return;
+        }
+
+        if (t >= 1) {                                  // off-screen — commit the collapse
+          container.dataset.state = 'init';
+          container.dataset.sel = '-1';
+          applyState();
+          return;
+        }
+
+        if (!scrubbing) { scrubbing = true; container.classList.add('is-scrubbing'); }
+        var openness = 1 - t;
+        applyLayout(openness, +container.dataset.sel);
+        updateDetail(openness, +container.dataset.sel);
+      }
+
+      var ticking = false;
+      function requestScroll() {
+        if (!ticking) {
+          ticking = true;
+          requestAnimationFrame(function () { ticking = false; onScroll(); });
+        }
+      }
+      window.addEventListener('scroll', requestScroll, { passive: true });
+      window.addEventListener('resize', requestScroll, { passive: true });
+
+      // Initial paint (starts as the monolith)
+      applyState();
+    })();
+  </script>
+
+  <script>
+    // kaku — self-booting circuit card. Vanilla port of the exported "chip"
+    // component: builds an SVG circuit, then runs a one-time power-up timeline
+    //   dormant → boot → flow → flicker → glow → levitate → hold
+    // igniting the traces, flickering a kaku-blue rim aura on, then lifting +
+    // growing .kaku-card. It:
+    //   • starts only once the WriteLite card has finished flying in
+    //   • plays once, then rests in "hold" (no loop, no click-to-restart)
+    //   • honours prefers-reduced-motion (jumps straight to a lit, static state)
+    (function () {
+      var stage = document.querySelector('.kaku-stage');
+      if (!stage) return;
+      var inner = stage.querySelector('.kaku-stage__inner');   // holds data-phase
+
+      // ---- fixed props (were editor controls in the export) ----------------
+      var ACC = '#1c4bd9', GLOW = 1, SPEED = 1, LIFT = 1.7;
+
+      var PHASES = ['dormant','boot','flow','flicker','glow','levitate','hold'];
+      var BASE = { dormant:1000, boot:700, flow:1300, flicker:650, glow:750, levitate:1500, hold:1900 };
+      var chipDelay = 260, igniteMs = 0;
+
+      // ---- SVG builders (ported; wrap() now returns a string) --------------
+      function rng(seed){ var s = seed % 2147483647; if (s <= 0) s += 2147483646; return function(){ return (s = s * 16807 % 2147483647) / 2147483647; }; }
+      function litStyle(delay, base){ return 'opacity:' + (base == null ? '.09' : base) + '; transition:opacity .5s ease; transition-delay:' + delay + 'ms'; }
+      function shuffledDelays(r, n, step){ var arr = []; for (var i = 0; i < n; i++) arr.push(i * (step || 60)); for (var j = n - 1; j > 0; j--){ var k = Math.floor(r() * (j + 1)); var t = arr[j]; arr[j] = arr[k]; arr[k] = t; } return arr; }
+
+      function wrap(svgInner){
+        return '<div style="position:absolute; inset:0; color:var(--acc)">' +
+          '<svg viewBox="0 0 100 100" width="100%" height="100%" preserveAspectRatio="xMidYMid meet" style="display:block; overflow:visible">' +
+          svgInner + '</svg></div>';
+      }
+
+      function chipBorder(){
+        var s = '<rect x="20" y="20" width="60" height="60" rx="7" fill="none" stroke="#3c414a" stroke-width="1.1"/>';
+        s += '<rect data-energised x="20" y="20" width="60" height="60" rx="7" fill="none" stroke="currentColor" stroke-width="1.3" style="' + litStyle(0, '.12') + '"/>';
+        s += '<rect data-energised x="23.5" y="23.5" width="53" height="53" rx="5" fill="none" stroke="currentColor" stroke-width="0.45" style="' + litStyle(60, '.09') + '"/>';
+        for (var i = 0; i < 7; i++){
+          var p = (26 + i * 8).toFixed(1);
+          var dir = [[p,20,p,13.5], [p,80,p,86.5], [20,p,13.5,p], [80,p,86.5,p]];
+          for (var di = 0; di < dir.length; di++){
+            var d = dir[di];
+            if (di === 1 && (i === 0 || i === 1)) continue;   // bottom edge: drop two left-most pins
+            if (di === 2 && (i === 2 || i === 6)) continue;   // left edge: drop 3rd-from-top + bottom-most
+            if (di === 2 && i === 5) d = [d[0], d[1], (d[0] + d[2]) / 2, d[3]];          // half-length pin
+            if (di === 0 && i === 3) d = [d[0], d[1], d[2], d[1] - (d[1] - d[3]) * 1.5]; // 50% longer
+            if (di === 0 && i === 4) d = [d[0], d[1], d[2], d[1] - (d[1] - d[3]) * 3.5]; // longest pin
+            s += '<line x1="' + d[0] + '" y1="' + d[1] + '" x2="' + d[2] + '" y2="' + d[3] + '" stroke="#5a6068" stroke-width="0.7"/>';
+            s += '<line data-energised x1="' + d[0] + '" y1="' + d[1] + '" x2="' + d[2] + '" y2="' + d[3] + '" stroke="currentColor" stroke-width="0.9" style="' + litStyle(120 + di * 40, '.12') + '"/>';
+          }
+        }
+        return s;
+      }
+
+      function _seg(pts){
+        var dstr = '';
+        for (var i = 0; i < pts.length; i++) dstr += (i ? 'L' : 'M') + ' ' + pts[i][0] + ' ' + pts[i][1] + ' ';
+        return '<path d="' + dstr.trim() + '" fill="none" stroke="#3a3f47" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>';
+      }
+      function _socket(x, y, r){ return '<circle cx="' + x + '" cy="' + y + '" r="' + r + '" fill="#14171d" stroke="#40454d" stroke-width="0.5"/>'; }
+      function _dot(x, y, r){ return function(d){ return '<circle data-lit data-delay="' + d + '" cx="' + x + '" cy="' + y + '" r="' + r + '" fill="currentColor" style="opacity:.08; transition:opacity .5s ease; transition-delay:0ms"/>'; }; }
+
+      function compose(base, lit, r, step, order){
+        var delays = Array.isArray(order) ? order
+                   : (order ? lit.map(function(_, i){ return i * (step || 110); }) : shuffledDelays(r, lit.length, step || 110));
+        var threads = base.filter(function(s){ return s.indexOf('<circle') === -1; });
+        var nodes   = base.filter(function(s){ return s.indexOf('<circle') !== -1; });
+        return wrap(chipBorder() + threads.join('') + nodes.join('') + lit.map(function(f, i){ return f(delays[i]); }).join(''));
+      }
+
+      function _busShared(){
+        return {
+          base: [
+            '<line x1="91" y1="30" x2="91" y2="70" stroke="#3a3f47" stroke-width="0.9"/>',
+            _socket(91,34,2.4), _socket(91,50,2.4), _socket(91,66,2.4),
+            _seg([[80,50],[91,50]]), _seg([[80,66],[91,66]]),
+            _seg([[20,40],[10,40]]), _socket(10,40,3)
+          ],
+          lit: [ _dot(91,34,1.6), _dot(91,50,1.6), _dot(91,66,1.6), _dot(85,50,1.2) ]
+        };
+      }
+
+      function buildDeco(){
+        var r = rng(214); var shared = _busShared(); var base = shared.base, lit = shared.lit;
+        base.push(_seg([[91,66],[91,90],[42,90]]));   // powered bottom run
+        base.push(_seg([[42,86.5],[42,90]]));
+        base.push(_seg([[58,86.5],[58,90]]));
+        base.push(_seg([[74,86.5],[74,90]]));
+        base.push(_socket(32,90,1.8));                 // dead terminal
+        base.push(_seg([[32,90],[11,74],[11,58]]));
+        base.push(_socket(11,58,1.8));
+        base.push(_seg([[13.5,58],[11,58]]));
+        base.push(_socket(11,50,1.8));
+        base.push(_seg([[13.5,50],[11,50]]));
+        base.push(_seg([[11,50],[11,44],[10,40]]));
+        lit.push(_dot(91,80,1.4), _dot(74,90,1.5), _dot(58,90,1.5), _dot(42,90,1.9));
+        base.push(_socket(50,10.25,2.4));              // medium top node
+        base.push(_socket(58,-2.75,3.2));              // large top node
+        lit.push(_dot(50,10.25,1.6), _dot(58,-2.75,2.2));
+        var GAP = 500, CASC = 130;
+        var d_large = 0, d_medium = GAP, d_small = 3 * GAP, d_right2 = 4 * GAP;
+        chipDelay = 2 * GAP;                            // circuit lights between medium + small
+        var d_pair = d_right2 + CASC, d_c1 = d_pair + CASC, d_c2 = d_c1 + CASC, d_c3 = d_c2 + CASC, d_c4 = d_c3 + CASC;
+        var delays = [d_pair, d_right2, d_pair, d_small, d_c1, d_c2, d_c3, d_c4, d_medium, d_large];
+        igniteMs = Math.max.apply(null, delays.concat([chipDelay])) + 600;   // hold flow until ignition ends
+        return compose(base, lit, r, CASC, delays);
+      }
+
+      // ---- timeline --------------------------------------------------------
+      var timer = null;
+      var booted = false;   // true once the boot settles at 'hold' → magnet may act
+      function setTimer(fn, ms){ if (timer) clearTimeout(timer); timer = setTimeout(fn, ms); }
+
+      function runPhase(idx){
+        var phase = PHASES[idx];
+        applyPhase(phase);
+        var t = ((phase === 'flow' ? (igniteMs || BASE.flow) : BASE[phase]) || 1000) / SPEED;
+        if (idx < PHASES.length - 1) setTimer(function(){ runPhase(idx + 1); }, t);
+        // autoPlay is off → the sequence stops at 'hold'
+      }
+
+      function applyPhase(phase){
+        inner.dataset.phase = phase;
+        var body   = inner.querySelector('.kaku-card');
+        var glow   = inner.querySelector('.kaku-stage__glow');
+        var shadow = inner.querySelector('.kaku-stage__shadow');
+        var hover  = inner.querySelector('.kaku-stage__lift');
+        var deco   = inner.querySelector('.kaku-stage__circuit');
+        var rim    = inner.querySelector('.kaku-stage__rim');
+        var chips  = inner.querySelectorAll('[data-energised]');
+        var lits   = inner.querySelectorAll('[data-lit]');
+        var setChips     = function(o){ for (var i = 0; i < chips.length; i++) chips[i].style.opacity = o; };
+        var setChipDelay = function(d){ for (var i = 0; i < chips.length; i++) chips[i].style.transitionDelay = d + 'ms'; };
+        var setLits      = function(o, useDelay){ for (var i = 0; i < lits.length; i++){ lits[i].style.transitionDelay = (useDelay ? (lits[i].dataset.delay || 0) : 0) + 'ms'; lits[i].style.opacity = o; } };
+        var powered = phase === 'levitate' || phase === 'hold';
+
+        if (phase !== 'flicker') body.style.animation = 'none';
+        hover.style.animation = powered ? ('kaku-hoverbob ' + (3.6 / SPEED).toFixed(2) + 's ease-in-out infinite') : 'none';
+        if (!powered) hover.style.transform = 'translateY(0)';
+
+        switch (phase){
+          case 'dormant':
+            body.style.transform = 'scale(1)'; body.style.filter = 'brightness(.5) saturate(.55)';
+            glow.style.opacity = '0'; glow.style.transform = 'translate(-50%,-50%) scale(.7)';
+            shadow.style.opacity = '.5'; shadow.style.transform = 'translate(-50%,0) scale(1)'; shadow.style.filter = 'blur(8px)';
+            deco.style.filter = 'none'; setChipDelay(0); setChips('.12'); setLits('.08');
+            rim.style.animation = 'none'; rim.style.opacity = '0'; rim.style.transform = 'scale(1)'; break;
+          case 'boot':
+            body.style.filter = 'brightness(.6) saturate(.7)'; glow.style.opacity = '.05';
+            deco.style.filter = 'drop-shadow(0 0 2px var(--acc))'; setChipDelay(0); setChips('.12'); setLits('.08');
+            rim.style.animation = 'none'; rim.style.opacity = '0'; break;
+          case 'flow':
+            body.style.filter = 'brightness(.72) saturate(.85)';
+            glow.style.opacity = '.14'; glow.style.transform = 'translate(-50%,-50%) scale(.85)';
+            deco.style.filter = 'drop-shadow(0 0 3px var(--acc))'; setChipDelay(chipDelay || 260); setChips('1'); setLits('1', true);
+            rim.style.animation = 'none'; rim.style.opacity = '0'; break;
+          case 'flicker':
+            body.style.animation = 'kaku-flicker ' + (0.62 / SPEED).toFixed(2) + 's ease-out';
+            body.style.filter = 'brightness(.9) saturate(.95)'; glow.style.opacity = String(.26 * GLOW);
+            deco.style.filter = 'drop-shadow(0 0 4px var(--acc))'; setChips('1'); setLits('1');
+            // rim aura ignites here: flicker once, then it holds steady at opacity 1
+            rim.style.animation = 'kaku-rim-flicker ' + (0.62 / SPEED).toFixed(2) + 's ease-out'; rim.style.opacity = '1'; break;
+          case 'glow':
+            body.style.animation = 'none'; body.style.filter = 'brightness(1) saturate(1)';
+            glow.style.opacity = String(.42 * GLOW); glow.style.transform = 'translate(-50%,-50%) scale(1)';
+            deco.style.filter = 'drop-shadow(0 0 ' + (5 * GLOW).toFixed(1) + 'px var(--acc))'; setChips('1'); setLits('1');
+            rim.style.animation = 'none'; rim.style.opacity = '1'; rim.style.transform = 'scale(1)'; break;
+          case 'levitate':
+          case 'hold':
+            body.style.transform = 'scale(' + LIFT + ')'; body.style.filter = 'brightness(1.08) saturate(1.08)';
+            glow.style.opacity = String(Math.min(1, .85 * GLOW)); glow.style.transform = 'translate(-50%,-50%) scale(1.15)';
+            shadow.style.opacity = '.42'; shadow.style.transform = 'translate(-50%,30px) scale(1.9)'; shadow.style.filter = 'blur(22px)';
+            deco.style.filter = 'drop-shadow(0 0 ' + (7 * GLOW).toFixed(1) + 'px var(--acc)) drop-shadow(0 0 ' + (16 * GLOW).toFixed(1) + 'px var(--acc))';
+            setChips('1'); setLits('1');
+            // rim grows with the card
+            rim.style.animation = 'none'; rim.style.opacity = '1'; rim.style.transform = 'scale(' + LIFT + ')';
+            if (phase === 'hold') booted = true;   // boot done → arm the magnet
+            break;
+        }
+      }
+
+      // ---- build the circuit + set the accent ------------------------------
+      inner.querySelector('.kaku-stage__circuit').innerHTML = buildDeco();
+      stage.style.setProperty('--acc', ACC);
+      stage.style.setProperty('--glow', GLOW);
+
+      // ---- WriteLite reference (used only by the start gate below) ---------
+      // The stage's size is now owned entirely by CSS (a fixed square), so it no
+      // longer mirrors the WriteLite height — we only need the element to know
+      // when WriteLite has landed so the boot can begin.
+      var wl = document.querySelector('.writelite-card');
+
+      // ---- start gate ------------------------------------------------------
+      var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (reduce){ applyPhase('glow'); return; }        // lit, static, no motion
+
+      applyPhase('dormant');                             // explicit resting state
+      var started = false;
+      function start(){ if (started) return; started = true; runPhase(1); }   // begin at 'boot'
+      if (wl) wl.addEventListener('animationend', start, { once: true });
+      setTimeout(start, 2500);                           // fallback if the glide's animationend is missed
+
+      // ---- magnet follow (mirrors the WriteLite card) ----------------------
+      // Drives the whole chip assembly via .kaku-stage__inner — the free
+      // transform layer (bob lives on __lift, the ×1.7 scale on .kaku-card).
+      // Gated on `booted` so it never fights the boot timeline; this path is
+      // unreachable under reduced motion (the early return above). Inside the
+      // square → tilt; near an outside edge → pull; the two never coexist.
+      window.addEventListener('pointermove', function (e) {
+        if (!booted) return;
+        var r = stage.getBoundingClientRect();
+        var cs = getComputedStyle(stage);
+        var range = parseFloat(cs.getPropertyValue('--range')) || 24;
+        var pull  = parseFloat(cs.getPropertyValue('--pull'))  || 5;
+
+        var inside = e.clientX >= r.left && e.clientX <= r.right &&
+                     e.clientY >= r.top  && e.clientY <= r.bottom;
+
+        if (inside) {
+          var px = (e.clientX - r.left) / r.width  - 0.5;
+          var py = (e.clientY - r.top)  / r.height - 0.5;
+          inner.style.transform = 'rotateY(' + (px * 10) + 'deg) rotateX(' + (-py * 10) + 'deg) translateY(-6px)';
+          return;
+        }
+        inner.style.transform = '';
+
+        var edgeX = Math.max(r.left - e.clientX, 0, e.clientX - r.right);
+        var edgeY = Math.max(r.top  - e.clientY, 0, e.clientY - r.bottom);
+        var edge  = Math.hypot(edgeX, edgeY);
+        if (edge >= range) return;                        // beyond reach — inner reset above
+
+        var cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+        var dx = e.clientX - cx, dy = e.clientY - cy;
+        var dist = Math.hypot(dx, dy) || 1;
+        var f = Math.sin(Math.PI * (edge / range)) * pull;
+        inner.style.transform = 'translate(' + ((dx / dist) * f) + 'px,' + ((dy / dist) * f) + 'px)';
       }, { passive: true });
     })();
   </script>
