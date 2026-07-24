@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hematite Card — standalone export</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Public+Sans:wght@400;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  /* ---- demo stage (delete for production) ---- */
+  body{ margin:0; min-height:100vh; display:grid; place-items:center;
+        background:radial-gradient(120% 90% at 20% -10%,#17181c,#0b0b0d 55%,#060607);
+        font-family:'Public Sans',system-ui,sans-serif; }
+
+  /* ============================================================
+     HEMATITE CARD  —  everything below is what you copy
+     Tweak via the CSS custom properties on .magnet-card:
+       --accent  neon rim / glyph colour
+       --glow    glow strength multiplier (0–2)
+       --range   how far (px) beyond the edge the pull reaches
+       --pull    peak drift strength
+     ============================================================ */
+  .magnet-card{
+    --accent:#ff5a6a;
+    --glow:1;
+    --range:120;
+    --pull:24;
+    perspective:900px;
+    width:320px;
+  }
+  .magnet-card__inner{
+    position:relative; border-radius:20px; padding:26px; min-height:280px;
+    display:flex; flex-direction:column; justify-content:space-between;
+    transform-style:preserve-3d;
+    transition:transform .18s ease-out, box-shadow .3s;
+    background:linear-gradient(150deg,#2a2320,#131011);
+    border:1px solid #ffffff1f;
+    box-shadow:0 40px 60px -20px #000c, 0 0 0 1px #ffffff0a inset;
+    /* NOTE: no float animation on this variant — it sits still */
+  }
+  /* stone grain (feTurbulence baked into a data-URI) */
+  .magnet-card__inner::before{
+    content:""; position:absolute; inset:0; border-radius:20px; pointer-events:none;
+    opacity:.35; mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='c'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23c)'/%3E%3C/svg%3E");
+  }
+  /* neon rim */
+  .magnet-card__inner::after{
+    content:""; position:absolute; inset:0; border-radius:20px; pointer-events:none;
+    border:1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+    box-shadow:0 0 24px calc(var(--glow)*2px) var(--accent),
+               inset 0 0 0 1px color-mix(in srgb, var(--accent) 33%, transparent);
+  }
+  .magnet-card__row{ position:relative; display:flex; align-items:center; justify-content:space-between; transform:translateZ(40px); }
+  .magnet-card__stone{ font-family:'Space Grotesk',monospace; font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--accent); }
+  .magnet-card__mark{ font-size:22px; color:var(--accent); text-shadow:0 0 calc(var(--glow)*14px) var(--accent); }
+  .magnet-card__title{ margin:0 0 8px; font-family:'Cinzel',serif; font-weight:700; font-size:24px; color:#f4f1ea; }
+  .magnet-card__body{ margin:0; font-size:13px; line-height:1.6; color:#cbd0d6cc; }
+  .magnet-card__mid{ position:relative; transform:translateZ(30px); }
+  .magnet-card__cta{ position:relative; transform:translateZ(50px); }
+  .magnet-card__cta span{ display:inline-flex; align-items:center; gap:8px; font-family:'Space Grotesk',monospace; font-size:12px; letter-spacing:1px; color:var(--accent); border:1px solid color-mix(in srgb, var(--accent) 33%, transparent); padding:8px 14px; border-radius:999px; }
+</style>
+</head>
+<body>
+
+  <!-- ==================== MARKUP ==================== -->
+  <div class="magnet-card" data-magnet>
+    <div class="magnet-card__inner">
+      <div class="magnet-card__row">
+        <span class="magnet-card__stone">hematite</span>
+        <span class="magnet-card__mark">&#8984;</span>
+      </div>
+      <div class="magnet-card__mid">
+        <h3 class="magnet-card__title">Grounded Core</h3>
+        <p class="magnet-card__body">Anchored magnetite variant — no levitation drift. It sits dead still, then leans toward your cursor from beyond the edge.</p>
+      </div>
+      <div class="magnet-card__cta"><span>explore &#10230;</span></div>
+    </div>
+  </div>
+
+  <!-- ==================== BEHAVIOUR ==================== -->
+  <script>
+  // Edge-based magnet pull + 3D tilt for every .magnet-card on the page.
+  (function () {
+    const cards = [...document.querySelectorAll('[data-magnet]')];
+    if (!cards.length) return;
+
+    window.addEventListener('pointermove', (e) => {
+      for (const card of cards) {
+        const inner = card.querySelector('.magnet-card__inner');
+        const r = card.getBoundingClientRect();
+        const cs = getComputedStyle(card);
+        const range = parseFloat(cs.getPropertyValue('--range')) || 260;
+        const pull  = parseFloat(cs.getPropertyValue('--pull'))  || 48;
+
+        const inside = e.clientX >= r.left && e.clientX <= r.right &&
+                       e.clientY >= r.top  && e.clientY <= r.bottom;
+
+        // tilt while hovering
+        if (inside) {
+          const px = (e.clientX - r.left) / r.width  - .5;
+          const py = (e.clientY - r.top)  / r.height - .5;
+          inner.style.transform = `rotateY(${px*10}deg) rotateX(${-py*10}deg) translateY(-6px)`;
+          card.style.transform = 'translate(0,0)';       // hold still on hover
+          continue;
+        }
+        inner.style.transform = '';
+
+        // distance from nearest EDGE (not centre) → smooth ramp
+        const edgeX = Math.max(r.left - e.clientX, 0, e.clientX - r.right);
+        const edgeY = Math.max(r.top  - e.clientY, 0, e.clientY - r.bottom);
+        const edge  = Math.hypot(edgeX, edgeY);
+
+        if (edge >= range) { card.style.transform = 'translate(0,0)'; continue; }
+
+        const cx = r.left + r.width/2, cy = r.top + r.height/2;
+        const dx = e.clientX - cx, dy = e.clientY - cy;
+        const dist = Math.hypot(dx, dy) || 1;
+        // bell curve: 0 at edge, peak mid-range, 0 by `range`
+        const f = Math.sin(Math.PI * (edge/range)) * pull;
+        card.style.transform = `translate(${(dx/dist)*f}px,${(dy/dist)*f}px)`;
+      }
+    }, { passive: true });
+  })();
+  </script>
+</body>
+</html>

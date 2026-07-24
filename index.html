@@ -82,23 +82,9 @@
     --shadow: 0 24px 50px -28px rgba(0, 0, 0, 0.20);
   }
 
-  /* WriteLite island — amber lives ONLY inside .card--writelite */
-  [data-theme="dark"] .card--writelite {
-    --wl-card: #262521;         /* warm charcoal — a different temperature */
-    --wl-amber: #d4a030;
-    --wl-ink: #1f1e1a;          /* readable foreground on the amber fill */
-    --wl-text: #ece8df;
-    --wl-muted: #a49e90;
-    --wl-line: rgba(212, 160, 48, 0.22);
-  }
-  [data-theme="light"] .card--writelite {
-    --wl-card: #e6e6e4;
-    --wl-amber: #9c6f0a;
-    --wl-ink: #fdf7e8;          /* readable foreground on the amber fill */
-    --wl-text: #1c1b17;
-    --wl-muted: #6d685e;
-    --wl-line: rgba(156, 111, 10, 0.26);
-  }
+  /* Product-card palette is fixed-dark and lives on .product-card itself
+     (an intentional dark "island" that does NOT follow the page theme) —
+     see the "Product card" section below. */
 
   /* ---------- Base ------------------------------------------------------ */
   * { box-sizing: border-box; }
@@ -109,6 +95,7 @@
     margin: 0;
     background: var(--bg);
     color: var(--text);
+    overflow-x: hidden;              /* card glides in from off-screen left — no scrollbar flash */
     font-family: var(--font-body);
     font-size: 17px;
     line-height: 1.6;
@@ -203,24 +190,71 @@
   /* When there's a single card, keep it from stretching the full width */
   .grid.grid--solo { grid-template-columns: 564px; justify-content: start; }
 
-  /* ---------- Card ------------------------------------------------------ */
-  .card {
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    overflow: hidden;
+  /* ---------- Product card (reusable dark-stone island) ----------------- */
+  /* Behaviour knobs + fixed-dark palette live on the base class.
+     To add another product: give it a modifier that sets ONLY --accent.
+     The card stays dark in both page themes — deliberate, like the reference. */
+  .product-card {
+    --accent: #d4a030;               /* neon rim / amber accent (overridden per product) */
+    --glow: 1;                        /* rim glow strength multiplier */
+    --range: 24;                      /* px beyond the edge the magnet pull reaches */
+    --pull: 5;                        /* peak magnet drift */
+    --pc-text: #ece8df;              /* foreground on stone */
+    --pc-muted: #a49e90;             /* meta line */
+    --pc-ink: #1f1e1a;               /* text on an amber fill */
+    perspective: 900px;
+    width: 100%;
+    /* starts off-screen-left (not invisible) via the animation's backwards fill,
+       so it reads as a solid card flying in from outside the page */
+    animation: pc-glide 2.2s var(--ease) both var(--glide-delay, 0ms);
   }
+  /* Per-product accent — the single line you change to spin up a new card */
+  .product-card--writelite { --accent: #d4a030; }   /* WriteLite amber */
 
-  .card--writelite {
-    background: var(--wl-card);
-    color: var(--wl-text);
+  /* Once the glide finishes we drop the animation so the JS can own the
+     transform (a still-filling animation would override inline transforms). */
+  .product-card.is-landed { animation: none; }
+  .product-card.is-landed .product-card__inner { animation: none; }
+
+  .product-card__inner {
+    position: relative;
+    border-radius: var(--radius);
     display: grid;
     grid-template-columns: 144px 1fr;
     gap: 20px;
     padding: 16px;
     align-items: center;
+    color: var(--pc-text);
+    transform-style: preserve-3d;
+    background: linear-gradient(150deg, #2a2320, #131011);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 40px 60px -20px rgba(0, 0, 0, 0.8),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+    animation: pc-bank 2.2s var(--ease) both var(--glide-delay, 0ms);
   }
-  .card--writelite:hover { transform: translateY(-3px); }
-  body.ready .card--writelite { transition: transform 0.3s var(--ease), background-color 0.28s var(--ease), border-color 0.28s var(--ease); }
+  /* Lazy cursor-follow: the pull + tilt ease toward each new pointer position
+     over ~1.5s, so the card drafts after the mouse instead of snapping to it. */
+  body.ready .product-card,
+  body.ready .product-card__inner { transition: transform 1.5s var(--ease); }
+
+  /* stone grain — baked feTurbulence data-URI (from the reference card) */
+  .product-card__inner::before {
+    content: ""; position: absolute;
+    inset: 0; border-radius: var(--radius);
+    pointer-events: none;
+    opacity: 0.35; mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='c'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23c)'/%3E%3C/svg%3E");
+  }
+  /* neon rim — driven entirely by --accent (no overflow:hidden or the glow clips) */
+  .product-card__inner::after {
+    content: ""; position: absolute; inset: 0; border-radius: var(--radius);
+    pointer-events: none;
+    border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+    box-shadow: 0 0 24px calc(var(--glow) * 2px) var(--accent),
+                inset 0 0 0 1px color-mix(in srgb, var(--accent) 33%, transparent);
+  }
+  /* lift the real content above the grain/rim pseudo-layers so text stays crisp */
+  .product-card__inner > * { position: relative; z-index: 1; }
 
   .card__logo {
     display: grid;
@@ -242,12 +276,12 @@
   .card__tagline {
     margin: 10px 0 0;
     font-size: 20px;
-    color: var(--wl-amber);
+    color: var(--accent);
     font-weight: 500;
   }
   .card__desc {
     margin: 14px 0 0;
-    color: var(--wl-text);
+    color: var(--pc-text);
     max-width: 460px;
   }
   .card__foot {
@@ -265,17 +299,30 @@
     font-weight: 600;
     font-size: 16px;
     text-decoration: none;
-    color: var(--wl-text);
+    color: var(--pc-text);
     padding: 11px 21px;
-    border: 1.5px solid var(--wl-amber);
+    border: 1.5px solid var(--accent);
     border-radius: 999px;
   }
-  .card__cta:hover { background: var(--wl-amber); color: var(--wl-ink); }
+  .card__cta:hover { background: var(--accent); color: var(--pc-ink); }
   body.ready .card__cta { transition: background-color 0.2s var(--ease), color 0.2s var(--ease); }
   .card__meta {
     font-size: 14px;
-    color: var(--wl-muted);
+    color: var(--pc-muted);
     letter-spacing: 0.02em;
+  }
+
+  /* ---------- Glide-in load animation ---------------------------------- */
+  /* Two coordinated animations: the outer card flies in fully opaque from
+     off-screen left; the inner banks (rotateY/rotateZ) and levels out, like a
+     ship settling into position. --glide-delay lets future cards stagger. */
+  @keyframes pc-glide {
+    from { transform: translateX(-140vw); }
+    to   { transform: translateX(0); }
+  }
+  @keyframes pc-bank {
+    from { transform: rotateY(24deg) rotateZ(-6deg); }
+    to   { transform: rotateY(0) rotateZ(0); }
   }
 
   /* ---------- Product list (below the cards) --------------------------- */
@@ -335,7 +382,7 @@
   /* ---------- Responsive ----------------------------------------------- */
   @media (max-width: 720px) {
     .grid.grid--solo { grid-template-columns: minmax(0, 1fr); }
-    .card--writelite {
+    .product-card__inner {
       grid-template-columns: 1fr;
       gap: 14px;
       padding: 14px;
@@ -358,7 +405,10 @@
   @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
     * { transition: none !important; animation: none !important; }
-    .card--writelite:hover { transform: none; }
+    /* Glide is off, so pin the card to its resting position (no off-screen
+       fill) and keep it level — no glide, no tilt, no pull. */
+    .product-card { transform: none !important; }
+    .product-card__inner { transform: none !important; }
   }
 </style>
 </head>
@@ -394,26 +444,28 @@
         <!-- grid--solo centres a single card; remove "grid--solo" once a 2nd card lands -->
         <div class="grid grid--solo">
 
-          <article class="card card--writelite">
-            <div class="card__logo">
-              <!-- Real WriteLite logo, fixed colours — does not recolour with the theme -->
-              <img src="wl_logo.svg" alt="WriteLite logo">
-            </div>
+          <article class="product-card product-card--writelite" data-magnet>
+            <div class="product-card__inner">
+              <div class="card__logo">
+                <!-- Real WriteLite logo, fixed colours — does not recolour with the theme -->
+                <img src="wl_logo.svg" alt="WriteLite logo">
+              </div>
 
-            <div class="card__body">
-              <h3 class="card__name">WriteLite</h3>
-              <p class="card__tagline">A writing app engineered for speed, focus and flow.</p>
-              <!-- EDIT: wl-description -->
-              <p class="card__desc">
-                Most writing software does too much, starts too slowly, or insists on keeping your files in a format it controls.
-                WriteLite will not.
-              </p>
-              <div class="card__foot">
-                <a class="card__cta" href="https://writelite.net" target="_blank" rel="noopener">
-                  Visit writelite.net
-                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg>
-                </a>
-                <span class="card__meta">Windows · macOS · Free</span>
+              <div class="card__body">
+                <h3 class="card__name">WriteLite</h3>
+                <p class="card__tagline">A writing app engineered for speed, focus and flow.</p>
+                <!-- EDIT: wl-description -->
+                <p class="card__desc">
+                  Most writing software does too much, starts too slowly, or insists on keeping your files in a format it controls.
+                  WriteLite will not.
+                </p>
+                <div class="card__foot">
+                  <a class="card__cta" href="https://writelite.net" target="_blank" rel="noopener">
+                    Visit writelite.net
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg>
+                  </a>
+                  <span class="card__meta">Windows · macOS · Free</span>
+                </div>
               </div>
             </div>
           </article>
@@ -449,6 +501,64 @@
       sync();
       // Enable colour transitions only after the first paint
       requestAnimationFrame(function () { document.body.classList.add('ready'); });
+    })();
+  </script>
+
+  <script>
+    // Product-card behaviour: once each card's glide-in lands, enable the
+    // edge-based magnet pull + 3D cursor tilt. Skipped entirely when the
+    // visitor prefers reduced motion (no glide, no tilt, no pull).
+    (function () {
+      var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var cards = [].slice.call(document.querySelectorAll('[data-magnet]'));
+      if (!cards.length || reduce) return;
+
+      // Mark a card "landed" when its glide finishes — the magnet stays off
+      // until then, and .is-landed clears the animation so JS owns the transform.
+      cards.forEach(function (card) {
+        card.addEventListener('animationend', function () {
+          card.classList.add('is-landed');
+        }, { once: true });
+      });
+
+      window.addEventListener('pointermove', function (e) {
+        for (var i = 0; i < cards.length; i++) {
+          var card = cards[i];
+          if (!card.classList.contains('is-landed')) continue;   // still flying in
+          var inner = card.querySelector('.product-card__inner');
+          var r = card.getBoundingClientRect();
+          var cs = getComputedStyle(card);
+          var range = parseFloat(cs.getPropertyValue('--range')) || 260;
+          var pull  = parseFloat(cs.getPropertyValue('--pull'))  || 48;
+
+          var inside = e.clientX >= r.left && e.clientX <= r.right &&
+                       e.clientY >= r.top  && e.clientY <= r.bottom;
+
+          // tilt toward the cursor while hovering
+          if (inside) {
+            var px = (e.clientX - r.left) / r.width  - 0.5;
+            var py = (e.clientY - r.top)  / r.height - 0.5;
+            inner.style.transform = 'rotateY(' + (px * 10) + 'deg) rotateX(' + (-py * 10) + 'deg) translateY(-6px)';
+            card.style.transform = 'translate(0,0)';
+            continue;
+          }
+          inner.style.transform = '';
+
+          // distance from the nearest EDGE → smooth ramp
+          var edgeX = Math.max(r.left - e.clientX, 0, e.clientX - r.right);
+          var edgeY = Math.max(r.top  - e.clientY, 0, e.clientY - r.bottom);
+          var edge  = Math.hypot(edgeX, edgeY);
+
+          if (edge >= range) { card.style.transform = 'translate(0,0)'; continue; }
+
+          var cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+          var dx = e.clientX - cx, dy = e.clientY - cy;
+          var dist = Math.hypot(dx, dy) || 1;
+          // bell curve: 0 at edge, peak mid-range, 0 by `range`
+          var f = Math.sin(Math.PI * (edge / range)) * pull;
+          card.style.transform = 'translate(' + ((dx / dist) * f) + 'px,' + ((dy / dist) * f) + 'px)';
+        }
+      }, { passive: true });
     })();
   </script>
 
