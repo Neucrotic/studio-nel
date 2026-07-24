@@ -75,6 +75,10 @@
     --patina-fill: #3f9079;      /* solid fill / buttons */
     --patina-bright: #5fc2a4;    /* lifted, reads on dark granite */
     --patina-deep: #216350;      /* darker, AA-safe text on light limestone (~5.4:1) */
+
+    /* Hero subheading words — fixed colours, do NOT follow the theme */
+    --subheading-accent: #39e6b0;      /* "artists" — teal */
+    --subheading-accent-alt: #b06bff;  /* "thinkers" — purple */
   }
 
   /* Studio world — dark (default). granite + patina */
@@ -207,7 +211,14 @@
     max-width: 34ch;
     font-weight: 400;
   }
-  .hero__values .accent { color: var(--accent-text); }
+  .hero__values .accent {
+    color: var(--subheading-accent);
+    text-shadow:
+      0 0 12px color-mix(in srgb, var(--subheading-accent) 60%, transparent),
+      0 0 30px color-mix(in srgb, var(--subheading-accent) 35%, transparent);
+  }
+  /* "thinkers" — swap the local token so colour AND glow both go purple */
+  .hero__values .accent--alt { --subheading-accent: var(--subheading-accent-alt); }
 
   /* ---------- Section header ------------------------------------------- */
   .section { padding-block: clamp(1.25rem, 3vh, 2.5rem); }
@@ -471,7 +482,7 @@
     <div class="wrap">
       <h1 class="hero__title">Studio&nbsp;<strong>NEL</strong></h1>
       <!-- EDIT: values-line -->
-      <p class="hero__values">creative tools for <span class="accent">artists</span> and <span class="accent">thinkers</span></p>
+      <p class="hero__values">creative tools for <span class="accent">artists</span> and <span class="accent accent--alt">thinkers</span></p>
     </div>
   </header>
 
