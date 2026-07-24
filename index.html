@@ -73,13 +73,8 @@
     --limestone-ink: #2a2617;    /* dark warm text */
     --limestone-muted: #6e654e;  /* warm muted */
 
-    /* Oxidised copper (verdigris patina) — the accent */
-    --patina-fill: #3f9079;      /* solid fill / buttons */
-    --patina-bright: #5fc2a4;    /* lifted, reads on dark granite */
-    --patina-deep: #216350;      /* darker, AA-safe text on light limestone (~5.4:1) */
-
     /* Cornflower — the site accent */
-    --blue-fill: #4d8dff;   /* solid fill / buttons / title glow; reads on dark granite */
+    --blue-fill: #139fe8;   /* solid fill / buttons / title glow; reads on dark granite */
     --blue-deep: #14509c;   /* darker, AA-safe as link text on light limestone (~6:1) */
     --blue-kaku: #1c4bd9;   /* kaku's own energy accent — drives its glow, circuit + rim */
 
@@ -88,7 +83,7 @@
     --accent-thinkers: #b06bff;  /* "thinkers" — purple */
   }
 
-  /* Studio world — dark (default). granite + patina */
+  /* Studio world — dark (default). granite. */
   [data-theme="dark"] {
     --bg: var(--granite-950);
     --surface: var(--granite-900);
@@ -246,7 +241,7 @@
   #studio   { padding-block-start: 20px; }
   /* Extra breathing room above the studio row (rune deck + contact card).
      Scoped to #studio so the shared .grid base — and #software — stay untouched. */
-  #studio .grid { margin-top: 40px; }
+  #studio .grid { margin-top: 40px; flex-direction: column; align-items: center; }
 
   .section__title {
     font-family: var(--font-display);
@@ -710,6 +705,138 @@
     margin: 0;
   }
 
+  /* ---------- Contact form (neon terminal on obsidian) ----------------- */
+  /* STUB. Fields render as lit screens: near-black panels with an accent-tinted
+     rim + glow (same neon idiom as the product card's rim), accent-coloured
+     monospace text. --accent inside the card resolves to the site blue (#4d8dff). */
+  .contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-top: 22px;
+  }
+
+  .contact-form__field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    border: 0;             /* reset the <fieldset> the topics group uses */
+    padding: 0;
+    margin: 0;
+    min-width: 0;
+  }
+
+  /* terminal captions — small, uppercase, muted stone */
+  .contact-form__label {
+    font-family: var(--font-body);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--pc-muted);
+    padding: 0;
+  }
+
+  /* the screens — obsidian panels, accent rim + glow, accent monospace text */
+  .contact-form__input,
+  .contact-form__message {
+    font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 15px;
+    color: var(--accent);
+    background: rgba(8, 10, 14, 0.85);
+    border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+    border-radius: 10px;
+    padding: 12px 14px;
+    box-shadow: inset 0 0 18px rgba(0, 0, 0, 0.6),
+                0 0 12px color-mix(in srgb, var(--accent) 18%, transparent);
+    transition: border-color 0.18s ease, box-shadow 0.18s ease;
+  }
+  .contact-form__input::placeholder,
+  .contact-form__message::placeholder {
+    color: color-mix(in srgb, var(--accent) 45%, transparent);
+  }
+
+  /* screen-on: intensify the glow on focus (keyboard outline still applies) */
+  .contact-form__input:focus,
+  .contact-form__message:focus {
+    outline: none;
+    border-color: color-mix(in srgb, var(--accent) 70%, transparent);
+    box-shadow: inset 0 0 18px rgba(0, 0, 0, 0.5),
+                0 0 22px color-mix(in srgb, var(--accent) 40%, transparent);
+  }
+
+  .contact-form__message {
+    width: 500px;
+    height: 200px;
+    max-width: 100%;        /* never overflow the 720px card on narrow viewports */
+    resize: vertical;       /* adjustable height, as asked */
+    line-height: 1.5;
+  }
+
+  /* radio group — neon chips that light up when selected */
+  .contact-form__topics {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+  }
+  .contact-form__topics .contact-form__label {
+    flex: 0 0 100%;         /* legend on its own line above the chips */
+  }
+  .contact-form__topic {
+    display: inline-flex;
+    cursor: pointer;
+  }
+  .contact-form__topic input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;   /* native dot hidden; the <span> is the visible chip */
+  }
+  .contact-form__topic span {
+    display: inline-block;
+    font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 14px;
+    color: color-mix(in srgb, var(--accent) 75%, var(--pc-text));
+    background: rgba(8, 10, 14, 0.85);
+    border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+    border-radius: 999px;
+    padding: 8px 16px;
+    transition: color 0.18s ease, border-color 0.18s ease,
+                background 0.18s ease, box-shadow 0.18s ease;
+  }
+  .contact-form__topic:hover span {
+    border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+  }
+  .contact-form__topic input:checked + span {
+    color: var(--accent-ink);
+    background: var(--accent);
+    border-color: var(--accent);
+    box-shadow: 0 0 16px color-mix(in srgb, var(--accent) 55%, transparent);
+  }
+  /* keyboard focus ring on the chip (input is visually hidden) */
+  .contact-form__topic input:focus-visible + span {
+    outline: 2px solid var(--accent-text);
+    outline-offset: 3px;
+  }
+
+  /* submit — bare stub; Nel swaps this for the real button */
+  .contact-form__submit {
+    align-self: flex-start;        /* form layout, not part of the button's identity */
+    font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 1px;
+    color: var(--accent);
+    background: none;              /* no fill, in any state */
+    border: 1px solid var(--accent);
+    border-radius: 14px;
+    padding: 16px 30px;
+    cursor: pointer;
+    position: relative;   /* anchor for the click ripple */
+    overflow: hidden;     /* clip the ripple to the button */
+    transition: transform 0.12s ease-out;
+  }
+
   /* ---------- Product list (below the cards) --------------------------- */
   /* ---------- Support / donate ----------------------------------------- */
   .support {
@@ -835,7 +962,7 @@
     <!-- Software -->
     <section class="section" id="software">
       <div class="wrap">
-        <h2 class="section__title">software by&nbsp;<strong>NEL</strong></h2>
+        <h2 class="section__title">creative software by&nbsp;<strong>NEL</strong></h2>
 
         <div class="grid">
 
@@ -851,7 +978,7 @@
                 <p class="writelite-card__tagline">A writing app engineered for speed, focus and flow.</p>
                 <!-- EDIT: wl-description -->
                 <p class="writelite-card__desc">
-                  Most writing software does too much, starts too slowly, or insists on keeping your files in a format it controls.
+                  Most writing software clutters the UI, starts too slowly, or insists on keeping your files in a format it controls.
                   WriteLite will not.
                 </p>
                 <div class="writelite-card__foot">
@@ -912,7 +1039,43 @@
               <!-- EDIT: contact-heading -->
               <h3 class="contact-card__title">Get in touch</h3>
               <form class="contact-form">
-                <!-- EDIT: contact-fields — form structure goes here (out of scope for now) -->
+                <!-- EDIT: contact-fields -->
+                <div class="contact-form__field">
+                  <label class="contact-form__label" for="cf-name">Name</label>
+                  <input class="contact-form__input" id="cf-name" name="name" type="text" autocomplete="name">
+                </div>
+
+                <div class="contact-form__field">
+                  <label class="contact-form__label" for="cf-email">Email</label>
+                  <input class="contact-form__input" id="cf-email" name="email" type="email" autocomplete="email">
+                </div>
+
+                <fieldset class="contact-form__field contact-form__topics">
+                  <legend class="contact-form__label">What's this about?</legend>
+                  <label class="contact-form__topic">
+                    <input type="radio" name="topic" value="app">
+                    <span>app</span>
+                  </label>
+                  <label class="contact-form__topic">
+                    <input type="radio" name="topic" value="website">
+                    <span>website</span>
+                  </label>
+                  <label class="contact-form__topic">
+                    <input type="radio" name="topic" value="both">
+                    <span>both</span>
+                  </label>
+                  <label class="contact-form__topic">
+                    <input type="radio" name="topic" value="chat">
+                    <span>just a chat</span>
+                  </label>
+                </fieldset>
+
+                <div class="contact-form__field">
+                  <label class="contact-form__label" for="cf-message">Message</label>
+                  <textarea class="contact-form__message" id="cf-message" name="message"></textarea>
+                </div>
+
+                <button class="contact-form__submit" type="submit" data-magnetic>Get in touch</button>
               </form>
             </div>
           </section>
@@ -1009,6 +1172,48 @@
           inner.style.transform = 'translate(' + ((dx / dist) * f) + 'px,' + ((dy / dist) * f) + 'px)';
         }
       }, { passive: true });
+    })();
+  </script>
+
+  <script>
+    // Contact submit button — magnetic pull + click ripple, ported from the
+    // standalone Contact Button export (only these two behaviours). Skipped
+    // entirely when the visitor prefers reduced motion.
+    (function () {
+      var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var btn = document.querySelector('[data-magnetic]');
+      if (!btn || reduce) return;
+
+      var RANGE = 180;   // px from centre where the pull begins
+      var PULL  = 6;     // base intensity (× 1.6 → ~9.6px max travel)
+
+      // Magnet: drift the button toward the cursor within RANGE, else rest.
+      window.addEventListener('pointermove', function (e) {
+        var r = btn.getBoundingClientRect();
+        var cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+        var dx = e.clientX - cx, dy = e.clientY - cy;
+        var dist = Math.hypot(dx, dy) || 1;
+        if (dist < RANGE) {
+          var f = (1 - dist / RANGE) * PULL * 1.6;
+          btn.style.transform = 'translate(' + ((dx / dist) * f) + 'px,' + ((dy / dist) * f) + 'px)';
+        } else {
+          btn.style.transform = 'translate(0,0)';
+        }
+      }, { passive: true });
+
+      // Ripple: bloom an accent circle from the click point, then remove it.
+      btn.addEventListener('click', function (e) {
+        e.preventDefault();   // suppress the native form submit/reload so the ripple can play
+        var r = btn.getBoundingClientRect();
+        var rp = document.createElement('span');
+        rp.style.cssText = 'position:absolute; left:' + (e.clientX - r.left) + 'px; top:' + (e.clientY - r.top) +
+          'px; width:6px; height:6px; border-radius:50%; background:var(--accent); transform:translate(-50%,-50%); pointer-events:none; opacity:.8;';
+        btn.appendChild(rp);
+        rp.animate(
+          [{ width: '6px', height: '6px', opacity: 0.8 }, { width: '320px', height: '320px', opacity: 0 }],
+          { duration: 650, easing: 'ease-out' }
+        ).onfinish = function () { rp.remove(); };
+      });
     })();
   </script>
 
@@ -1193,7 +1398,7 @@
       // As the card leaves the viewport, scrub the deck closed: fully open at
       // 120px of the exiting edge still on-screen, fully collapsed at 8px.
       var scrubbing = false;
-      var START = 120, END = 8;
+      var START = 500, END = 200;
 
       function onScroll() {
         if ((container.dataset.state || 'init') !== 'deck') {
