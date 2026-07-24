@@ -239,9 +239,12 @@
      each in half without touching the hero→software or studio→footer gaps. */
   #software { padding-block-end: 13.5px; }
   #studio   { padding-block-start: 20px; }
-  /* Extra breathing room above the studio row (rune deck + contact card).
-     Scoped to #studio so the shared .grid base — and #software — stay untouched. */
-  #studio .grid { margin-top: 40px; flex-direction: column; align-items: center; }
+  /* Extra breathing room above the studio row (rune deck + contact card, paired
+     side by side — deck left, contact right, following DOM order).
+     align-items:center vertically centres the pair without stretching either card
+     to the other's height (base .grid uses stretch). Scoped to #studio so the
+     shared .grid base — and #software — stay untouched. */
+  #studio .grid { margin-top: 40px; flex-direction: row; align-items: center; }
 
   .section__title {
     font-family: var(--font-display);
@@ -528,10 +531,10 @@
 
   /* ---------- Rune stack (interactive dark-stone island) --------------- */
   /* Vanilla port of the standalone rune-stack demo. A fixed-dark island like
-     .writelite-card — deliberately does NOT follow the page theme. Click the
-     monolith to fan the deck; click a layer to open its inscription in the
-     slab. The deck collapses on its own only as it scrolls off-screen — the
-     rune-stack IIFE scrubs it closed between 120px and 8px from the edge. */
+     .writelite-card — deliberately does NOT follow the page theme. The deck
+     fans open/closed by scroll position (open in the middle of the viewport,
+     collapsed near either edge); click a layer to open its inscription in the
+     slab. The rune-stack IIFE drives the fan via its EXPAND/COLLAPSE bands. */
   .rune-stack {
     --vc: #ffb454;                 /* frame accent — the label */
     --glow: 1;                     /* glow-strength multiplier */
@@ -563,8 +566,8 @@
   .rune-stack__layer {
     position: absolute;
     left: 50%; top: 50%;
-    width: 132px; height: 132px;
-    margin: -66px;
+    width: 182px; height: 182px;
+    margin: -91px;
     transform-style: preserve-3d;
     transition: transform 1.2s cubic-bezier(0.3, 0.8, 0.2, 1), opacity 0.9s;
   }
@@ -572,6 +575,7 @@
      the tweens so the deck tracks the scroll instead of trailing behind it. */
   .rune-stack.is-scrubbing .rune-stack__scene,
   .rune-stack.is-scrubbing .rune-stack__layer,
+  .rune-stack.is-scrubbing .rune-stack__cover,
   .rune-stack.is-scrubbing .rune-stack__detail { transition: none; }
 
   .rune-stack__face {
@@ -602,6 +606,35 @@
     color: var(--lc);
     opacity: 0.85;
     text-transform: uppercase;
+  }
+
+  /* Unique 5th "cover" card — the only thing shown when the deck is collapsed.
+     Shares the face's stone surface but carries wrapped heading text instead of a
+     single rune. Opacity is driven per-frame by the rune-stack IIFE (1 collapsed,
+     0 fanned); it sits above the deck layers so no fading card bleeds over it. */
+  .rune-stack__cover {
+    --lc: #39e6b0;                   /* green, to match the deck's origin card */
+    position: absolute;
+    left: 50%; top: 50%;
+    width: 182px; height: 182px;
+    margin: -91px;
+    z-index: 65;                     /* above the deck layers (max 60 when popped) */
+    pointer-events: none;            /* let clicks fall through to the container (layer select) */
+    display: grid;
+    place-items: center;
+    padding: 0 16px;
+    text-align: center;
+    border-radius: 12px;
+    background: linear-gradient(150deg, #3b404a, #191c22);
+    border: 1px solid var(--lc);
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.67), inset 0 0 26px rgba(0, 0, 0, 0.44),
+                0 0 18px -6px var(--lc);
+    font-family: 'Cinzel', serif;
+    font-size: 20px;
+    line-height: 1.25;
+    color: var(--lc);
+    text-shadow: 0 0 12px var(--lc);
+    transition: opacity 0.9s;
   }
 
   .rune-stack__detail {
@@ -782,6 +815,7 @@
   }
   .contact-form__topics .contact-form__label {
     flex: 0 0 100%;         /* legend on its own line above the chips */
+    margin-bottom: 8px;     /* match the 8px label→input gap of the other fields */
   }
   .contact-form__topic {
     display: inline-flex;
@@ -1024,6 +1058,10 @@
                aria-label="Studio NEL — interactive rune stack">
             <div class="rune-stack__scene" data-scene><!-- layers injected by JS --></div>
 
+            <!-- Unique cover shown only when the deck is collapsed (opacity driven
+                 by the rune-stack IIFE). Sits above the scene and never rotates. -->
+            <div class="rune-stack__cover" data-cover>Studio NEL</div>
+
             <div class="rune-stack__detail" data-detail>
               <span class="rune-stack__d-name" data-d-name>// ORIGIN</span>
               <div class="rune-stack__d-rune" data-d-rune>&#5792;</div>
@@ -1037,7 +1075,6 @@
           <section class="contact-card" aria-label="Contact">
             <div class="contact-card__inner">
               <!-- EDIT: contact-heading -->
-              <h3 class="contact-card__title">Get in touch</h3>
               <form class="contact-form">
                 <!-- EDIT: contact-fields -->
                 <div class="contact-form__field">
@@ -1219,17 +1256,19 @@
 
   <script>
     // Rune stack — vanilla port of the standalone demo.
-    //   • click the monolith          → fan the deck
-    //   • click a layer               → lift it out + open its inscription
+    //   • scroll into the middle       → the deck fans itself open
+    //   • scroll toward either edge    → the deck scrubs itself closed
+    //   • click a layer                → lift it out + open its inscription
     //   • click the open readout/layer → close it back into the deck
-    //   • scroll the card off-screen  → the deck scrubs itself closed
-    //                                    (120px → 8px from the exiting edge)
+    // Fan open/close is scroll-position driven (see the EXPAND/COLLAPSE bands
+    // below); click only pops/closes an individual layer while the deck is open.
     // The card is a fixed-dark island; layout transforms are all computed here.
     (function () {
       var container = document.querySelector('[data-rune-stack]');
       if (!container) return;
 
       var scene  = container.querySelector('[data-scene]');
+      var cover  = container.querySelector('[data-cover]');
       var detail = container.querySelector('[data-detail]');
       var dName  = detail.querySelector('[data-d-name]');
       var dRune  = detail.querySelector('[data-d-rune]');
@@ -1237,22 +1276,23 @@
       var dBody  = detail.querySelector('[data-d-body]');
 
       // ---- Deck data (ported from the demo's buildLayers) ------------------
-      var RUNES  = ['ᚠ','ᚦ','ᚨ','ᛉ','ᛟ','ᚹ','ᛝ','ᚱ'];
-      var COLS   = ['#39e6b0','#b06bff','#4d8dff','#ff5a6a','#ffb27a','#39d6e6','#c79bff','#5fe6a0'];
-      var NAMES  = ['origin','passage','ward','ember','pulse','tide','veil','root'];
-      var HEADS  = ['ORIGIN STONE','PASSAGE GATE','WARD CIRCUIT','EMBER CORE','PULSE RELAY','TIDE ENGINE','VEIL PROTOCOL','ROOT ANCHOR'];
+      // Deck order: green (origin) and red (ember) swapped — red now first, green last.
+      var RUNES  = ['ᛉ','ᛟ','ᚨ','ᚦ','ᚠ','ᚹ','ᛝ','ᚱ'];
+      var COLS   = ['#ff5a6a','#ffb27a','#139fe8','#b06bff','#39e6b0','#39d6e6','#c79bff','#5fe6a0'];
+      var NAMES  = ['maintenance','analyics','architecture','design','human','tide','veil','root'];
+      var HEADS  = ['BUG-FIXES','DATA','ARCHITECTURE','DESIGN','HUMAN','TIDE ENGINE','VEIL PROTOCOL','ROOT ANCHOR'];
       var BODIES = [
-        'First slab quarried before the machines woke. Its lattice still hums with the boot-signal of the old builders.',
-        'A doorway cut for bodies that no longer exist. The servos remember the shape and open for no one.',
-        'Defensive glyph-array. Reroutes lightning into the monolith spine to keep the sleepers cold and dreaming.',
-        'Reactor-heart fused into basalt. It burns a slow red beneath ten tonnes of carved silence.',
-        'Signal-drum of the assembly. Each strike still schedules a task no worker survives to run.',
+        'NEL provides on-going support to quickly resolve issues and patch software.',
+        'Collect essential user data to identify user trends & inform business decisions.',
+        'NEL build scalable architecture that makes it easy to build & test additional features.',
+        'Build something beautiful. NEL can quickly prototype ideas & deliver a product that feels alive.',
+        'Talk to a real person – not a chat bot.\n NEL makes developing your software easy.',
         'Drew power from the moon-lock. Its gears turn on a calendar older than the coastline.',
         'Cloaking rite etched in feldspar. Bends light and telemetry around the site so it reads as empty rock.',
         'Foundation node driven into bedrock. Everything above it is negotiable; this is not.'
       ];
 
-      var N = 4;                                   // layer count (demo default)
+      var N = 5;                                   // layer count (demo default)
       var DATA = [];
       for (var i = 0; i < N; i++) {
         DATA.push({
@@ -1313,13 +1353,15 @@
           } else {
             var o = i - c;
             L.style.transform =
-              'translate3d(' + (-o * 72 * openness) + 'px,' + (o * 72 * openness) + 'px,0px)';
+              'translate3d(' + (-o * 92 * openness) + 'px,' + (o * 92 * openness) + 'px,0px)';
             var deckOp = (sel >= 0 && sel !== i) ? 0.4 : 1;   // dim siblings while one is out
-            var initOp = (i === 0) ? 1 : 0;                    // monolith shows only the top face
-            L.style.opacity = String(initOp + (deckOp - initOp) * openness);
+            L.style.opacity = String(deckOp * openness);      // all deck cards vanish when collapsed
             L.style.zIndex = String(i);
           }
         }
+
+        // The cover is the collapsed monolith: opaque when closed, gone when fanned.
+        if (cover) cover.style.opacity = String(1 - openness);
       }
 
       function updateDetail(openness, sel) {
@@ -1357,12 +1399,7 @@
       container.addEventListener('click', function (e) {
         var state = container.dataset.state || 'init';
 
-        if (state !== 'deck') {                       // closed → fan the deck
-          container.dataset.state = 'deck';
-          container.dataset.sel = '-1';
-          applyState();
-          return;
-        }
+        if (state !== 'deck') return;                 // collapsed → scroll controls open/close; click does nothing
 
         var cur = +container.dataset.sel;
 
@@ -1372,12 +1409,9 @@
           return;
         }
 
-        if (cur >= 0) {                               // a card is out — only it closes
-          var selL = layerEls[cur];
-          if (selL && inRect(e, selL.getBoundingClientRect())) {
-            container.dataset.sel = '-1';
-            applyState();
-          }
+        if (cur >= 0) {                               // a card is out — any click in the deck closes it
+          container.dataset.sel = '-1';
+          applyState();
           return;
         }
 
@@ -1394,37 +1428,66 @@
         }
       });
 
-      // ---- Scroll-off collapse (replaces the reset button) -----------------
-      // As the card leaves the viewport, scrub the deck closed: fully open at
-      // 120px of the exiting edge still on-screen, fully collapsed at 8px.
+      // Click anywhere off the deck closes the popped card — but let interactive
+      // controls (links, form fields, buttons) consume the click and stay open.
+      document.addEventListener('click', function (e) {
+        if ((container.dataset.state || 'init') !== 'deck') return;   // deck not fanned
+        if (+container.dataset.sel < 0) return;                       // no card out
+        if (container.contains(e.target)) return;                     // in-deck: handled above
+        if (e.target instanceof Element &&
+            e.target.closest('a, button, input, textarea, select, label, [role="button"], [contenteditable="true"]')) {
+          return;                                                     // interactive → suppress close
+        }
+        container.dataset.sel = '-1';
+        applyState();
+      });
+
+      // ---- Scroll-driven expand + collapse ---------------------------------
+      // The deck's fan is scroll-position driven, not clicked. Each viewport edge
+      // gets its own ramp: the card fans OPEN as it rises in from the bottom
+      // (EXPAND band on topGap) and folds CLOSED as it leaves the top (COLLAPSE
+      // band on botGap). Taking the min after each ramp is what lets the two
+      // bands be tuned independently; with the defaults below it is identical to
+      // the old single-band collapse. Middle of screen → both saturate → open.
       var scrubbing = false;
-      var START = 500, END = 200;
+
+      // --- Expand: fans open as the card rises in from the BOTTOM edge (topGap px) ---
+      var EXPAND_START   = 200;   // topGap where fanning BEGINS   (bigger = opens later / higher up)
+      var EXPAND_END     = 380;   // topGap where fully FANNED     (bigger = needs more travel to finish)
+
+      // --- Collapse: folds shut as the card leaves the TOP edge (botGap px) ---
+      var COLLAPSE_START = 380;   // botGap where folding BEGINS   (bigger = starts collapsing sooner)
+      var COLLAPSE_END   = 200;   // botGap where fully COLLAPSED  (bigger = fully gone sooner)
 
       function onScroll() {
-        if ((container.dataset.state || 'init') !== 'deck') {
-          if (scrubbing) { scrubbing = false; container.classList.remove('is-scrubbing'); }
-          return;
-        }
-
         var r = container.getBoundingClientRect();
         var vh = window.innerHeight || document.documentElement.clientHeight;
-        var remaining = Math.min(r.bottom, vh - r.top);   // nearest exiting edge
-        var t = clamp((START - remaining) / (START - END), 0, 1);
+        var topGap = vh - r.top;    // entering (bottom) edge: 0 as card top touches viewport bottom, grows as it rises
+        var botGap = r.bottom;      // exiting  (top)   edge: shrinks to 0 as the card leaves the top
 
-        if (t <= 0) {                                  // safely in view — restore deck
-          if (scrubbing) { applyState(); }             // applyState clears is-scrubbing
+        var oExpand   = clamp((topGap - EXPAND_START) / (EXPAND_END - EXPAND_START), 0, 1);
+        var oCollapse = clamp((botGap - COLLAPSE_END) / (COLLAPSE_START - COLLAPSE_END), 0, 1);
+        var openness  = Math.min(oExpand, oCollapse);
+
+        if (openness >= 1) {                           // centred — commit the open deck
+          if (scrubbing || (container.dataset.state || 'init') !== 'deck') {
+            container.dataset.state = 'deck';
+            applyState();                              // applyState clears is-scrubbing
+          }
           return;
         }
 
-        if (t >= 1) {                                  // off-screen — commit the collapse
-          container.dataset.state = 'init';
-          container.dataset.sel = '-1';
-          applyState();
+        if (openness <= 0) {                           // off either edge — commit the collapse
+          if (scrubbing || (container.dataset.state || 'init') !== 'init') {
+            container.dataset.state = 'init';
+            container.dataset.sel = '-1';
+            applyState();
+          }
           return;
         }
 
+        container.dataset.state = 'deck';              // mid-scrub: keep layer geometry/sel valid
         if (!scrubbing) { scrubbing = true; container.classList.add('is-scrubbing'); }
-        var openness = 1 - t;
         applyLayout(openness, +container.dataset.sel);
         updateDetail(openness, +container.dataset.sel);
       }
@@ -1439,8 +1502,9 @@
       window.addEventListener('scroll', requestScroll, { passive: true });
       window.addEventListener('resize', requestScroll, { passive: true });
 
-      // Initial paint (starts as the monolith)
+      // Initial paint, then adopt the openness for wherever the card sits on load
       applyState();
+      requestScroll();
     })();
   </script>
 
