@@ -871,6 +871,22 @@
     transition: transform 0.12s ease-out;
   }
 
+  /* sending / sent states — read as inactive */
+  .contact-form__submit:disabled {
+    opacity: 0.55;
+    cursor: default;
+  }
+
+  /* failure line — terminal caption idiom (see .contact-form__label), in red.
+     No red token exists in :root; #ff5a6a matches the rune deck's ember. */
+  .contact-form__status {
+    font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    color: #ff5a6a;
+    margin: 0;
+  }
+
   /* ---------- Product list (below the cards) --------------------------- */
   /* ---------- Support / donate ----------------------------------------- */
   .support {
@@ -1112,7 +1128,10 @@
                   <textarea class="contact-form__message" id="cf-message" name="message"></textarea>
                 </div>
 
-                <button class="contact-form__submit" type="submit" data-magnetic>Get in touch</button>
+                <button class="contact-form__submit" type="submit" data-magnetic><span class="contact-form__submit-label">Get in touch</span></button>
+
+                <!-- failure message only; success shows on the button itself -->
+                <p class="contact-form__status" role="alert" hidden></p>
               </form>
             </div>
           </section>
@@ -1240,7 +1259,6 @@
 
       // Ripple: bloom an accent circle from the click point, then remove it.
       btn.addEventListener('click', function (e) {
-        e.preventDefault();   // suppress the native form submit/reload so the ripple can play
         var r = btn.getBoundingClientRect();
         var rp = document.createElement('span');
         rp.style.cssText = 'position:absolute; left:' + (e.clientX - r.left) + 'px; top:' + (e.clientY - r.top) +
@@ -1250,6 +1268,85 @@
           [{ width: '6px', height: '6px', opacity: 0.8 }, { width: '320px', height: '320px', opacity: 0 }],
           { duration: 650, easing: 'ease-out' }
         ).onfinish = function () { rp.remove(); };
+      });
+    })();
+  </script>
+
+  <script>
+    // Contact form submit — POSTs to splitforms.com (no backend). Hooks the form's
+    // `submit` event (not the button's click) so it works with Enter and under
+    // reduced motion. The ripple handler above no longer preventDefaults, so the
+    // native submit reaches this handler, which owns cancellation.
+    (function () {
+      var form = document.querySelector('.contact-form');
+      if (!form) return;
+      var btn    = form.querySelector('.contact-form__submit');
+      var label  = form.querySelector('.contact-form__submit-label');
+      var status = form.querySelector('.contact-form__status');
+
+      var ACCESS_KEY    = 'e0733441b70b4294b054be68fcd426e5';   // from the new splitforms form
+      var ENDPOINT      = 'https://splitforms.com/api/submit';
+      var DEFAULT_LABEL = label.textContent;             // restore on retry
+
+      // Change the label span, never the button's textContent — the latter would
+      // wipe the ripple <span> the click handler appends as a button child.
+
+      function showError(msg) {
+        status.textContent = msg;
+        status.hidden = false;
+      }
+      function clearError() {
+        status.textContent = '';
+        status.hidden = true;
+      }
+
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        var name    = form.elements['name'].value.trim();
+        var email   = form.elements['email'].value.trim();
+        var message = form.elements['message'].value.trim();
+        var topicEl = form.querySelector('input[name="topic"]:checked');
+        var topic   = topicEl ? topicEl.value : '';
+
+        // All fields required.
+        if (!name || !email || !topic || !message) {
+          showError('Please fill in every field before sending.');
+          return;
+        }
+        if (!form.elements['email'].checkValidity()) {
+          showError('That email address doesn’t look right.');
+          return;
+        }
+
+        clearError();
+        btn.disabled      = true;
+        label.textContent = 'Sending…';
+
+        fetch(ENDPOINT, {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify({
+            access_key: ACCESS_KEY,
+            botcheck:   '',            // honeypot — leave empty
+            source:     'nel.studio',
+            name:       name,
+            email:      email,
+            topic:      topic,
+            message:    message
+          })
+        })
+        .then(function (res) {
+          // fetch only rejects on network failure — a bad key or blocked domain
+          // returns a non-2xx response, so check res.ok explicitly.
+          if (!res.ok) throw new Error('splitforms responded ' + res.status);
+          label.textContent = 'Sent ✓';   // stays disabled
+        })
+        .catch(function () {
+          btn.disabled      = false;
+          label.textContent = DEFAULT_LABEL;
+          showError('Couldn’t send — please try again.');
+        });
       });
     })();
   </script>
