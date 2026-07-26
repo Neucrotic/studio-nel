@@ -591,6 +591,14 @@
     color: var(--lc);
     text-shadow: 0 0 calc(var(--glow) * 18px) var(--lc);
   }
+  /* Inline icon on each deck face. currentColor = the card accent (--lc); the
+     drop-shadow re-creates the rune's glow (text-shadow doesn't reach SVG strokes).
+     width/height + blur are visual knobs. */
+  .rune-stack__face svg {
+    width: 60px;
+    height: 60px;
+    filter: drop-shadow(0 0 calc(var(--glow) * 10px) var(--lc));
+  }
   .rune-stack__rim {
     position: absolute; inset: 0;
     border-radius: 12px;
@@ -672,6 +680,14 @@
     line-height: 1;
     color: var(--rc, #ffb454);
     text-shadow: 0 0 calc(var(--glow) * 24px) var(--rc, #ffb454);
+  }
+  /* Larger icon in the popped inscription slab — same treatment as the face,
+     scaled up, glow keyed to the readout accent (--rc). */
+  .rune-stack__d-rune svg {
+    display: block;
+    width: 72px;
+    height: 72px;
+    filter: drop-shadow(0 0 calc(var(--glow) * 14px) var(--rc, #ffb454));
   }
   .rune-stack__d-rule {
     width: 48px; height: 1px;
@@ -1080,7 +1096,8 @@
 
             <div class="rune-stack__detail" data-detail>
               <span class="rune-stack__d-name" data-d-name>// ORIGIN</span>
-              <div class="rune-stack__d-rune" data-d-rune>&#5792;</div>
+              <!-- filled in by updateDetail() when a card pops; empty behind opacity:0 -->
+              <div class="rune-stack__d-rune" data-d-rune></div>
               <div class="rune-stack__d-rule"></div>
               <div class="rune-stack__d-head" data-d-head>ORIGIN STONE</div>
               <div class="rune-stack__d-body" data-d-body>First slab quarried before the machines woke.</div>
@@ -1374,19 +1391,30 @@
 
       // ---- Deck data (ported from the demo's buildLayers) ------------------
       // Deck order: green (origin) and red (ember) swapped — red now first, green last.
-      var RUNES  = ['ᛉ','ᛟ','ᚨ','ᚦ','ᚠ','ᚹ','ᛝ','ᚱ'];
-      var COLS   = ['#ff5a6a','#ffb27a','#139fe8','#b06bff','#39e6b0','#39d6e6','#c79bff','#5fe6a0'];
-      var NAMES  = ['maintenance','analyics','architecture','design','human','tide','veil','root'];
-      var HEADS  = ['BUG-FIXES','DATA','ARCHITECTURE','DESIGN','HUMAN','TIDE ENGINE','VEIL PROTOCOL','ROOT ANCHOR'];
+      // Glyphs are inline SVGs (authoring source in icons/), recolored to
+      // currentColor so each icon inherits its card's accent (--lc / --rc) and
+      // sizes/glows via CSS (.rune-stack__face svg / .rune-stack__d-rune svg).
+      var ICONS  = [
+        // maintenance → icons/debugging.svg
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><rect x="9" y="8" width="6" height="8.5" rx="3"></rect><path d="M12 8v8.5"></path><path d="M10.3 7.2 9 5.6M13.7 7.2 15 5.6"></path><path d="M9 10 6.4 8.6M9 12.6H6M9 15.2 6.4 16.8M15 10 17.6 8.6M15 12.6H18M15 15.2 17.6 16.8"></path><path d="M4.9 4.9 19.1 19.1"></path></svg>',
+        // analyics → icons/analytics.svg
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3v17h17"></path><path d="M8 20v-4M12 20v-8M16 20v-6"></path></svg>',
+        // architecture → icons/architecture.svg
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="7" cy="5" rx="4" ry="1.8"></ellipse><path d="M3 5v11c0 1 1.8 1.8 4 1.8s4-.8 4-1.8V5"></path><path d="M3 8.7c0 1 1.8 1.8 4 1.8s4-.8 4-1.8M3 12.4c0 1 1.8 1.8 4 1.8s4-.8 4-1.8"></path><rect x="17" y="3" width="4" height="3.2" rx=".6"></rect><rect x="17" y="9.4" width="4" height="3.2" rx=".6"></rect><rect x="17" y="15.8" width="4" height="3.2" rx=".6"></rect><path d="M11 11h2.5M13.5 4.6h3.5M13.5 11h3.5M13.5 17.4h3.5M13.5 4.6V17.4"></path></svg>',
+        // design → icons/design.svg
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="1.5"></rect><path d="M3 8h18"></path><circle cx="5.8" cy="6" r="1" fill="currentColor" stroke="none"></circle><circle cx="8.6" cy="6" r="1" fill="currentColor" stroke="none"></circle><rect x="6" y="11" width="6" height="6" rx=".5"></rect><path d="M6 16l1.8-1.8 1.4 1.4"></path><path d="M14.5 11.5h3.5M14.5 14h3.5M14.5 16.5h2.5"></path></svg>',
+        // human → icons/human.svg
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="7" r="3.4"></circle><path d="M4 20c0-3.3 2.7-6 6-6 1 0 1.9.2 2.7.7"></path><path d="M18.5 13.6c-1.1-1-2.9-.3-2.9 1.1 0 1.4 2.9 3.3 2.9 3.3s2.9-1.9 2.9-3.3c0-1.4-1.8-2.1-2.9-1.1z"></path></svg>'
+      ];
+      var COLS   = ['#ff5a6a','#ffb27a','#139fe8','#b06bff','#39e6b0'];
+      var NAMES  = ['maintenance','analyics','architecture','design','human'];
+      var HEADS  = ['BUG-FIXES','DATA','ARCHITECTURE','DESIGN','HUMAN'];
       var BODIES = [
         'NEL provides on-going support to quickly resolve issues and patch software.',
         'Collect essential user data to identify user trends & inform business decisions.',
         'NEL build scalable architecture that makes it easy to build & test additional features.',
         'Build something beautiful. NEL can quickly prototype ideas & deliver a product that feels alive.',
-        'Talk to a real person – not a chat bot.\n NEL makes developing your software easy.',
-        'Drew power from the moon-lock. Its gears turn on a calendar older than the coastline.',
-        'Cloaking rite etched in feldspar. Bends light and telemetry around the site so it reads as empty rock.',
-        'Foundation node driven into bedrock. Everything above it is negotiable; this is not.'
+        'Talk to a real person – not a chat bot.\n NEL makes developing your software easy.'
       ];
 
       var N = 5;                                   // layer count (demo default)
@@ -1394,7 +1422,7 @@
       for (var i = 0; i < N; i++) {
         DATA.push({
           idx: i,
-          rune: RUNES[i % RUNES.length],
+          icon: ICONS[i % ICONS.length],
           col:  COLS[i % COLS.length],
           name: NAMES[i % NAMES.length],
           head: HEADS[i % HEADS.length],
@@ -1411,7 +1439,7 @@
 
         var face = document.createElement('div');
         face.className = 'rune-stack__face';
-        face.textContent = L.rune;
+        face.innerHTML = L.icon;
 
         var rim = document.createElement('div');
         rim.className = 'rune-stack__rim';
@@ -1466,7 +1494,7 @@
         if (show) {
           var L = DATA[sel];
           dName.textContent = '// ' + L.name.toUpperCase();
-          dRune.textContent = L.rune;
+          dRune.innerHTML = L.icon;
           dHead.textContent = L.head;
           dBody.textContent = L.body;
           detail.style.setProperty('--rc', L.col);
