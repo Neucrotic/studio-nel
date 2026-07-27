@@ -234,11 +234,12 @@
     padding-block-start: 40px;                      /* fixed gap: subtitle → title */
     padding-block-end: 27px;                        /* space above the footer */
   }
-  /* Halve only the software → studio gap. That gap is the sum of two section
+  /* Tune only the software → studio gap. That gap is the sum of two section
      paddings meeting there (27px end + 40px start = 67px); these overrides cut
-     each in half without touching the hero→software or studio→footer gaps. */
+     the software end and add breathing room on the studio start, without
+     touching the hero→software or studio→footer gaps. */
   #software { padding-block-end: 13.5px; }
-  #studio   { padding-block-start: 20px; }
+  #studio   { padding-block-start: 40px; }
   /* Extra breathing room above the studio row (rune deck + contact card, paired
      side by side — deck left, contact right, following DOM order).
      align-items:flex-start top-aligns the pair so the row has a shared top edge
@@ -629,7 +630,7 @@
      — so it reads as a plain control, not part of the rune palette. */
   .rune-stack__toggle {
     position: absolute;
-    top: 6px; right: 8px;
+    top: 6px; right: -24px;
     z-index: 80;
     display: flex;
     flex-direction: column;
@@ -667,6 +668,11 @@
     letter-spacing: 1px;
     text-transform: uppercase;
     color: rgba(236, 232, 223, 0.6);
+    /* Reserve the longest caption's width ("COLLAPSE") so the wrapper — and the
+       button centred in it — don't resize/shift when the label swaps on toggle. */
+    min-width: 72px;
+    text-align: center;
+    white-space: nowrap;
   }
 
   /* Unique 5th "cover" card — the only thing shown when the deck is collapsed.
