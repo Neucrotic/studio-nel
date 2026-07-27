@@ -723,12 +723,16 @@
        open fan spills further past the (invisible, transparent) box; raise it if
        the open fan reaches the label. */
     height: var(--rune-stage, 380px);
-    cursor: pointer;
     border-radius: var(--radius);
     overflow: visible;              /* box is transparent — let the open fan spill past it */
     perspective: 2400px;
     perspective-origin: 50% 50%;
   }
+  /* Pointer only where a click does something. Fanned, a click anywhere in the
+     box selects the nearest layer, so the whole box earns it; collapsed, only
+     the cover card does (see .rune-stack__cover) and the transparent margin
+     around it is inert. */
+  .rune-stack[data-state="deck"] { cursor: pointer; }
   .rune-stack__scene {
     position: absolute;
     inset: 0;
@@ -856,7 +860,11 @@
     width: 182px; height: 182px;
     margin: -91px;
     z-index: 65;                     /* above the deck layers (max 60 when popped) */
-    pointer-events: none;            /* let clicks fall through to the container (layer select) */
+    /* Fanned, the cover sits invisible over the centre of the stage — it must not
+       swallow clicks meant for the layers underneath. Collapsed, it IS the click
+       target (it opens the deck), so the rule below hands it back its events. */
+    pointer-events: none;
+    cursor: pointer;
     display: grid;
     place-items: center;
     padding: 0 16px;
@@ -866,13 +874,16 @@
     border: 1px solid var(--lc);
     box-shadow: 0 8px 22px rgba(0, 0, 0, 0.67), inset 0 0 26px rgba(0, 0, 0, 0.44),
                 0 0 18px -6px var(--lc);
-    font-family: 'Cinzel', serif;
-    font-size: 20px;
+    font-family: 'Public Sans', var(--font-body);   /* same stack as .hero__title */
+    font-size: 26px;
     line-height: 1.25;
     color: var(--lc);
     text-shadow: 0 0 12px var(--lc);
     transition: opacity 0.9s;
   }
+  /* Collapsed only: the cover becomes a real hit target, so clicking it opens
+     the deck (handled in the rune-stack IIFE) and it can show its own cursor. */
+  .rune-stack[data-state="init"] .rune-stack__cover { pointer-events: auto; }
 
   .rune-stack__detail {
     position: absolute; left: 50%; top: 50%;
@@ -1638,10 +1649,12 @@
   <script>
     // Rune stack — vanilla port of the standalone demo.
     //   • click the toggle button      → fan the deck open / collapse it shut
+    //   • click the cover (collapsed)  → fan the deck open
     //   • click a layer (deck open)    → lift it out + open its inscription
     //   • click the open readout/layer → close it back into the deck
-    // Fan open/close is driven by the top-right toggle button (wired near the
-    // bottom); click only pops/closes an individual layer while the deck is open.
+    // Two ways open — the cover card or the top-right toggle button — but only
+    // the button collapses, so closing has one clearly labelled control. While
+    // the deck is open, clicks only pop/close an individual layer.
     // The card is a fixed-dark island; layout transforms are all computed here.
     (function () {
       var container = document.querySelector('[data-rune-stack]');
@@ -1780,13 +1793,24 @@
         updateDetail(deck ? 1 : 0, sel);
       }
 
-      // ---- Layer click interaction (pop / close an inscription) ------------
-      // Deck open/close is driven by the toggle button (wired below); this
-      // handler only pops or closes an individual layer while the deck is open.
+      // ---- Container click interaction -------------------------------------
+      // Collapsed: a click on the cover card fans the deck open (the toggle
+      // button below is the other way in, and the only way out). Open: this
+      // handler only pops or closes an individual layer.
       container.addEventListener('click', function (e) {
         var state = container.dataset.state || 'init';
 
-        if (state !== 'deck') return;                 // collapsed → only the toggle button opens the deck
+        // Collapsed: the cover card is the second way in (the toggle button is
+        // the other). CSS gives the cover pointer-events only in this state, so
+        // its click lands on it and bubbles here; the rest of the transparent
+        // stage box stays inert. Opening only — nothing but the button collapses.
+        if (state !== 'deck') {
+          if (!(e.target instanceof Element) || !e.target.closest('[data-cover]')) return;
+          container.dataset.state = 'deck';
+          syncToggle(true);                           // button label/aria → "Collapse"
+          applyState();
+          return;
+        }
 
         var cur = +container.dataset.sel;
 
