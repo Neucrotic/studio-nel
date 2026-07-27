@@ -777,7 +777,9 @@
   .contact-card {
     --pc-text: #ece8df;              /* foreground on stone (from the product card) */
     --pc-muted: #a49e90;             /* muted meta */
-    flex: 0 0 720px;                 /* fixed 720px — never grows or shrinks to fill */
+    /* 598 = 1034 − 400 rune stack − 36 gap, so the studio row matches the
+       software row's width and the two centre to identical edges. */
+    flex: 0 0 598px;                 /* fixed 598px — never grows or shrinks to fill */
     max-width: 100%;                 /* shrink only when the viewport is narrower */
   }
 
@@ -875,7 +877,7 @@
   .contact-form__message {
     width: 500px;
     height: 200px;
-    max-width: 100%;        /* never overflow the 720px card on narrow viewports */
+    max-width: 100%;        /* never overflow the 598px card on narrow viewports */
     resize: vertical;       /* adjustable height, as asked */
     line-height: 1.5;
   }
@@ -998,7 +1000,11 @@
   /* ---------- Footer ---------------------------------------------------- */
   .foot {
     padding-block: 23px;
-    padding-inline: 10%;
+    /* Anchors the footer text to the content rows. Both .grid rows are 1034px
+       centred, so this reproduces exactly what flex centring leaves at each side.
+       Below 1034px it floors at 0 — where the rows wrap and the cards go flush to
+       the edge too, so the two stay aligned on both sides of that breakpoint. */
+    padding-inline: max(0px, (100% - 1034px) / 2);
     border-top: 1px solid var(--line);
     color: var(--muted);
     font-size: 0.9rem;
