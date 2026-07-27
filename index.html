@@ -427,8 +427,9 @@
     --pull: 5;                          /* peak magnet drift */
     position: relative;
     flex: 0 0 auto;
-    /* 434px → levitated chip ≈ 384px (chip = 52% of stage, JS scales it ×1.7).
-       The whole square animation system scales off this one size. */
+    /* 434px → levitated chip ≈ 384px (chip = 88.4% of stage; that IS its resting
+       size, and the boot shrinks it to 1/1.7 for the dormant phase — see
+       .kaku-stage__lift). The whole square animation system scales off this. */
     width: min(434px, 90vw);
     aspect-ratio: 1 / 1;
     max-width: 100%;
@@ -479,7 +480,10 @@
   .kaku-stage__lift {
     position: relative;
     z-index: 4;
-    width: 52%;
+    /* 88.4% = the card's LEVITATED size (0.52 × 1.7), i.e. its real box. The card
+       rests untransformed at this size so its text is rasterised at 1:1 and stays
+       crisp; the boot runs the scale the other way, from 1/1.7 up to 1. */
+    width: 88.4%;
     aspect-ratio: 1 / 1;
     display: grid;
     place-items: center;
@@ -488,26 +492,33 @@
     position: relative;
     width: 100%;
     aspect-ratio: 1 / 1;
-    border-radius: 14px;
+    /* Decoration lengths are authored at LEVITATED size (the old 14px/1px/44px
+       × 1.7), because the card now rests untransformed and it is the DORMANT
+       phase that scales — down to 1/1.7, which returns them to those originals. */
+    border-radius: 23.8px;
     background: linear-gradient(135deg,#333842 0%,#20242c 40%,#14171d 72%,#0d0f14 100%),
                 repeating-linear-gradient(118deg, rgba(255,255,255,.05) 0 1px, transparent 1px 6px);
-    border: 1px solid #ffffff22;
-    box-shadow: inset 0 1px 0 #ffffff2e, inset 0 0 44px #0009, 0 22px 44px -22px #000d;
+    border: 1.7px solid #ffffff22;
+    box-shadow: inset 0 1.7px 0 #ffffff2e, inset 0 0 74.8px #0009, 0 37.4px 74.8px -37.4px #000d;
     overflow: hidden;
-    transform: scale(1);
+    /* 1/1.7 — the dormant size. Must be the inverse, not identity, or the card
+       flashes at full size before the boot starts. */
+    transform: scale(0.5882352941);
     filter: brightness(.5) saturate(.55);   /* dormant look — matches the base phase */
     transition: transform 1.1s cubic-bezier(.2,.8,.2,1), filter .6s ease;
   }
   /* WriteLite-style rim aura — overlays .kaku-card, mirrors its scale in JS. */
   .kaku-stage__rim {
     position: absolute; inset: 0;
-    border-radius: 14px;
+    /* Authored at levitated size like .kaku-card above (× 1.7), and scaled by the
+       same inverse while dormant, so the two never drift apart. */
+    border-radius: 23.8px;
     pointer-events: none;
     opacity: 0;                         /* off until the boot's flicker phase */
-    transform: scale(1);
-    border: 1px solid color-mix(in srgb, var(--acc) 40%, transparent);
-    box-shadow: 0 0 24px calc(var(--glow) * 2px) var(--acc),
-                inset 0 0 0 1px color-mix(in srgb, var(--acc) 33%, transparent);
+    transform: scale(0.5882352941);
+    border: 1.7px solid color-mix(in srgb, var(--acc) 40%, transparent);
+    box-shadow: 0 0 40.8px calc(var(--glow) * 3.4px) var(--acc),
+                inset 0 0 0 1.7px color-mix(in srgb, var(--acc) 33%, transparent);
     transition: opacity .8s ease, transform 1.1s cubic-bezier(.2,.8,.2,1);
   }
   /* One-shot rim ignition: flickers, then the JS pins it steady at opacity 1. */
@@ -529,6 +540,165 @@
   @keyframes kaku-hoverbob {
     0%,100%{ transform: translateY(2px); }
     50%    { transform: translateY(-9px); }
+  }
+
+  /* ---------- kaku card face (the dictionary entry) --------------------
+     Content on .kaku-card, revealed as a second sequence once the boot has
+     settled at 'hold' (i.e. after the card finished growing). The kaku IIFE
+     sets data-face="on" on .kaku-card, which drives every fade in order — the
+     glyph first, then the entry text. The glyph's ignition is the LAST beat, so
+     it hangs off a second attribute, data-glyph="lit", set by the IIFE once the
+     typing has finished (only the JS knows when the last character lands).
+     Toggling those two attributes in devtools replays the whole reveal.
+
+     SIZES: .kaku-card is 384px and rests untransformed, so every value here is
+     plain px and means exactly what it renders at. Keep it that way — the face
+     must never be authored against a scale, or the text is rasterised small and
+     stretched, which is what made it blurry before. */
+  .kaku-card {
+    /* Lit colour for the "building..." line ONLY. --acc (#1c4bd9) is ~1.8:1 on
+       this face — fine for a big shape, hard to read as 28px text — so that
+       line's ink is lifted toward white while its text-shadow stays raw --acc.
+       The glyph does NOT use this: it is a 144px mark, not text, and it paints
+       raw --blue-kaku so it matches the circuit nodes exactly. */
+    --k-lit: color-mix(in srgb, var(--acc) 45%, #dbe6ff);
+    /* dead-trace grey — the glyph's colour before it ignites. A token because
+       the ignition keyframes below have to name it too. */
+    --k-dead: #3c414a;
+    --k-pad: 20px;
+  }
+  .kaku-card__face {
+    /* Plain block flow — NOT flex/grid and no overflow, or .kaku-card__glyph's
+       float stops shortening the text's line boxes. */
+    position: absolute;
+    inset: 0;
+    padding: var(--k-pad);
+  }
+  /* Etched mark, top-left. Floated (not absolute) so the entry text runs beside
+     it and then leaks underneath line by line, like a dictionary page. */
+  .kaku-card__glyph {
+    float: left;
+    /* 144px — the same size the WriteLite logo renders at, so the two marks
+       read as a pair across the row. */
+    width: 144px;
+    height: 144px;
+    margin: 0 12px 10px 0;
+    /* dormant: cut into the plate — dead-trace grey with a hairline light lip
+       below (1.7px: what the old 1px rendered at once the card was magnified) */
+    color: var(--k-dead);
+    filter: drop-shadow(0 1.7px 0 rgba(255,255,255,.06));
+    /* Held back until the reveal — the mark must not sit on the plate during the
+       boot. Floats still reserve their box when transparent, so nothing reflows
+       when it appears. `color` is deliberately NOT transitioned: the ignition
+       below owns it. */
+    opacity: 0;
+    transition: opacity .5s ease, filter .7s ease;
+  }
+  /* Beat 1 — the unlit mark fades in ahead of the entry text. */
+  .kaku-card[data-face="on"] .kaku-card__glyph { opacity: 1; }
+  /* Beat 4 — ignition. Set by the IIFE a short pause after "building..." has
+     finished typing. Flickers once on the same 0.62s the card's own boot flicker
+     uses, so the two read as one electrical event, then rests lit. No glow: the
+     hairline lip is the only filter, carried over from the rule above. */
+  .kaku-card[data-glyph="lit"] .kaku-card__glyph {
+    color: var(--blue-kaku);
+    animation: kaku-glyph-ignite .62s ease-out;
+  }
+  @keyframes kaku-glyph-ignite {
+      0%{ color: var(--k-dead) }   8%{ color: var(--blue-kaku) }  16%{ color: var(--k-dead) }
+     34%{ color: var(--blue-kaku) } 48%{ color: var(--k-dead) }   68%{ color: var(--blue-kaku) }
+     82%{ color: var(--k-dead) }  100%{ color: var(--blue-kaku) }
+  }
+  /* Beat 2 — the entry itself, staggered line by line behind the glyph's fade. */
+  .kaku-card__word,
+  .kaku-card__pos,
+  .kaku-card__gloss {
+    margin: 0;
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity .4s ease, transform .4s var(--ease);
+  }
+  .kaku-card[data-face="on"] .kaku-card__word,
+  .kaku-card[data-face="on"] .kaku-card__pos,
+  .kaku-card[data-face="on"] .kaku-card__gloss {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  /* 500ms = the glyph's fade, so the entry starts as the mark lands. */
+  .kaku-card[data-face="on"] .kaku-card__word  { transition-delay: 500ms; }
+  .kaku-card[data-face="on"] .kaku-card__pos   { transition-delay: 620ms; }
+  .kaku-card[data-face="on"] .kaku-card__gloss { transition-delay: 740ms; }
+
+  /* Type scale mirrors .writelite-card's: 46/20/16/14 → the two cards read as
+     one family. Only the headword sits under its twin (42 vs 46) because it
+     shares its line with the 144px glyph. */
+  .kaku-card__word {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 42px;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+    color: #e6e8ef;
+  }
+  /* Breaks onto its own line beneath the headword — "kaku" + the pronunciation
+     is wider than the column the glyph leaves, and the space between them is the
+     only break opportunity. That is the dictionary setting, and it is forced by
+     the geometry rather than left to chance. */
+  .kaku-card__ipa {
+    font-weight: 400;
+    font-size: 20px;
+    color: #8d919d;
+  }
+  .kaku-card__pos {
+    margin-top: 10px;
+    font-family: var(--font-body);
+    font-style: italic;
+    font-size: 16px;
+    line-height: 1.3;
+    color: #8d919d;
+  }
+  .kaku-card__gloss {
+    margin-top: 8px;
+    font-family: var(--font-body);
+    font-size: 18px;
+    line-height: 1.35;
+    color: #b9bec9;
+  }
+  /* Typed status line — sits well above the bottom edge rather than on the
+     padding, so the caret has room to blink without crowding the corner. At 38px
+     the line runs ~274px of the 339px row, leaving a deliberate tail of space. */
+  .kaku-card__build {
+    position: absolute;
+    left: var(--k-pad);
+    bottom: 100px;
+    margin: 0;
+    font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 28px;
+    line-height: 1;
+    color: var(--k-lit);
+    text-shadow: 0 0 14px color-mix(in srgb, var(--acc) 55%, transparent);
+  }
+  /* Block caret — off until the typing starts, then blinks for good. 1ch is one
+     character cell in a monospace font, so it sits in the line like a real
+     terminal cursor rather than as an arbitrary bar. */
+  .kaku-card__caret {
+    display: inline-block;
+    width: 1ch;
+    height: 1em;
+    vertical-align: -0.12em;
+    background: currentColor;
+    opacity: 0;
+  }
+  .kaku-card[data-typing] .kaku-card__caret {
+    animation: kaku-caret 1.06s steps(1) infinite;
+  }
+  .kaku-card[data-typing="static"] .kaku-card__caret {
+    animation: none;
+    opacity: 1;                              /* reduced motion — caret sits lit */
+  }
+  @keyframes kaku-caret {
+    0%, 49%   { opacity: 1; }
+    50%, 100% { opacity: 0; }
   }
 
   /* ---------- Rune stack (interactive dark-stone island) --------------- */
@@ -680,7 +850,7 @@
      single rune. Opacity is driven per-frame by the rune-stack IIFE (1 collapsed,
      0 fanned); it sits above the deck layers so no fading card bleeds over it. */
   .rune-stack__cover {
-    --lc: #39e6b0;                   /* green, to match the deck's origin card */
+    --lc: var(--blue-fill);          /* site accent blue */
     position: absolute;
     left: 50%; top: 50%;
     width: 182px; height: 182px;
@@ -1133,7 +1303,28 @@
               <div class="kaku-stage__glow"></div>
               <div class="kaku-stage__circuit"><!-- circuit SVG injected by JS --></div>
               <div class="kaku-stage__lift">
-                <div class="kaku-card"></div>
+                <!-- Card face: a dictionary entry for the working title. The text
+                     and the mono line are hidden until the boot reaches 'hold';
+                     the etched glyph is always there (grey), and lights up with
+                     the rest. The IIFE sets data-face / data-typing. -->
+                <div class="kaku-card">
+                  <div class="kaku-card__face">
+                    <!-- Inlined from kaku_logo.svg (fill → currentColor so it can
+                         recolour + glow; viewBox tightened from the file's
+                         "-27 -879.5 1046 1046" to the ink's own bounds so the mark
+                         fills its box). If the logo file changes, re-copy it here. -->
+                    <svg class="kaku-card__glyph" viewBox="33 -792 926 871"
+                         xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                      <path fill="currentColor" d="M204-246L204-246L203 1Q148-20 105-48L105-48Q86-60 76-60L76-60Q69-60 69-54L69-54Q69-47 85.500-25.500Q102-4 126 20Q150 44 173.500 61.500Q197 79 211 79L211 79Q228 79 245 62.500Q262 46 262 21L262 21Q262 12 261 3Q260-6 260-16L260-16L261-285Q335-335 361-359Q387-383 387-390L387-390Q387-397 378-397L378-397Q369-397 358-390L358-390Q308-361 262-339L262-339L263-508L355-516Q364-517 371.500-520.500Q379-524 379-531L379-531Q379-538 369.500-548Q360-558 347.500-566.500Q335-575 326-575L326-575Q322-575 320-574L320-574Q301-564 283-563L283-563L263-561L264-749Q264-760 259-767.500Q254-775 234-783L234-783Q212-792 199-792L199-792Q187-792 187-785L187-785Q187-782 190-777L190-777Q200-762 203.500-750.500Q207-739 207-721L207-721L206-557L119-550Q112-549 106-549Q100-549 95-549L95-549Q77-549 65-552L65-552Q63-553 59-553L59-553Q55-553 55-549L55-549Q55-545 56-543L56-543Q58-538 64-526Q70-514 80-504.500Q90-495 105-495L105-495Q112-495 121-496Q130-497 140-498L140-498L206-504L205-309Q151-282 109.500-263.500Q68-245 45-243L45-243Q33-242 33-236L33-236Q33-234 41.500-222Q50-210 63.500-199.500Q77-189 92-189L92-189Q97-189 106-191.500Q115-194 137.500-206Q160-218 204-246ZM762-562L762-562L943-572Q959-572 959-586L959-586Q959-598 941-614Q923-630 905-630L905-630Q897-630 894-629L894-629Q881-624 869-622Q857-620 839-619L839-619L779-615Q787-642 794-673.500Q801-705 807-735L807-735Q807-737 807.500-738.500Q808-740 808-741L808-741Q808-752 795-761Q782-770 766.500-775.500Q751-781 741-781L741-781Q731-781 731-773L731-773Q731-768 732-766L732-766Q735-757 736-750Q737-743 737-735L737-735L737-726Q732-670 720-612L720-612L585-604L570-719Q568-731 557.500-736Q547-741 534-742Q521-743 512-743L512-743Q499-743 499-737L499-737Q499-735 501-731L501-731Q509-717 513-706Q517-695 518-681L518-681L528-600L441-595L429-595Q416-595 403.500-596.500Q391-598 377-600L377-600L374-600Q368-600 368-596L368-596Q368-592 369-590L369-590Q380-559 395.500-551.500Q411-544 424-544L424-544Q430-544 437-544Q444-544 454-545L454-545L534-549L537-523Q540-504 540-478L540-478Q540-459 551.500-451Q563-443 575.500-441Q588-439 589-439L589-439Q604-439 604-452L604-452L604-456L592-553L710-559Q706-534 700-510.500Q694-487 688-465L688-465Q685-453 685-445L685-445Q685-432 692-432L692-432Q699-432 708.500-446Q718-460 728-480.500Q738-501 747-523.500Q756-546 762-562ZM503 53L501 20L863 13Q887 11 887 0L887 0Q887-14 861-41L861-41L891-349Q892-355 895.500-361.500Q899-368 899-375L899-375Q899-381 895-388.500Q891-396 878-404L878-404Q872-410 863.500-412Q855-414 845-414L845-414L838-414L481-397Q454-405 438-409.500Q422-414 414-414L414-414Q404-414 404-407L404-407Q404-405 405.500-401.500Q407-398 408-393L408-393Q418-370 421-332L421-332L439-46Q440-34 440.500-24Q441-14 441-5L441-5Q441 2 440.500 9Q440 16 439 24L439 24Q439 26 438.500 28.500Q438 31 438 33L438 33Q438 43 444 49.500Q450 56 467 65L467 65Q479 71 488 71L488 71Q503 71 503 55L503 55L503 53ZM678-355L827-362L819-237L677-231L678-355ZM480-346L619-352L618-229L487-223L480-346ZM676-180L816-186L806-40L675-37L676-180ZM490-172L618-178L617-36L498-33L490-172Z"/>
+                    </svg>
+                    <p class="kaku-card__word">Kaku <span class="kaku-card__ipa">| &#712;ka.k&#623; |</span></p>
+                    <p class="kaku-card__pos">verb</p>
+                    <p class="kaku-card__gloss">Japanese: &ldquo;to draw&rdquo;</p>
+                    <!-- typed a character at a time by the IIFE; hidden from
+                         assistive tech so a half-written string is never read -->
+                    <p class="kaku-card__build" aria-hidden="true"><span class="kaku-card__typed"></span><span class="kaku-card__caret"></span></p>
+                  </div>
+                </div>
                 <div class="kaku-stage__rim"></div>
               </div>
             </div>
@@ -1682,7 +1873,13 @@
       var inner = stage.querySelector('.kaku-stage__inner');   // holds data-phase
 
       // ---- fixed props (were editor controls in the export) ----------------
-      var ACC = '#1c4bd9', GLOW = 1, SPEED = 1, LIFT = 1.7;
+      // The accent is NOT one of these: it lives in CSS as --blue-kaku, aliased
+      // to --acc on .kaku-stage. Keep it that way — a JS copy would inline-style
+      // the stage and silently override the stylesheet.
+      var GLOW = 1, SPEED = 1, LIFT = 1.7;
+      // The card's box IS its levitated size, so 'hold' is scale(1) and the boot
+      // runs the growth from this inverse. Keeps resting text at 1:1 raster.
+      var INV = 1 / LIFT;
 
       var PHASES = ['dormant','boot','flow','flicker','glow','levitate','hold'];
       var BASE = { dormant:1000, boot:700, flow:1300, flicker:650, glow:750, levitate:1500, hold:1900 };
@@ -1808,11 +2005,11 @@
 
         switch (phase){
           case 'dormant':
-            body.style.transform = 'scale(1)'; body.style.filter = 'brightness(.5) saturate(.55)';
+            body.style.transform = 'scale(' + INV + ')'; body.style.filter = 'brightness(.5) saturate(.55)';
             glow.style.opacity = '0'; glow.style.transform = 'translate(-50%,-50%) scale(.7)';
             shadow.style.opacity = '.5'; shadow.style.transform = 'translate(-50%,0) scale(1)'; shadow.style.filter = 'blur(8px)';
             deco.style.filter = 'none'; setChipDelay(0); setChips('.12'); setLits('.08');
-            rim.style.animation = 'none'; rim.style.opacity = '0'; rim.style.transform = 'scale(1)'; break;
+            rim.style.animation = 'none'; rim.style.opacity = '0'; rim.style.transform = 'scale(' + INV + ')'; break;
           case 'boot':
             body.style.filter = 'brightness(.6) saturate(.7)'; glow.style.opacity = '.05';
             deco.style.filter = 'drop-shadow(0 0 2px var(--acc))'; setChipDelay(0); setChips('.12'); setLits('.08');
@@ -1832,24 +2029,62 @@
             body.style.animation = 'none'; body.style.filter = 'brightness(1) saturate(1)';
             glow.style.opacity = String(.42 * GLOW); glow.style.transform = 'translate(-50%,-50%) scale(1)';
             deco.style.filter = 'drop-shadow(0 0 ' + (5 * GLOW).toFixed(1) + 'px var(--acc))'; setChips('1'); setLits('1');
-            rim.style.animation = 'none'; rim.style.opacity = '1'; rim.style.transform = 'scale(1)'; break;
+            rim.style.animation = 'none'; rim.style.opacity = '1'; rim.style.transform = 'scale(' + INV + ')'; break;
           case 'levitate':
           case 'hold':
-            body.style.transform = 'scale(' + LIFT + ')'; body.style.filter = 'brightness(1.08) saturate(1.08)';
+            body.style.transform = 'scale(1)'; body.style.filter = 'brightness(1.08) saturate(1.08)';
             glow.style.opacity = String(Math.min(1, .85 * GLOW)); glow.style.transform = 'translate(-50%,-50%) scale(1.15)';
             shadow.style.opacity = '.42'; shadow.style.transform = 'translate(-50%,30px) scale(1.9)'; shadow.style.filter = 'blur(22px)';
             deco.style.filter = 'drop-shadow(0 0 ' + (7 * GLOW).toFixed(1) + 'px var(--acc)) drop-shadow(0 0 ' + (16 * GLOW).toFixed(1) + 'px var(--acc))';
             setChips('1'); setLits('1');
             // rim grows with the card
-            rim.style.animation = 'none'; rim.style.opacity = '1'; rim.style.transform = 'scale(' + LIFT + ')';
-            if (phase === 'hold') booted = true;   // boot done → arm the magnet
+            rim.style.animation = 'none'; rim.style.opacity = '1'; rim.style.transform = 'scale(1)';
+            if (phase === 'hold'){ booted = true; reveal(); }   // boot done → arm the magnet, light the face
             break;
         }
       }
 
-      // ---- build the circuit + set the accent ------------------------------
+      // ---- card face reveal ------------------------------------------------
+      // Runs once, on entry to 'hold' — i.e. after the card has finished growing.
+      // Four beats: unlit glyph → entry text → "building..." typed → the glyph
+      // ignites. The first two are pure CSS off data-face; the typing needs a
+      // timer, and the ignition has to wait for it, so it fires from the end of
+      // the typing loop rather than off a CSS delay guessing at its length.
+      var card = inner.querySelector('.kaku-card');
+      var BUILD_TEXT = 'building...', TYPE_MS = 75, TYPE_START = 2200;
+      var IGNITE_BEAT = 400;                              // caret blinks alone before the mark lights
+      var revealed = false;
+
+      function typeBuild(){
+        var out = card.querySelector('.kaku-card__typed');
+        card.dataset.typing = 'on';                       // caret appears + blinks
+        var i = 0;
+        (function tick(){
+          out.textContent = BUILD_TEXT.slice(0, ++i);
+          if (i < BUILD_TEXT.length){ setTimeout(tick, TYPE_MS / SPEED); return; }
+          setTimeout(function(){ card.dataset.glyph = 'lit'; }, IGNITE_BEAT / SPEED);
+        })();
+      }
+
+      function reveal(){
+        if (revealed) return;
+        revealed = true;
+        card.dataset.face = 'on';
+        setTimeout(typeBuild, TYPE_START / SPEED);
+      }
+
+      // Reduced-motion twin: everything present and lit, nothing animating.
+      function revealInstant(){
+        revealed = true;
+        card.dataset.face = 'on';
+        card.dataset.glyph = 'lit';                       // mark present + lit, no fade, no flicker
+        card.querySelector('.kaku-card__typed').textContent = BUILD_TEXT;
+        card.dataset.typing = 'static';                   // caret lit, not blinking
+      }
+
+      // ---- build the circuit -----------------------------------------------
+      // --acc is deliberately not set here; the stylesheet owns it.
       inner.querySelector('.kaku-stage__circuit').innerHTML = buildDeco();
-      stage.style.setProperty('--acc', ACC);
       stage.style.setProperty('--glow', GLOW);
 
       // ---- WriteLite reference (used only by the start gate below) ---------
@@ -1860,7 +2095,7 @@
 
       // ---- start gate ------------------------------------------------------
       var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      if (reduce){ applyPhase('glow'); return; }        // lit, static, no motion
+      if (reduce){ applyPhase('glow'); revealInstant(); return; }   // lit, static, no motion
 
       applyPhase('dormant');                             // explicit resting state
       var started = false;
@@ -1870,7 +2105,8 @@
 
       // ---- magnet follow (mirrors the WriteLite card) ----------------------
       // Drives the whole chip assembly via .kaku-stage__inner — the free
-      // transform layer (bob lives on __lift, the ×1.7 scale on .kaku-card).
+      // transform layer (bob lives on __lift, the boot's scale on .kaku-card,
+      // which rests at scale(1) so its text stays crisp).
       // Gated on `booted` so it never fights the boot timeline; this path is
       // unreachable under reduced motion (the early return above). Inside the
       // square → tilt; near an outside edge → pull; the two never coexist.
