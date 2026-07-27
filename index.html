@@ -241,10 +241,11 @@
   #studio   { padding-block-start: 20px; }
   /* Extra breathing room above the studio row (rune deck + contact card, paired
      side by side — deck left, contact right, following DOM order).
-     align-items:center vertically centres the pair without stretching either card
-     to the other's height (base .grid uses stretch). Scoped to #studio so the
-     shared .grid base — and #software — stay untouched. */
-  #studio .grid { margin-top: 40px; flex-direction: row; align-items: center; }
+     align-items:flex-start top-aligns the pair so the row has a shared top edge
+     (the deck's toggle button lines up with the contact card's top) without
+     stretching either card to the other's height (base .grid uses stretch).
+     Scoped to #studio so the shared .grid base — and #software — stay untouched. */
+  #studio .grid { margin-top: 40px; flex-direction: row; align-items: flex-start; }
 
   .section__title {
     font-family: var(--font-display);
@@ -532,9 +533,9 @@
   /* ---------- Rune stack (interactive dark-stone island) --------------- */
   /* Vanilla port of the standalone rune-stack demo. A fixed-dark island like
      .writelite-card — deliberately does NOT follow the page theme. The deck
-     fans open/closed by scroll position (open in the middle of the viewport,
-     collapsed near either edge); click a layer to open its inscription in the
-     slab. The rune-stack IIFE drives the fan via its EXPAND/COLLAPSE bands. */
+     fans open/collapses via the top-right toggle button (see .rune-stack__toggle
+     below); click a layer to open its inscription in the slab. The rune-stack
+     IIFE drives all layout transforms. */
   .rune-stack {
     --vc: #ffb454;                 /* frame accent — the label */
     --glow: 1;                     /* glow-strength multiplier */
@@ -571,13 +572,6 @@
     transform-style: preserve-3d;
     transition: transform 1.2s cubic-bezier(0.3, 0.8, 0.2, 1), opacity 0.9s;
   }
-  /* While a scroll-scrub is in progress the layout is driven per-frame — kill
-     the tweens so the deck tracks the scroll instead of trailing behind it. */
-  .rune-stack.is-scrubbing .rune-stack__scene,
-  .rune-stack.is-scrubbing .rune-stack__layer,
-  .rune-stack.is-scrubbing .rune-stack__cover,
-  .rune-stack.is-scrubbing .rune-stack__detail { transition: none; }
-
   .rune-stack__face {
     position: absolute; inset: 0;
     border-radius: 12px;
@@ -625,6 +619,54 @@
     color: var(--lc);
     opacity: 0.85;
     text-transform: uppercase;
+  }
+
+  /* ---------- Deck toggle button ---------------------------------------- */
+  /* Fans the deck open / collapses it shut — replaces the old scroll coupling.
+     Anchored top-right of the container, mirroring the top-left __tag. Sits
+     above the detail slab (z 70) so it stays visible + clickable in BOTH the
+     collapsed and fanned states. Deliberately neutral — not keyed to --lc/--vc
+     — so it reads as a plain control, not part of the rune palette. */
+  .rune-stack__toggle {
+    position: absolute;
+    top: 6px; right: 8px;
+    z-index: 80;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+  }
+  .rune-stack__toggle-btn {
+    display: grid;
+    place-items: center;
+    width: 40px; height: 40px;
+    padding: 0;
+    border: 1px solid rgba(236, 232, 223, 0.28);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.04);
+    color: rgba(236, 232, 223, 0.75);   /* muted off-white — fills the masked glyph */
+    cursor: pointer;
+  }
+  body.ready .rune-stack__toggle-btn {
+    transition: background-color 0.2s var(--ease), border-color 0.2s var(--ease), color 0.2s var(--ease);
+  }
+  .rune-stack__toggle-btn:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(236, 232, 223, 0.5);
+    color: rgba(236, 232, 223, 0.95);
+  }
+  /* Reuse the masked-glyph idiom (see .rune-stack__glyph): the file's shape is
+     the mask, currentColor fills it, drop-shadow adds a low neutral glow. */
+  .rune-stack__toggle-btn .rune-stack__glyph {
+    width: 22px; height: 22px;
+    filter: drop-shadow(0 0 4px rgba(236, 232, 223, 0.35));
+  }
+  .rune-stack__toggle-label {
+    font-family: 'Space Grotesk', monospace;
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: rgba(236, 232, 223, 0.6);
   }
 
   /* Unique 5th "cover" card — the only thing shown when the deck is collapsed.
@@ -1095,10 +1137,22 @@
 
         <div class="grid">
           <!-- Interactive rune stack. Layers are built by the rune-stack IIFE below;
-               the deck fans on click and collapses as it scrolls off-screen. -->
+               the deck fans open / collapses via the top-right toggle button, and a
+               layer pops its inscription on click while the deck is open. -->
           <div class="rune-stack" data-rune-stack data-state="init" data-sel="-1"
                aria-label="Studio NEL — interactive rune stack">
             <div class="rune-stack__scene" data-scene><!-- layers injected by JS --></div>
+
+            <!-- Deck toggle: fans open / collapses. reset.svg is pulled in as a
+                 recoloured mask via the shared .rune-stack__glyph (--icon). The
+                 label + aria-expanded track state (see the IIFE). -->
+            <div class="rune-stack__toggle">
+              <button class="rune-stack__toggle-btn" type="button" data-deck-toggle
+                      aria-expanded="false" aria-label="Expand the deck">
+                <span class="rune-stack__glyph" style="--icon: url('icons/reset.svg')"></span>
+              </button>
+              <span class="rune-stack__toggle-label" data-deck-label>Expand</span>
+            </div>
 
             <!-- Unique cover shown only when the deck is collapsed (opacity driven
                  by the rune-stack IIFE). Sits above the scene and never rotates. -->
@@ -1380,12 +1434,11 @@
 
   <script>
     // Rune stack — vanilla port of the standalone demo.
-    //   • scroll into the middle       → the deck fans itself open
-    //   • scroll toward either edge    → the deck scrubs itself closed
-    //   • click a layer                → lift it out + open its inscription
+    //   • click the toggle button      → fan the deck open / collapse it shut
+    //   • click a layer (deck open)    → lift it out + open its inscription
     //   • click the open readout/layer → close it back into the deck
-    // Fan open/close is scroll-position driven (see the EXPAND/COLLAPSE bands
-    // below); click only pops/closes an individual layer while the deck is open.
+    // Fan open/close is driven by the top-right toggle button (wired near the
+    // bottom); click only pops/closes an individual layer while the deck is open.
     // The card is a fixed-dark island; layout transforms are all computed here.
     (function () {
       var container = document.querySelector('[data-rune-stack]');
@@ -1394,6 +1447,8 @@
       var scene  = container.querySelector('[data-scene]');
       var cover  = container.querySelector('[data-cover]');
       var detail = container.querySelector('[data-detail]');
+      var toggleBtn = container.querySelector('[data-deck-toggle]');
+      var toggleLabel = container.querySelector('[data-deck-label]');
       var dName  = detail.querySelector('[data-d-name]');
       var dRune  = detail.querySelector('[data-d-rune]');
       var dHead  = detail.querySelector('[data-d-head]');
@@ -1465,8 +1520,6 @@
         return layer;
       });
 
-      function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
-
       // ---- Layout ----------------------------------------------------------
       // openness: 1 = fully fanned, 0 = stacked monolith (interpolated for the
       // scroll-scrub). sel: index of the popped-out layer, or -1.
@@ -1515,27 +1568,22 @@
         detail.style.pointerEvents = (show && openness > 0.5) ? 'auto' : 'none';
       }
 
-      // Snap the card to its committed state (deck/init) — used after clicks and
-      // when a scrub ends. Transitions are on here, so these changes animate.
+      // Snap the card to its committed state (deck/init) — used after the toggle
+      // button and layer clicks. Transitions are on here, so these changes animate.
       function applyState() {
-        scrubbing = false;
-        container.classList.remove('is-scrubbing');
         var deck = container.dataset.state === 'deck';
         var sel = deck ? +container.dataset.sel : -1;
         applyLayout(deck ? 1 : 0, sel);
         updateDetail(deck ? 1 : 0, sel);
       }
 
-      // ---- Click interaction (reset button removed) ------------------------
-      function inRect(e, b) {
-        return e.clientX >= b.left && e.clientX <= b.right &&
-               e.clientY >= b.top  && e.clientY <= b.bottom;
-      }
-
+      // ---- Layer click interaction (pop / close an inscription) ------------
+      // Deck open/close is driven by the toggle button (wired below); this
+      // handler only pops or closes an individual layer while the deck is open.
       container.addEventListener('click', function (e) {
         var state = container.dataset.state || 'init';
 
-        if (state !== 'deck') return;                 // collapsed → scroll controls open/close; click does nothing
+        if (state !== 'deck') return;                 // collapsed → only the toggle button opens the deck
 
         var cur = +container.dataset.sel;
 
@@ -1578,69 +1626,32 @@
         applyState();
       });
 
-      // ---- Scroll-driven expand + collapse ---------------------------------
-      // The deck's fan is scroll-position driven, not clicked. Each viewport edge
-      // gets its own ramp: the card fans OPEN as it rises in from the bottom
-      // (EXPAND band on topGap) and folds CLOSED as it leaves the top (COLLAPSE
-      // band on botGap). Taking the min after each ramp is what lets the two
-      // bands be tuned independently; with the defaults below it is identical to
-      // the old single-band collapse. Middle of screen → both saturate → open.
-      var scrubbing = false;
-
-      // --- Expand: fans open as the card rises in from the BOTTOM edge (topGap px) ---
-      var EXPAND_START   = 200;   // topGap where fanning BEGINS   (bigger = opens later / higher up)
-      var EXPAND_END     = 380;   // topGap where fully FANNED     (bigger = needs more travel to finish)
-
-      // --- Collapse: folds shut as the card leaves the TOP edge (botGap px) ---
-      var COLLAPSE_START = 380;   // botGap where folding BEGINS   (bigger = starts collapsing sooner)
-      var COLLAPSE_END   = 200;   // botGap where fully COLLAPSED  (bigger = fully gone sooner)
-
-      function onScroll() {
-        var r = container.getBoundingClientRect();
-        var vh = window.innerHeight || document.documentElement.clientHeight;
-        var topGap = vh - r.top;    // entering (bottom) edge: 0 as card top touches viewport bottom, grows as it rises
-        var botGap = r.bottom;      // exiting  (top)   edge: shrinks to 0 as the card leaves the top
-
-        var oExpand   = clamp((topGap - EXPAND_START) / (EXPAND_END - EXPAND_START), 0, 1);
-        var oCollapse = clamp((botGap - COLLAPSE_END) / (COLLAPSE_START - COLLAPSE_END), 0, 1);
-        var openness  = Math.min(oExpand, oCollapse);
-
-        if (openness >= 1) {                           // centred — commit the open deck
-          if (scrubbing || (container.dataset.state || 'init') !== 'deck') {
-            container.dataset.state = 'deck';
-            applyState();                              // applyState clears is-scrubbing
-          }
-          return;
+      // ---- Deck toggle button ----------------------------------------------
+      // Fans the deck open / collapses it shut — the commit path the old scroll
+      // handler used. stopPropagation keeps the click off the container's
+      // layer-select handler above (which would otherwise pick a layer when open).
+      function syncToggle(deck) {
+        if (toggleBtn) {
+          toggleBtn.setAttribute('aria-expanded', String(deck));
+          toggleBtn.setAttribute('aria-label', (deck ? 'Collapse' : 'Expand') + ' the deck');
         }
-
-        if (openness <= 0) {                           // off either edge — commit the collapse
-          if (scrubbing || (container.dataset.state || 'init') !== 'init') {
-            container.dataset.state = 'init';
-            container.dataset.sel = '-1';
-            applyState();
-          }
-          return;
-        }
-
-        container.dataset.state = 'deck';              // mid-scrub: keep layer geometry/sel valid
-        if (!scrubbing) { scrubbing = true; container.classList.add('is-scrubbing'); }
-        applyLayout(openness, +container.dataset.sel);
-        updateDetail(openness, +container.dataset.sel);
+        if (toggleLabel) toggleLabel.textContent = deck ? 'Collapse' : 'Expand';
       }
 
-      var ticking = false;
-      function requestScroll() {
-        if (!ticking) {
-          ticking = true;
-          requestAnimationFrame(function () { ticking = false; onScroll(); });
-        }
+      if (toggleBtn) {
+        toggleBtn.addEventListener('click', function (e) {
+          e.stopPropagation();
+          var deck = (container.dataset.state || 'init') !== 'deck';   // toggle target
+          container.dataset.state = deck ? 'deck' : 'init';
+          if (!deck) container.dataset.sel = '-1';                     // collapsing clears any popped layer
+          syncToggle(deck);
+          applyState();
+        });
       }
-      window.addEventListener('scroll', requestScroll, { passive: true });
-      window.addEventListener('resize', requestScroll, { passive: true });
 
-      // Initial paint, then adopt the openness for wherever the card sits on load
+      // Initial paint — deck loads collapsed (data-state="init" on the container).
+      syncToggle(container.dataset.state === 'deck');
       applyState();
-      requestScroll();
     })();
   </script>
 
