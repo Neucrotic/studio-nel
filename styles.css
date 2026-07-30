@@ -1,0 +1,1167 @@
+/* ===========================================================================
+   Studio NEL — styles.css
+
+   Groups run in dependency order: tokens, themes, base, layout, then one group
+   per component, then responsive and accessibility last.
+
+   ORDER IS LOAD-BEARING in two places (see SPECS.md §Cascade constraints):
+     • .contact-form__field must stay ABOVE .contact-form__topics
+     • both @media blocks must stay LAST
+   Everything else is settled by specificity and may be moved freely.
+
+   @keyframes live with the component that uses them, not in a global block.
+   Derivations, tuning knobs and design rationale live in SPECS.md.
+   =========================================================================== */
+
+
+/* ===========================================================================
+   1. TOKENS
+   =========================================================================== */
+
+:root {
+  --font-display: 'Public Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-body: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+
+  --radius: 18px;
+
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+
+  /* Stone palette (raw, theme-agnostic). The one place every stone colour is
+     defined — the theme blocks below only point at these. Never put a raw hex
+     in a theme block. */
+
+  /* Dark granite */
+  --granite-950: #16181f;      /* deepest — page bg */
+  --granite-900: #1f222c;      /* raised surface — same hue, lifted */
+  --granite-ink: #e6e8ef;      /* cool off-white text */
+  --granite-muted: #8d919d;    /* blue-grey muted */
+
+  /* Yellow limestone */
+  --limestone-bg: #f0e1bd;     /* page bg */
+  --limestone-surf: #f8eed3;   /* raised surface — same hue, lifted */
+  --limestone-ink: #2a2617;    /* dark warm text */
+  --limestone-muted: #6e654e;  /* warm muted */
+
+  /* Cornflower — the site accent */
+  --blue-fill: #139fe8;   /* solid fill / buttons / title glow; reads on dark granite */
+  --blue-deep: #14509c;   /* AA-safe as link text on light limestone (~6:1) — --blue-fill is not */
+  --blue-kaku: #1c4bd9;   /* kaku's own energy accent — drives its glow, circuit + rim */
+
+  /* Hero subheading words — fixed colours, do NOT follow the theme */
+  --accent-artists: #39e6b0;      /* "artists" — teal */
+  --accent-thinkers: #b06bff;  /* "thinkers" — purple */
+}
+
+
+/* ===========================================================================
+   2. THEMES
+   The page theme. Three components are deliberate fixed-dark islands that
+   ignore it entirely: .writelite-card, .kaku-stage, .rune-stack and
+   .contact-card carry their own palettes on the class.
+   =========================================================================== */
+
+/* Studio world — dark (default). granite. */
+[data-theme="dark"] {
+  --bg: var(--granite-950);
+  --surface: var(--granite-900);
+  --text: var(--granite-ink);
+  --muted: var(--granite-muted);
+  --line: rgba(255, 255, 255, 0.09);
+  --accent: var(--blue-fill);         /* site accent — fills */
+  --accent-ink: #ffffff;              /* text on accent fills */
+  --accent-text: var(--blue-fill);    /* accent as text/links; reads on dark granite */
+  --shadow: 0 24px 60px -24px rgba(0, 0, 0, 0.65);
+}
+
+/* Studio world — light. limestone + patina */
+[data-theme="light"] {
+  --bg: var(--limestone-bg);
+  --surface: var(--limestone-surf);
+  --text: var(--limestone-ink);
+  --muted: var(--limestone-muted);
+  --line: rgba(0, 0, 0, 0.10);
+  --accent: var(--blue-fill);
+  --accent-ink: #ffffff;
+  --accent-text: var(--blue-deep);    /* darker blue for contrast on limestone */
+  --shadow: 0 24px 50px -28px rgba(0, 0, 0, 0.20);
+}
+
+
+/* ===========================================================================
+   3. BASE
+   =========================================================================== */
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+/* Stone grain — an inline grayscale feTurbulence data-URI blended into --bg, so
+   one texture tints granite in dark and limestone in light. Scrolls with the
+   page and stays flat (no fixed attachment, no vignette).
+   The encoded data-URI is the ONLY source of truth for the grain parameters —
+   do not add a decoded copy here, it will drift. See SPECS.md §Stone grain. */
+body {
+  margin: 0;
+  display: flex;                   /* sticky-footer column */
+  flex-direction: column;
+  min-height: 100vh;               /* fallback */
+  min-height: 100dvh;              /* mobile dynamic viewport */
+  background-color: var(--bg);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.5' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-blend-mode: soft-light;
+  color: var(--text);
+  overflow-x: hidden;              /* card glides in from off-screen left — no scrollbar flash */
+  font-family: var(--font-body);
+  font-size: 17px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Colour transitions only after first paint (avoids animating the load) */
+body.ready,
+body.ready .toggle {
+  transition: background-color 0.28s var(--ease), color 0.28s var(--ease),
+              border-color 0.28s var(--ease);
+}
+
+.wrap {
+  width: 100%;
+}
+
+a { color: var(--accent-text); }
+
+main { flex: 1 0 auto; }           /* grow so the footer sits at the viewport bottom */
+
+
+/* ===========================================================================
+   4. LAYOUT — sections and the product/studio rows
+   =========================================================================== */
+
+.section {
+  padding-block-start: 40px;                      /* fixed gap: subtitle → title */
+  padding-block-end: 27px;                        /* space above the footer */
+}
+
+/* Tune only the software → studio gap, without touching hero→software or
+   studio→footer. See SPECS.md §Section gaps. */
+#software { padding-block-end: 13.5px; }
+#studio   { padding-block-start: 40px; }
+
+/* The studio row: rune deck left, contact card right, following DOM order.
+   flex-start top-aligns the pair to a shared top edge instead of stretching
+   either card to the other's height (base .grid uses stretch). Scoped to
+   #studio so the shared .grid base — and #software — stay untouched. */
+#studio .grid { margin-top: 40px; flex-direction: row; align-items: flex-start; }
+
+.section__title {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 24px;
+  letter-spacing: -0.01em;
+  text-align: center;
+  margin: 0 0 11px;
+}
+
+/* Product grid — holds up to 3, centres 1 */
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 36px;
+  align-items: stretch;            /* equal-height cards when paired */
+}
+
+
+/* ===========================================================================
+   5. HERO
+   =========================================================================== */
+
+.hero {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding-top: 36px;                        /* space above the title */
+  padding-bottom: 0;                        /* gap below is owned by .section top */
+}
+.hero__title {
+  font-family: 'Public Sans', var(--font-body);
+  font-weight: 500;
+  font-size: 68px;
+  line-height: 0.98;
+  letter-spacing: -0.02em;
+  margin: 0;
+  text-shadow:
+    0 0 10px color-mix(in srgb, var(--accent) 45%, transparent),
+    0 0 24px color-mix(in srgb, var(--accent) 25%, transparent);
+}
+
+.hero__values {
+  margin: 18px auto 0;
+  font-size: 23px;
+  color: var(--muted);
+  max-width: 34ch;
+  font-weight: 400;
+}
+.hero__values .accent {
+  color: var(--accent-artists);
+  text-shadow:
+    0 0 12px color-mix(in srgb, var(--accent-artists) 60%, transparent),
+    0 0 30px color-mix(in srgb, var(--accent-artists) 35%, transparent);
+}
+/* "thinkers" — swap the local token so colour AND glow both go purple */
+.hero__values .accent--alt { --accent-artists: var(--accent-thinkers); }
+
+
+/* ===========================================================================
+   6. THEME TOGGLE — DORMANT
+   The site is locked to dark; the button's markup and handler are commented out
+   in index.html. These rules are kept deliberately, as the restore path.
+   See SPECS.md §The dark lock for exactly what to uncomment.
+   =========================================================================== */
+
+.toggle {
+  position: fixed;
+  top: 28px;
+  right: 28px;
+  z-index: 50;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--muted);
+  cursor: pointer;
+}
+.toggle:hover { color: var(--text); }
+.toggle svg { width: 20px; height: 20px; display: block; }
+.toggle .icon-sun { display: none; }
+[data-theme="light"] .toggle .icon-moon { display: none; }
+[data-theme="light"] .toggle .icon-sun { display: block; }
+
+
+/* ===========================================================================
+   7. WRITELITE CARD — fixed-dark island
+   Behaviour knobs + palette live on the class. The card stays dark in both
+   page themes. Glide/bank/bob and the magnet: SPECS.md §WriteLite card.
+   =========================================================================== */
+
+.writelite-card {
+  --accent: #d4a030;               /* neon rim / amber accent */
+  --glow: 1;                        /* rim glow strength multiplier */
+  --range: 24;                      /* px beyond the edge the magnet pull reaches */
+  --pull: 5;                        /* peak magnet drift */
+  --pc-text: #ece8df;              /* foreground on stone */
+  --pc-muted: #a49e90;             /* meta line */
+  --pc-ink: #1f1e1a;               /* text on an amber fill */
+  perspective: 900px;
+  flex: 0 0 564px;                  /* fixed 564px — never grows or shrinks to fill */
+  max-width: 100%;                  /* shrink only when the viewport is narrower than the card */
+  margin-top: 25px;                 /* aligns the card's top with the kaku chip's top; zeroed once stacked */
+  /* `both` fill is load-bearing: the backwards fill is what parks the card
+     off-screen-left rather than invisible, so it reads as a solid card flying
+     in from outside the page. --glide-delay lets future cards stagger. */
+  animation: pc-glide 2.2s var(--ease) both var(--glide-delay, 0ms);
+}
+
+/* Once the glide finishes, the outer card hands off to the idle bob and the
+   inner drops its bank animation so JS can own the inner's pull/tilt transform. */
+.writelite-card.is-landed { animation: writelite-bob 3.6s ease-in-out infinite; }
+.writelite-card.is-landed .writelite-card__inner { animation: none; }
+
+.writelite-card__inner {
+  position: relative;
+  border-radius: var(--radius);
+  display: grid;
+  grid-template-columns: 144px 1fr;
+  gap: 20px;
+  padding: 16px;
+  align-items: center;
+  color: var(--pc-text);
+  transform-style: preserve-3d;
+  background: linear-gradient(150deg, #2a2320, #131011);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 40px 60px -20px rgba(0, 0, 0, 0.8),
+              inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+  animation: pc-bank 2.2s var(--ease) both var(--glide-delay, 0ms);
+}
+/* Lazy cursor-follow: the pull + tilt ease toward each new pointer position
+   over ~1.5s, so the card drafts after the mouse instead of snapping to it. */
+body.ready .writelite-card,
+body.ready .writelite-card__inner { transition: transform 1.5s var(--ease); }
+
+/* stone grain — baked feTurbulence data-URI */
+.writelite-card__inner::before {
+  content: ""; position: absolute;
+  inset: 0; border-radius: var(--radius);
+  pointer-events: none;
+  opacity: 0.35; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='c'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23c)'/%3E%3C/svg%3E");
+}
+/* neon rim — driven entirely by --accent (no overflow:hidden or the glow clips) */
+.writelite-card__inner::after {
+  content: ""; position: absolute; inset: 0; border-radius: var(--radius);
+  pointer-events: none;
+  border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+  box-shadow: 0 0 24px calc(var(--glow) * 2px) var(--accent),
+              inset 0 0 0 1px color-mix(in srgb, var(--accent) 33%, transparent);
+}
+/* lift the real content above the grain/rim pseudo-layers so text stays crisp */
+.writelite-card__inner > * { position: relative; z-index: 1; }
+
+.writelite-card__logo {
+  display: grid;
+  place-items: center;
+  align-self: start;
+}
+.writelite-card__logo img {
+  width: 144px;
+  height: auto;
+}
+
+.writelite-card__name {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 46px;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+.writelite-card__tagline {
+  margin: 10px 0 0;
+  font-size: 20px;
+  color: var(--accent);
+  font-weight: 500;
+}
+.writelite-card__desc {
+  margin: 14px 0 0;
+  color: var(--pc-text);
+  max-width: 460px;
+}
+.writelite-card__foot {
+  margin-top: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px 24px;
+}
+.writelite-card__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 16px;
+  text-decoration: none;
+  color: var(--pc-text);
+  padding: 11px 21px;
+  border: 1.5px solid var(--accent);
+  border-radius: 999px;
+}
+.writelite-card__cta:hover { background: var(--accent); color: var(--pc-ink); }
+body.ready .writelite-card__cta { transition: background-color 0.2s var(--ease), color 0.2s var(--ease); }
+.writelite-card__meta {
+  font-size: 14px;
+  color: var(--pc-muted);
+  letter-spacing: 0.02em;
+}
+
+/* The outer card flies in fully opaque from off-screen left; the inner banks
+   and levels out, like a ship settling into position. */
+@keyframes pc-glide {
+  from { transform: translateX(-140vw); }
+  to   { transform: translateX(0); }
+}
+@keyframes pc-bank {
+  from { transform: rotateY(24deg) rotateZ(-6deg); }
+  to   { transform: rotateY(0) rotateZ(0); }
+}
+/* Idle float once landed — the WriteLite twin of kaku's hoverbob. Lives on the
+   outer card so it never collides with the magnet pull/tilt on the inner. */
+@keyframes writelite-bob {
+  0%,100% { transform: translateY(2px); }
+  50%     { transform: translateY(-9px); }
+}
+
+
+/* ===========================================================================
+   8. KAKU — self-booting circuit card, fixed-dark island
+     .kaku-stage  — the grid sibling; a fixed square
+     .kaku-card   — the square that lifts + resizes (the "card" itself)
+     __circuit    — the SVG circuit board (injected by stage.js)
+     __rim        — WriteLite-style kaku-blue aura; flickers once then holds
+
+   stage.js mutates inline styles to run the phase timeline. The base styles
+   below ARE the `dormant` look — keep them that way, or the card flashes a
+   later phase before the boot starts. Timeline + derivations: SPECS.md §kaku.
+   =========================================================================== */
+
+.kaku-stage {
+  --acc: var(--blue-kaku);           /* energy colour — drives glow, circuit, rim */
+  --glow: 1;                          /* glow-strength multiplier */
+  --range: 24;                        /* px beyond the edge the magnet pull reaches */
+  --pull: 5;                          /* peak magnet drift */
+  position: relative;
+  flex: 0 0 auto;
+  width: min(434px, 90vw);            /* the whole square animation system scales off this */
+  aspect-ratio: 1 / 1;
+  max-width: 100%;
+  perspective: 900px;                 /* depth for the magnet tilt (matches WriteLite) */
+  display: grid;
+  place-items: center;
+}
+.kaku-stage__inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  /* the magnet's free transform layer — eases toward the pointer. Untouched
+     until the boot arms it. */
+  transition: transform 1.5s var(--ease);
+}
+.kaku-stage__shadow {
+  position: absolute; left: 50%; bottom: 15%;
+  width: 52%; height: 12%;
+  transform: translate(-50%, 0) scale(1);
+  border-radius: 50%;
+  background: radial-gradient(closest-side, #000000cc, transparent 78%);
+  filter: blur(8px);
+  opacity: .5;
+  transition: transform .95s cubic-bezier(.2,.8,.2,1), opacity .95s ease, filter .95s ease;
+  z-index: 1;
+}
+.kaku-stage__glow {
+  position: absolute; left: 50%; top: 48%;
+  width: 90%; height: 90%;
+  transform: translate(-50%, -50%) scale(.7);
+  border-radius: 50%;
+  background: radial-gradient(closest-side, var(--acc), transparent 72%);
+  opacity: 0;
+  filter: blur(6px);
+  mix-blend-mode: screen;
+  transition: opacity .8s ease, transform .8s cubic-bezier(.2,.8,.2,1);
+  z-index: 2;
+}
+.kaku-stage__circuit {
+  position: absolute; inset: 3%;
+  z-index: 3;
+  color: var(--acc);                  /* currentColor for the injected SVG traces */
+  filter: none;
+  transition: filter .6s ease;
+}
+.kaku-stage__lift {
+  position: relative;
+  z-index: 4;
+  /* 88.4% is the card's LEVITATED size — its real box. The card must rest
+     untransformed at this size so its text rasterises at 1:1 and stays crisp;
+     the boot runs the scale the other way, from 1/1.7 up to 1. */
+  width: 88.4%;
+  aspect-ratio: 1 / 1;
+  display: grid;
+  place-items: center;
+}
+.kaku-card {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  /* Decoration lengths are authored at LEVITATED size; the DORMANT phase
+     scales them back down. See SPECS.md §kaku/scale. */
+  border-radius: 23.8px;
+  background: linear-gradient(135deg,#333842 0%,#20242c 40%,#14171d 72%,#0d0f14 100%),
+              repeating-linear-gradient(118deg, rgba(255,255,255,.05) 0 1px, transparent 1px 6px);
+  border: 1.7px solid #ffffff22;
+  box-shadow: inset 0 1.7px 0 #ffffff2e, inset 0 0 74.8px #0009, 0 37.4px 74.8px -37.4px #000d;
+  overflow: hidden;
+  /* 1/1.7 — the dormant size. Must be the inverse, not identity, or the card
+     flashes at full size before the boot starts. */
+  transform: scale(0.5882352941);
+  filter: brightness(.5) saturate(.55);   /* dormant look — matches the base phase */
+  transition: transform 1.1s cubic-bezier(.2,.8,.2,1), filter .6s ease;
+
+  /* --- card face tokens (the dictionary entry) --- */
+  /* Lit colour for the "building..." line ONLY. The glyph does NOT use this:
+     it is a 144px mark, not text, and paints raw --blue-kaku so it matches the
+     circuit nodes exactly. */
+  --k-lit: color-mix(in srgb, var(--acc) 45%, #dbe6ff);
+  /* dead-trace grey — the glyph's colour before it ignites. A token because
+     the ignition keyframes below have to name it too. */
+  --k-dead: #3c414a;
+  --k-pad: 20px;
+}
+/* WriteLite-style rim aura — overlays .kaku-card, mirrors its scale in JS.
+   Authored at the same levitated size as .kaku-card and scaled by the same
+   inverse while dormant, so the two never drift apart. */
+.kaku-stage__rim {
+  position: absolute; inset: 0;
+  border-radius: 23.8px;
+  pointer-events: none;
+  opacity: 0;                         /* off until the boot's flicker phase */
+  transform: scale(0.5882352941);
+  border: 1.7px solid color-mix(in srgb, var(--acc) 40%, transparent);
+  box-shadow: 0 0 40.8px calc(var(--glow) * 3.4px) var(--acc),
+              inset 0 0 0 1.7px color-mix(in srgb, var(--acc) 33%, transparent);
+  transition: opacity .8s ease, transform 1.1s cubic-bezier(.2,.8,.2,1);
+}
+
+/* --- the card face: revealed once the boot settles at 'hold' ---------------
+   stage.js sets data-face="on" to drive the fades in order, then
+   data-glyph="lit" for the ignition once the typing has finished.
+   Every value here is plain px and means exactly what it renders at. Never
+   author the face against a scale — the text would be rasterised small and
+   stretched, which is what made it blurry before. */
+.kaku-card__face {
+  /* Plain block flow — NOT flex/grid and no overflow, or .kaku-card__glyph's
+     float stops shortening the text's line boxes. */
+  position: absolute;
+  inset: 0;
+  padding: var(--k-pad);
+}
+/* Etched mark, top-left. Floated (not absolute) so the entry text runs beside
+   it and then leaks underneath line by line, like a dictionary page. */
+.kaku-card__glyph {
+  float: left;
+  width: 144px;                       /* matches the WriteLite logo's rendered size */
+  height: 144px;
+  margin: 0 12px 10px 0;
+  /* dormant: cut into the plate — dead-trace grey with a hairline light lip below */
+  color: var(--k-dead);
+  filter: drop-shadow(0 1.7px 0 rgba(255,255,255,.06));
+  /* Held back until the reveal. Floats still reserve their box when
+     transparent, so nothing reflows when it appears. `color` is deliberately
+     NOT transitioned: the ignition below owns it. */
+  opacity: 0;
+  transition: opacity .5s ease, filter .7s ease;
+}
+/* Beat 1 — the unlit mark fades in ahead of the entry text. */
+.kaku-card[data-face="on"] .kaku-card__glyph { opacity: 1; }
+/* Beat 4 — ignition, once "building..." has finished typing. Shares the card's
+   own 0.62s boot-flicker duration so the two read as one electrical event. */
+.kaku-card[data-glyph="lit"] .kaku-card__glyph {
+  color: var(--blue-kaku);
+  animation: kaku-glyph-ignite .62s ease-out;
+}
+@keyframes kaku-glyph-ignite {
+    0%{ color: var(--k-dead) }   8%{ color: var(--blue-kaku) }  16%{ color: var(--k-dead) }
+   34%{ color: var(--blue-kaku) } 48%{ color: var(--k-dead) }   68%{ color: var(--blue-kaku) }
+   82%{ color: var(--k-dead) }  100%{ color: var(--blue-kaku) }
+}
+/* Beat 2 — the entry itself, staggered line by line behind the glyph's fade. */
+.kaku-card__word,
+.kaku-card__pos,
+.kaku-card__gloss {
+  margin: 0;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity .4s ease, transform .4s var(--ease);
+}
+.kaku-card[data-face="on"] .kaku-card__word,
+.kaku-card[data-face="on"] .kaku-card__pos,
+.kaku-card[data-face="on"] .kaku-card__gloss {
+  opacity: 1;
+  transform: translateY(0);
+}
+/* 500ms = the glyph's fade, so the entry starts as the mark lands. */
+.kaku-card[data-face="on"] .kaku-card__word  { transition-delay: 500ms; }
+.kaku-card[data-face="on"] .kaku-card__pos   { transition-delay: 620ms; }
+.kaku-card[data-face="on"] .kaku-card__gloss { transition-delay: 740ms; }
+
+.kaku-card__word {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 42px;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+  color: #e6e8ef;
+}
+/* Breaks onto its own line beneath the headword — the geometry forces it
+   rather than leaving the dictionary setting to chance. */
+.kaku-card__ipa {
+  font-weight: 400;
+  font-size: 20px;
+  color: #8d919d;
+}
+.kaku-card__pos {
+  margin-top: 10px;
+  font-family: var(--font-body);
+  font-style: italic;
+  font-size: 16px;
+  line-height: 1.3;
+  color: #8d919d;
+}
+.kaku-card__gloss {
+  margin-top: 8px;
+  font-family: var(--font-body);
+  font-size: 18px;
+  line-height: 1.35;
+  color: #b9bec9;
+}
+/* Typed status line — sits well above the bottom edge rather than on the
+   padding, so the caret has room to blink without crowding the corner. */
+.kaku-card__build {
+  position: absolute;
+  left: var(--k-pad);
+  bottom: 100px;
+  margin: 0;
+  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 28px;
+  line-height: 1;
+  color: var(--k-lit);
+  text-shadow: 0 0 14px color-mix(in srgb, var(--acc) 55%, transparent);
+}
+/* Block caret — off until the typing starts, then blinks for good. 1ch is one
+   character cell in a monospace font, so it sits in the line like a real
+   terminal cursor rather than as an arbitrary bar. */
+.kaku-card__caret {
+  display: inline-block;
+  width: 1ch;
+  height: 1em;
+  vertical-align: -0.12em;
+  background: currentColor;
+  opacity: 0;
+}
+.kaku-card[data-typing] .kaku-card__caret {
+  animation: kaku-caret 1.06s steps(1) infinite;
+}
+.kaku-card[data-typing="static"] .kaku-card__caret {
+  animation: none;
+  opacity: 1;                              /* reduced motion — caret sits lit */
+}
+@keyframes kaku-caret {
+  0%, 49%   { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
+/* One-shot rim ignition: flickers, then stage.js pins it steady at opacity 1. */
+@keyframes kaku-rim-flicker {
+  0%   { opacity: 0; }
+  10%  { opacity: 1; }
+  22%  { opacity: .25; }
+  38%  { opacity: .95; }
+  54%  { opacity: .35; }
+  72%  { opacity: 1; }
+  86%  { opacity: .55; }
+  100% { opacity: 1; }
+}
+/* The card's ignition flicker + the airborne bob. */
+@keyframes kaku-flicker {
+  0%{opacity:.35} 8%{opacity:1} 14%{opacity:.45} 22%{opacity:.95} 30%{opacity:.28}
+  42%{opacity:1} 52%{opacity:.6} 64%{opacity:1} 76%{opacity:.55} 88%{opacity:.95} 100%{opacity:1}
+}
+@keyframes kaku-hoverbob {
+  0%,100%{ transform: translateY(2px); }
+  50%    { transform: translateY(-9px); }
+}
+
+
+/* ===========================================================================
+   9. RUNE DECK — interactive fixed-dark island
+   The deck fans open/collapses via the top-right toggle button; click a layer
+   to open its inscription in the slab. deck.js drives all layout transforms.
+   Fan maths + state model: SPECS.md §Rune deck.
+   =========================================================================== */
+
+.rune-stack {
+  --vc: #ffb454;                 /* frame accent — the label */
+  --glow: 1;                     /* glow-strength multiplier */
+  position: relative;
+  /* The deck's layers are position:absolute, so the stack has no natural size
+     — these two tokens reserve the box the fan spreads from. Tunable; raise
+     --rune-stage if the open fan reaches the label. */
+  width: var(--rune-width, 400px);
+  height: var(--rune-stage, 380px);
+  border-radius: var(--radius);
+  overflow: visible;              /* box is transparent — let the open fan spill past it */
+  perspective: 2400px;
+  perspective-origin: 50% 50%;
+}
+/* Pointer only where a click does something. Fanned, a click anywhere in the
+   box selects the nearest layer, so the whole box earns it; collapsed, only
+   the cover card does and the transparent margin around it is inert. */
+.rune-stack[data-state="deck"] { cursor: pointer; }
+.rune-stack__scene {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transition: transform 1.2s cubic-bezier(0.3, 0.8, 0.2, 1);
+}
+.rune-stack__layer {
+  position: absolute;
+  left: 50%; top: 50%;
+  width: 182px; height: 182px;
+  margin: -91px;
+  transform-style: preserve-3d;
+  transition: transform 1.2s cubic-bezier(0.3, 0.8, 0.2, 1), opacity 0.9s;
+}
+.rune-stack__face {
+  position: absolute; inset: 0;
+  border-radius: 12px;
+  background: linear-gradient(150deg, #3b404a, #191c22);
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.67), inset 0 0 26px rgba(0, 0, 0, 0.44);
+  display: grid;
+  place-items: center;
+  font-family: 'Cinzel', serif;
+  font-size: 52px;
+  color: var(--lc);
+  text-shadow: 0 0 calc(var(--glow) * 18px) var(--lc);
+}
+/* Icons are external files in icons/, pulled in as a CSS mask so the page can
+   recolour and glow them per card: the mask is the file's shape,
+   `background: currentColor` fills it with the card accent, drop-shadow adds
+   the glow. An icon file MUST be stroke-based and fill="none"
+   stroke="currentColor", or its shape will not mask cleanly.
+   Adding one: SPECS.md §Rune deck/icons. */
+.rune-stack__glyph {
+  display: block;
+  background: currentColor;                 /* filled with the inherited accent */
+  -webkit-mask: var(--icon) center / contain no-repeat;
+          mask: var(--icon) center / contain no-repeat;
+}
+.rune-stack__face .rune-stack__glyph {
+  width: 60px;
+  height: 60px;
+  filter: drop-shadow(0 0 calc(var(--glow) * 10px) var(--lc));
+}
+.rune-stack__rim {
+  position: absolute; inset: 0;
+  border-radius: 12px;
+  border: 1px solid var(--lc);
+  opacity: 0.45;
+  pointer-events: none;
+}
+.rune-stack__tag {
+  position: absolute; left: 10px; top: 9px;
+  font-family: 'Space Grotesk', monospace;
+  font-size: 12px;
+  letter-spacing: 1px;
+  color: var(--lc);
+  opacity: 0.85;
+  text-transform: uppercase;
+}
+
+/* Deck toggle — fans the deck open / collapses it shut. Anchored top-right,
+   mirroring the top-left __tag. z-index sits above the detail slab (z 70) so
+   it stays visible + clickable in BOTH the collapsed and fanned states.
+   Deliberately neutral — not keyed to --lc/--vc — so it reads as a plain
+   control, not part of the rune palette. */
+.rune-stack__toggle {
+  position: absolute;
+  top: 6px; right: -24px;
+  z-index: 80;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+.rune-stack__toggle-btn {
+  display: grid;
+  place-items: center;
+  width: 40px; height: 40px;
+  padding: 0;
+  border: 1px solid rgba(236, 232, 223, 0.28);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(236, 232, 223, 0.75);   /* muted off-white — fills the masked glyph */
+  cursor: pointer;
+}
+body.ready .rune-stack__toggle-btn {
+  transition: background-color 0.2s var(--ease), border-color 0.2s var(--ease), color 0.2s var(--ease);
+}
+.rune-stack__toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(236, 232, 223, 0.5);
+  color: rgba(236, 232, 223, 0.95);
+}
+/* Reuses the masked-glyph idiom above, with a low neutral glow. */
+.rune-stack__toggle-btn .rune-stack__glyph {
+  width: 22px; height: 22px;
+  filter: drop-shadow(0 0 4px rgba(236, 232, 223, 0.35));
+}
+.rune-stack__toggle-label {
+  font-family: 'Space Grotesk', monospace;
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: rgba(236, 232, 223, 0.6);
+  /* Reserve the longest caption's width ("COLLAPSE") so the wrapper — and the
+     button centred in it — don't resize/shift when the label swaps on toggle. */
+  min-width: 72px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* Unique 5th "cover" card — the only thing shown when the deck is collapsed.
+   Shares the face's stone surface but carries wrapped heading text instead of a
+   single rune. Opacity is driven per-frame by deck.js (1 collapsed, 0 fanned);
+   it sits above the deck layers so no fading card bleeds over it. */
+.rune-stack__cover {
+  --lc: var(--blue-fill);          /* site accent blue */
+  position: absolute;
+  left: 50%; top: 50%;
+  width: 182px; height: 182px;
+  margin: -91px;
+  z-index: 65;                     /* above the deck layers (max 60 when popped) */
+  /* Fanned, the cover sits invisible over the centre of the stage — it must not
+     swallow clicks meant for the layers underneath. Collapsed, it IS the click
+     target, so the rule below hands it back its events. */
+  pointer-events: none;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  padding: 0 16px;
+  text-align: center;
+  border-radius: 12px;
+  background: linear-gradient(150deg, #3b404a, #191c22);
+  border: 1px solid var(--lc);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.67), inset 0 0 26px rgba(0, 0, 0, 0.44),
+              0 0 18px -6px var(--lc);
+  font-family: 'Public Sans', var(--font-body);   /* same stack as .hero__title */
+  font-size: 26px;
+  line-height: 1.25;
+  color: var(--lc);
+  text-shadow: 0 0 12px var(--lc);
+  transition: opacity 0.9s;
+}
+/* Collapsed only: the cover becomes a real hit target, so clicking it opens
+   the deck (handled in deck.js) and it can show its own cursor. */
+.rune-stack[data-state="init"] .rune-stack__cover { pointer-events: auto; }
+
+.rune-stack__detail {
+  position: absolute; left: 50%; top: 50%;
+  width: 64%;
+  max-width: 300px;
+  z-index: 70;
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.9);
+  pointer-events: none;
+  transition: opacity 0.9s ease, transform 1.2s cubic-bezier(0.3, 0.8, 0.2, 1);
+  padding: 28px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 12px;
+  border-radius: 16px;
+  background: linear-gradient(150deg, #3b404a, #191c22);
+  border: 1px solid var(--rc, #ffb454);
+  box-shadow: 0 34px 66px -22px rgba(0, 0, 0, 0.93),
+              inset 0 0 46px rgba(0, 0, 0, 0.5),
+              0 0 calc(var(--glow) * 34px) -8px var(--rc, #ffb454);
+}
+.rune-stack__d-name {
+  font-family: 'Space Grotesk', monospace;
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: var(--rc, #ffb454);
+  text-transform: uppercase;
+}
+.rune-stack__d-rune {
+  font-family: 'Cinzel', serif;
+  font-size: 66px;
+  line-height: 1;
+  color: var(--rc, #ffb454);
+  text-shadow: 0 0 calc(var(--glow) * 24px) var(--rc, #ffb454);
+}
+/* Larger icon in the popped inscription slab — the face's masked-glyph
+   treatment scaled up, glow keyed to the readout accent (--rc). */
+.rune-stack__d-rune .rune-stack__glyph {
+  width: 72px;
+  height: 72px;
+  filter: drop-shadow(0 0 calc(var(--glow) * 14px) var(--rc, #ffb454));
+}
+.rune-stack__d-rule {
+  width: 48px; height: 1px;
+  background: var(--rc, #ffb454);
+  opacity: 0.6;
+}
+.rune-stack__d-head {
+  font-family: 'Cinzel', serif;
+  font-weight: 500;
+  font-size: 22px;
+  letter-spacing: 0.5px;
+  color: var(--rc, #ffb454);
+  text-shadow: 0 0 calc(var(--glow) * 12px) rgba(0, 0, 0, 0.33);
+}
+.rune-stack__d-body {
+  font-family: 'Space Grotesk', monospace;
+  font-size: 12.5px;
+  line-height: 1.65;
+  color: var(--rc, #ffb454);
+  opacity: 0.85;
+  text-wrap: pretty;
+}
+
+
+/* ===========================================================================
+   10. CONTACT — static fixed-dark island + the form
+   Shares the rune cards' cool stone gradient and the WriteLite card's surface
+   treatment, but is deliberately STATIC: no accent rim glow, and none of the
+   WriteLite motion (glide, bank, magnet, tilt). Width: SPECS.md §Layout.
+   =========================================================================== */
+
+.contact-card {
+  --pc-text: #ece8df;              /* foreground on stone */
+  --pc-muted: #a49e90;             /* muted meta */
+  flex: 0 0 598px;                 /* fixed 598px — never grows or shrinks to fill */
+  max-width: 100%;                 /* shrink only when the viewport is narrower */
+}
+
+.contact-card__inner {
+  position: relative;
+  border-radius: var(--radius);
+  padding: 28px;
+  color: var(--pc-text);
+  background: linear-gradient(150deg, #3b404a, #191c22);   /* same cool stone as the rune cards */
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 40px 60px -20px rgba(0, 0, 0, 0.8),        /* island drop shadow — no coloured rim */
+              inset 0 0 46px rgba(0, 0, 0, 0.5),           /* dark vignette — the rune cards' swept depth */
+              inset 0 0 0 1px rgba(255, 255, 255, 0.04);   /* faint inner hairline */
+}
+
+/* stone grain — same baked feTurbulence data-URI as the WriteLite card */
+.contact-card__inner::before {
+  content: ""; position: absolute;
+  inset: 0; border-radius: var(--radius);
+  pointer-events: none;
+  opacity: 0.35; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='c'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23c)'/%3E%3C/svg%3E");
+}
+/* keep real content crisp above the grain layer */
+.contact-card__inner > * { position: relative; z-index: 1; }
+
+/* Awaiting markup — see the EDIT: contact-heading marker in index.html. */
+.contact-card__title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 32px;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+/* --- the form: a neon terminal on obsidian ------------------------------
+   Fields render as lit screens: near-black panels with an accent-tinted rim +
+   glow (the same neon idiom as the WriteLite card's rim), accent-coloured
+   monospace text. */
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-top: 22px;
+}
+
+/* MUST stay above .contact-form__topics — that rule flips flex-direction to
+   row on an element carrying both classes, and wins on position alone. */
+.contact-form__field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border: 0;             /* reset the <fieldset> the topics group uses */
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
+
+/* terminal captions — small, uppercase, muted stone */
+.contact-form__label {
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--pc-muted);
+  padding: 0;
+}
+
+/* the screens — obsidian panels, accent rim + glow, accent monospace text */
+.contact-form__input,
+.contact-form__message {
+  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 15px;
+  color: var(--accent);
+  background: rgba(8, 10, 14, 0.85);
+  border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+  border-radius: 10px;
+  padding: 12px 14px;
+  box-shadow: inset 0 0 18px rgba(0, 0, 0, 0.6),
+              0 0 12px color-mix(in srgb, var(--accent) 18%, transparent);
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+.contact-form__input::placeholder,
+.contact-form__message::placeholder {
+  color: color-mix(in srgb, var(--accent) 45%, transparent);
+}
+
+/* screen-on: intensify the glow on focus (keyboard outline still applies) */
+.contact-form__input:focus,
+.contact-form__message:focus {
+  outline: none;
+  border-color: color-mix(in srgb, var(--accent) 70%, transparent);
+  box-shadow: inset 0 0 18px rgba(0, 0, 0, 0.5),
+              0 0 22px color-mix(in srgb, var(--accent) 40%, transparent);
+}
+
+.contact-form__message {
+  width: 500px;
+  height: 200px;
+  max-width: 100%;        /* never overflow the 598px card on narrow viewports */
+  resize: vertical;       /* adjustable height */
+  line-height: 1.5;
+}
+
+/* radio group — neon chips that light up when selected */
+.contact-form__topics {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+.contact-form__topics .contact-form__label {
+  flex: 0 0 100%;         /* legend on its own line above the chips */
+  margin-bottom: 8px;     /* match the 8px label→input gap of the other fields */
+}
+.contact-form__topic {
+  display: inline-flex;
+  cursor: pointer;
+}
+.contact-form__topic input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;   /* native dot hidden; the <span> is the visible chip */
+}
+.contact-form__topic span {
+  display: inline-block;
+  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 14px;
+  color: color-mix(in srgb, var(--accent) 75%, var(--pc-text));
+  background: rgba(8, 10, 14, 0.85);
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+  border-radius: 999px;
+  padding: 8px 16px;
+  transition: color 0.18s ease, border-color 0.18s ease,
+              background 0.18s ease, box-shadow 0.18s ease;
+}
+.contact-form__topic:hover span {
+  border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+}
+.contact-form__topic input:checked + span {
+  color: var(--accent-ink);
+  background: var(--accent);
+  border-color: var(--accent);
+  box-shadow: 0 0 16px color-mix(in srgb, var(--accent) 55%, transparent);
+}
+/* keyboard focus ring on the chip (input is visually hidden) */
+.contact-form__topic input:focus-visible + span {
+  outline: 2px solid var(--accent-text);
+  outline-offset: 3px;
+}
+
+.contact-form__submit {
+  align-self: flex-start;        /* form layout, not part of the button's identity */
+  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 1px;
+  color: var(--accent);
+  background: none;              /* no fill, in any state */
+  border: 1px solid var(--accent);
+  border-radius: 14px;
+  padding: 16px 30px;
+  cursor: pointer;
+  position: relative;   /* anchor for the click ripple */
+  overflow: hidden;     /* clip the ripple to the button */
+  transition: transform 0.12s ease-out;
+}
+
+/* sending / sent states — read as inactive */
+.contact-form__submit:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+/* failure line — the terminal caption idiom, in red. No red token exists in
+   :root; #ff5a6a matches the rune deck's ember. */
+.contact-form__status {
+  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  color: #ff5a6a;
+  margin: 0;
+}
+
+
+/* ===========================================================================
+   11. FOOTER
+   =========================================================================== */
+
+.foot {
+  padding-block: 23px;
+  /* Anchors the footer text to the content rows, reproducing what flex
+     centring leaves at each side. Floors at 0 below the row width, where the
+     cards go flush too. See SPECS.md §Layout. */
+  padding-inline: max(0px, (100% - 1034px) / 2);
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 0.9rem;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+
+/* ===========================================================================
+   12. RESPONSIVE — must stay after every base rule it overrides
+   =========================================================================== */
+
+@media (max-width: 720px) {
+  /* Small-screen spacing + type. Keeps narrow viewports from inheriting the
+     frozen desktop numbers. */
+  .hero            { padding-top: 24px; }
+  .hero__title     { font-size: 38px; }
+  .hero__values    { margin-top: 12px; font-size: 18px; }
+  .section         { padding-block-end: 20px; }
+  .section__title  { font-size: 18px; margin-bottom: 8px; }
+  .grid            { gap: 24px; }
+  .foot            { padding-block: 16px; }
+
+  /* Stacked column — no kaku beside it to align to, so drop the 25px offset. */
+  .writelite-card { margin-top: 0; }
+
+  .writelite-card__inner {
+    grid-template-columns: 1fr;
+    gap: 14px;
+    padding: 14px;
+    text-align: left;
+  }
+  .writelite-card__logo { justify-items: start; margin-bottom: 8px; }
+  .writelite-card__logo img { width: 128px; }
+  .writelite-card__name { font-size: 32px; }
+  .writelite-card__tagline { font-size: 17px; }
+  .writelite-card__foot { margin-top: 19px; }
+
+  .rune-stack { --rune-stage: 320px; }
+}
+
+
+/* ===========================================================================
+   13. ACCESSIBILITY — last
+   =========================================================================== */
+
+:focus-visible {
+  outline: 2px solid var(--accent-text);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  * { transition: none !important; animation: none !important; }
+  /* Glide is off, so pin the card to its resting position (no off-screen
+     fill) and keep it level — no glide, no tilt, no pull. */
+  .writelite-card { transform: none !important; }
+  .writelite-card__inner { transform: none !important; }
+}
