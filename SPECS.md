@@ -155,6 +155,14 @@ software → studio gap without touching hero → software or studio → footer,
 edge instead of stretching either to the other's height (base `.grid` uses
 `stretch`). Scoped to `#studio` so `.grid` and `#software` stay untouched.
 
+One child opts back out: `.rune-column` carries `align-self: stretch`, so it —
+and only it — takes the flex line's cross-size, which is whatever height the
+contact card's content sets. That is what gives the deck column room to hold its
+intro copy at the top and centre the deck beneath it. `align-self` on the one
+child rather than `align-items: stretch` on the container is deliberate: the
+container rule would reach the contact card too. Below 1034px the row wraps, each
+item gets its own line, and the stretch becomes a no-op.
+
 ---
 
 ## WriteLite card
@@ -362,6 +370,32 @@ reserve the box the fan spreads from. The box is transparent with
 `overflow: visible`, so the open fan is allowed to spill past it — raise
 `--rune-stage` if the fan starts reaching the label.
 
+`--rune-width` is **declared on `.rune-column`**, not on the stack, so one token
+sizes both the column's flex basis and the stage. `.rune-stack` reads it as
+`var(--rune-width, 400px)`; the fallback covers the stack being used outside a
+column.
+
+### Fan extent
+
+How far the open fan actually reaches, derived from the composed transforms
+rather than eyeballed — it is what decides how much can sit above the deck. The
+scene's `rotateX(-58°) rotateZ(-45°)` composed with each layer's
+`translate3d(-o·92, o·92, 0)`, projected through `perspective: 2400px`:
+
+- Layer centres land at `y = 68.95·o`, `z = -110.33·o` from the stage centre.
+- Each 182px card spans `±68.2` in y and `±109.1` in z about its own centre.
+- Highest point: `y = 206.1` at `z = -329.8` → `× 2400/2729.8` = **181px up**.
+- Lowest point: `y = -206.1` at `z = +329.8` → `× 2400/2070.2` = **239px down**.
+
+Against the 380px box's ±190px edges, the fan **clears the top edge by 9px and
+overhangs the bottom by 49px**. The upward spill does not exist, which is why
+`.rune-column`'s copy is safe above the box with any positive gap — but that 9px
+is the whole margin. Shrinking `--rune-stage` below 380px pushes the fan out
+through the top and into the copy.
+
+The popped card projects to ~220px square (`z: 320px`, `scale 1.05`) and the
+detail slab runs ~340px tall; both stay inside the box.
+
 ### State model
 
 | Attribute | Values |
@@ -481,7 +515,7 @@ Marked `EDIT:` in `index.html`:
 | `values-line` | The studio one-liner under the title |
 | `wl-description` | WriteLite card body copy |
 | `studio-intro` | Section title/copy for the "as a developer" pitch — TBD |
-| `contact-heading` | Contact card heading — no markup yet |
+| `contact-heading` | Contact card heading — "Ask NEL about building your software" |
 | `contact-fields` | The form's field set |
 
 ---
@@ -491,21 +525,18 @@ Marked `EDIT:` in `index.html`:
 Documented rather than changed — each is either harmless or carries a real risk
 if "fixed" carelessly.
 
-- **Unreachable JS fallbacks.** Both magnets do
-  `parseFloat(getComputedStyle(el).getPropertyValue('--range')) || 260`. The CSS
-  always sets `--range: 24` / `--pull: 5`, so the `260`/`48` fallbacks in
-  `cards.js` can never fire. They read as a contradiction but are dead code;
-  changing them is a behaviour risk for zero gain.
+- **Unreachable magnet fallbacks.** Both magnets do
+  `parseFloat(getComputedStyle(el).getPropertyValue('--range')) || 24`. The CSS
+  always sets `--range: 24` / `--pull: 5`, so the fallback can never fire.
+  `cards.js` and `stage.js` carry the same values. It is kept rather than
+  stripped because of how it fails: with the tokens missing, `parseFloat('')`
+  returns `NaN`, the `edge >= range` guard stops firing (every comparison with
+  `NaN` is false), and the emitted `translate(NaNpx,NaNpx)` is silently dropped
+  by the CSSOM — the pull would die with no error and no visible breakage. The
+  fallback makes that degrade to working behaviour instead.
 - **`--glide-delay`** is read with a `0ms` fallback and never set. Stagger hook
-  for a second product card.
-- **`--vc: #ffb454`** is defined on `.rune-stack` and never read. The detail slab
-  uses `--rc` with a `#ffb454` fallback instead.
-- **`--shadow`** is defined in both theme blocks and never read anywhere.
-- **`.contact-card__title`** has a full rule but no markup — it is waiting on the
-  `EDIT: contact-heading` marker. Do not delete it as "dead".
-- **`NAMES[1]` is `'analyics'`**, missing its `t`. It renders in the deck tag and
-  the readout as `// ANALYICS`. Left alone because fixing it changes what the
-  page displays.
+  for a second product card. This is a *consumed* variable with no definition,
+  which is not the same thing as an unused definition — don't "clean" it away.
 - **`.kaku-card__build`** previously carried a comment deriving its position from
   a 38px font size; the actual `font-size` is 28px. The arithmetic was stale, so
   only the intent (a deliberate tail of space below the line) is recorded above.

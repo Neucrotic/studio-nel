@@ -182,38 +182,44 @@
     <!-- Studio / "as a developer" -->
     <section class="section" id="studio">
       <div class="wrap">
-        <!-- EDIT: studio-intro — section title/copy for the "as a developer" pitch (TBD) -->
-
         <div class="grid">
-          <!-- Interactive rune stack. Layers are built by deck.js;
-               the deck fans open / collapses via the top-right toggle button, and a
-               layer pops its inscription on click while the deck is open. -->
-          <div class="rune-stack" data-rune-stack data-state="init" data-sel="-1"
-               aria-label="Studio NEL — interactive rune stack">
-            <div class="rune-stack__scene" data-scene><!-- layers injected by JS --></div>
+          <!-- Deck column: intro copy pinned to the top, the deck centred in
+               whatever height the contact card beside it sets. -->
+          <div class="rune-column">
+            <h3 class="rune-column__title">What can NEL do for you?</h3>
+            <p class="rune-column__body">Every business needs a tech stack. Not every
+              business needs to spend big bucks to build and maintain it.</p>
 
-            <!-- Deck toggle: fans open / collapses. reset.svg is pulled in as a
-                 recoloured mask via the shared .rune-stack__glyph (--icon). The
-                 label + aria-expanded track state (see deck.js). -->
-            <div class="rune-stack__toggle">
-              <button class="rune-stack__toggle-btn" type="button" data-deck-toggle
-                      aria-expanded="false" aria-label="Expand the deck">
-                <span class="rune-stack__glyph" style="--icon: url('icons/reset.svg')"></span>
-              </button>
-              <span class="rune-stack__toggle-label" data-deck-label>Expand</span>
-            </div>
+            <!-- Interactive rune stack. Layers are built by deck.js;
+                 the deck fans open / collapses via the top-right toggle button, and a
+                 layer pops its inscription on click while the deck is open. -->
+            <div class="rune-stack" data-rune-stack data-state="init" data-sel="-1"
+                 aria-label="Studio NEL — interactive rune stack">
+              <div class="rune-stack__scene" data-scene><!-- layers injected by JS --></div>
 
-            <!-- Unique cover shown only when the deck is collapsed (opacity driven
-                 by deck.js). Sits above the scene and never rotates. -->
-            <div class="rune-stack__cover" data-cover>Studio NEL</div>
+              <!-- Deck toggle: fans open / collapses. reset.svg is pulled in as a
+                   recoloured mask via the shared .rune-stack__glyph (--icon). The
+                   label + aria-expanded track state (see deck.js). -->
+              <div class="rune-stack__toggle">
+                <button class="rune-stack__toggle-btn" type="button" data-deck-toggle
+                        aria-expanded="false" aria-label="Expand the deck">
+                  <span class="rune-stack__glyph" style="--icon: url('icons/reset.svg')"></span>
+                </button>
+                <span class="rune-stack__toggle-label" data-deck-label>Expand</span>
+              </div>
 
-            <div class="rune-stack__detail" data-detail>
-              <span class="rune-stack__d-name" data-d-name>// ORIGIN</span>
-              <!-- filled in by deck.js when a card pops; empty behind opacity:0 -->
-              <div class="rune-stack__d-rune" data-d-rune></div>
-              <div class="rune-stack__d-rule"></div>
-              <div class="rune-stack__d-head" data-d-head>ORIGIN STONE</div>
-              <div class="rune-stack__d-body" data-d-body>First slab quarried before the machines woke.</div>
+              <!-- Unique cover shown only when the deck is collapsed (opacity driven
+                   by deck.js). Sits above the scene and never rotates. -->
+              <div class="rune-stack__cover" data-cover>Studio NEL</div>
+
+              <div class="rune-stack__detail" data-detail>
+                <span class="rune-stack__d-name" data-d-name>// ORIGIN</span>
+                <!-- filled in by deck.js when a card pops; empty behind opacity:0 -->
+                <div class="rune-stack__d-rune" data-d-rune></div>
+                <div class="rune-stack__d-rule"></div>
+                <div class="rune-stack__d-head" data-d-head>ORIGIN STONE</div>
+                <div class="rune-stack__d-body" data-d-body>First slab quarried before the machines woke.</div>
+              </div>
             </div>
           </div>
 
@@ -221,6 +227,7 @@
           <section class="contact-card" aria-label="Contact">
             <div class="contact-card__inner">
               <!-- EDIT: contact-heading -->
+              <h3 class="contact-card__title">Ask NEL about building your software</h3>
               <form class="contact-form">
                 <!-- EDIT: contact-fields -->
                 <div class="contact-form__field">

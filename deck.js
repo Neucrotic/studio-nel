@@ -38,7 +38,7 @@
     return g;
   }
   var COLS   = ['#ff5a6a','#ffb27a','#139fe8','#b06bff','#39e6b0'];
-  var NAMES  = ['maintenance','analyics','systems','design','human'];
+  var NAMES  = ['maintenance','analytics','systems','design','human'];
   var HEADS  = ['BUG-FIXES','DATA','ARCHITECTURE','DESIGN','HUMAN'];
   var BODIES = [
     'NEL provides on-going support to quickly resolve issues and patch software.',

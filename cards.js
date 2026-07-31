@@ -29,8 +29,8 @@
       var inner = card.querySelector('.writelite-card__inner');
       var r = card.getBoundingClientRect();
       var cs = getComputedStyle(card);
-      var range = parseFloat(cs.getPropertyValue('--range')) || 260;
-      var pull  = parseFloat(cs.getPropertyValue('--pull'))  || 48;
+      var range = parseFloat(cs.getPropertyValue('--range')) || 24;
+      var pull  = parseFloat(cs.getPropertyValue('--pull'))  || 5;
 
       var inside = e.clientX >= r.left && e.clientX <= r.right &&
                    e.clientY >= r.top  && e.clientY <= r.bottom;
