@@ -570,7 +570,7 @@ body.ready .writelite-card__cta { transition: background-color 0.2s var(--ease),
 .kaku-card__word {
   font-family: var(--font-display);
   font-weight: 600;
-  font-size: 42px;
+  font-size: 40px;
   letter-spacing: -0.01em;
   line-height: 1.2;
   color: #e6e8ef;
