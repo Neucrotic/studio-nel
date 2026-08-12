@@ -19,12 +19,14 @@ anything below.
 | `contact.js` | Submit-button magnet/ripple + the form's POST |
 | `deck.js` | Rune deck |
 | `stage.js` | kaku |
+| `grid.js` | Cursor feed for the background grid glow |
 | `icons/` | Deck icons: `analytics`, `architecture`, `debugging`, `design`, `human`, `reset` |
 | `wl_logo.svg` | WriteLite mark (`<img>`) |
 | `kaku_logo.svg` | Source for the kaku glyph, which is **inlined** into `index.html` |
 
 Scripts load as classic `defer` in `<head>`, in the order the inline blocks used
-to run: `cards.js`, `contact.js`, `deck.js`, `stage.js`.
+to run: `cards.js`, `contact.js`, `deck.js`, `stage.js`, then `grid.js`. `grid.js`
+shares no state with the others, so its position is free.
 
 Three constraints on that arrangement:
 
@@ -97,21 +99,78 @@ toggle means uncommenting **three** blocks:
 3. `styles.css` group 6 — nothing to do; the `.toggle` rules are already live,
    along with the whole `[data-theme="light"]` limestone palette in group 2.
 
-### Stone grain
+### Grid background
 
-A grayscale `feTurbulence` SVG as a `data:` URI, blended into `--bg` so one
-texture tints granite in dark and limestone in light. It scrolls with the page
-and stays flat — no fixed attachment, no vignette.
+The page ground is a blueprint grid in the site accent that lights up around the
+cursor. It replaced a `feTurbulence` stone-grain texture, which was discarded
+outright; the limestone palette survived that change untouched, because it only
+ever fed the light-theme aliases and never the texture.
+
+Two pseudo-elements on `body`, both `position: fixed; inset: 0; z-index: -1;
+pointer-events: none`:
+
+| Layer | Draws |
+|---|---|
+| `body::before` | The resting grid, in `--grid-dim` |
+| `body::after` | The same grid in `--grid-lit`, revealed only through a radial mask centred on the cursor |
+
+Each layer is two `repeating-linear-gradient`s — one `to right` for the vertical
+lines, one `to bottom` for the horizontals — using the double-position stop form
+so a `--grid-width` band of colour is followed by transparency out to
+`--grid-size`.
+
+| Token | Value | Is |
+|---|---|---|
+| `--grid-size` | 64px | cell pitch |
+| `--grid-width` | 1px | line thickness |
+| `--grid-dim` | `rgba(19,159,232,.10)` | resting line |
+| `--grid-lit` | `rgba(19,159,232,.85)` | line inside the glow |
+| `--glow-core` | 28px | full-strength radius |
+| `--glow-edge` | 140px | fade reaches zero |
+
+`--grid-dim` and `--grid-lit` restate `--blue-fill`'s channels by hand, because a
+hex token cannot be given an alpha. They are the one place in the codebase that
+duplicates a colour value; changing `--blue-fill` means changing both.
+
+**Layering.** `html` carries no background, so `body`'s `background-color`
+propagates to the page canvas and paints below negative-z-index children — which
+is why `z-index: -1` puts the grid above the ground colour and below all content.
+`body` has no transform, filter or opacity, so it is not a containing block and
+`fixed` resolves against the viewport; the grid therefore stays put while the page
+scrolls. `body`'s `overflow-x: hidden` propagates to the viewport rather than
+clipping locally, so it does not cut the layers off.
+
+**No `mix-blend-mode` on these layers.** A non-normal blend mode isolates the
+parent group, making `body` a stacking context and blending the layer against an
+empty backdrop instead of the page ground — the emissive effect it would be added
+for cannot happen there. Brightness belongs in `--grid-lit`'s alpha.
+
+**The cursor feed.** `grid.js` writes `--mx` / `--my` to `body`'s inline style from
+a passive `pointermove` listener, using `clientX/Y` (viewport space, matching the
+fixed layers — no scroll offset). The defaults are declared on the `body` rule, not
+on `::after`: a declaration on the pseudo-element would beat the inherited value
+and the glow would never move. They start at `-9999px` so nothing glows before the
+first pointer event. Under `prefers-reduced-motion` the listener never attaches and
+the grid stays at its resting state.
+
+The write is direct, one per pointer event, matching the magnets in `cards.js` and
+`contact.js`. It repaints a full-viewport masked layer each time, which is heavier
+than their transform writes; if that ever costs frames, coalesce it into a single
+pending `requestAnimationFrame`.
+
+### Card grain
+
+The two dark card islands keep the `feTurbulence` grain the page background gave
+up — a grayscale SVG as a `data:` URI, over their own stone gradient.
 
 | Where | Tile | `baseFrequency` | `numOctaves` | Blend |
 |---|---|---|---|---|
-| `body` | 260px | 0.5 | 4 | `soft-light` |
 | `.writelite-card__inner::before` | 200px | 0.7 | 3 | `overlay` @ 0.35 |
 | `.contact-card__inner::before` | 200px | 0.7 | 3 | `overlay` @ 0.35 |
 
 Tuning knobs: `baseFrequency` is grain size (higher = finer, useful range
 ~0.6–1.0); `numOctaves` is detail depth (more = rougher, ~2–3);
-`background-blend-mode` sets overall strength (`soft-light` → `overlay`).
+`mix-blend-mode` and `opacity` set overall strength.
 
 **The encoded data-URI is the only source of truth.** A decoded "readable
 copy" used to sit in a comment above `body`; it drifted to `0.85`/`2` while the

@@ -47,6 +47,16 @@
   --blue-deep: #14509c;   /* AA-safe as link text on light limestone (~6:1) — --blue-fill is not */
   --blue-kaku: #1c4bd9;   /* kaku's own energy accent — drives its glow, circuit + rim */
 
+  /* Background grid. The two rgba values carry --blue-fill's channels by hand,
+     because a hex token can't be given an alpha — change --blue-fill and these
+     must be changed with it. See SPECS.md §Grid background. */
+  --grid-size: 64px;                       /* cell pitch */
+  --grid-width: 1px;                       /* line thickness */
+  --grid-dim: rgba(19, 159, 232, 0.10);    /* resting line */
+  --grid-lit: rgba(19, 159, 232, 0.85);    /* line inside the cursor glow */
+  --glow-core: 28px;                       /* full-strength radius */
+  --glow-edge: 140px;                      /* fade reaches zero */
+
   /* Hero subheading words — fixed colours, do NOT follow the theme */
   --accent-artists: #39e6b0;      /* "artists" — teal */
   --accent-thinkers: #b06bff;  /* "thinkers" — purple */
@@ -93,11 +103,6 @@
 
 html { scroll-behavior: smooth; }
 
-/* Stone grain — an inline grayscale feTurbulence data-URI blended into --bg, so
-   one texture tints granite in dark and limestone in light. Scrolls with the
-   page and stays flat (no fixed attachment, no vignette).
-   The encoded data-URI is the ONLY source of truth for the grain parameters —
-   do not add a decoded copy here, it will drift. See SPECS.md §Stone grain. */
 body {
   margin: 0;
   display: flex;                   /* sticky-footer column */
@@ -105,8 +110,12 @@ body {
   min-height: 100vh;               /* fallback */
   min-height: 100dvh;              /* mobile dynamic viewport */
   background-color: var(--bg);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.5' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  background-blend-mode: soft-light;
+  /* Cursor position for the grid glow, fed by grid.js. Declared here, NOT on
+     ::after — grid.js writes them to body's inline style, and a declaration on
+     the pseudo-element would beat the inherited value. Off-screen until the
+     pointer moves, so nothing glows on load. */
+  --mx: -9999px;
+  --my: -9999px;
   color: var(--text);
   overflow-x: hidden;              /* card glides in from off-screen left — no scrollbar flash */
   font-family: var(--font-body);
@@ -114,6 +123,44 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+}
+
+/* Background grid — two viewport-fixed layers behind everything. ::before is the
+   resting grid; ::after is a lit copy of it, revealed only inside a radial mask
+   centred on the cursor. Both sit at z-index -1: above the body background
+   colour (which paints as the page canvas) and below all content.
+   Do NOT add mix-blend-mode here. A blend mode isolates the parent, which would
+   make body a stacking context and blend the layer against an empty backdrop
+   instead of the page ground. Brightness lives in --grid-lit's alpha. */
+body::before,
+body::after {
+  content: "";
+  position: fixed;                 /* body has no transform/filter, so: viewport */
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;            /* never intercept clicks on the deck or cards */
+}
+
+body::before {
+  background-image:
+    repeating-linear-gradient(to right, var(--grid-dim) 0 var(--grid-width),
+                              transparent var(--grid-width) var(--grid-size)),
+    repeating-linear-gradient(to bottom, var(--grid-dim) 0 var(--grid-width),
+                              transparent var(--grid-width) var(--grid-size));
+}
+
+body::after {
+  background-image:
+    repeating-linear-gradient(to right, var(--grid-lit) 0 var(--grid-width),
+                              transparent var(--grid-width) var(--grid-size)),
+    repeating-linear-gradient(to bottom, var(--grid-lit) 0 var(--grid-width),
+                              transparent var(--grid-width) var(--grid-size));
+  -webkit-mask-image: radial-gradient(circle var(--glow-edge) at var(--mx) var(--my),
+                        #000 0%, #000 var(--glow-core), transparent 100%);
+          mask-image: radial-gradient(circle var(--glow-edge) at var(--mx) var(--my),
+                        #000 0%, #000 var(--glow-core), transparent 100%);
+  -webkit-mask-repeat: no-repeat;
+          mask-repeat: no-repeat;
 }
 
 /* Colour transitions only after first paint (avoids animating the load) */
