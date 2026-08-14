@@ -14,7 +14,8 @@
     styles.css   all styling
     cards.js     WriteLite card motion + the first-paint gate
     contact.js   submit-button motion + the form's POST
-    deck.js      rune deck
+    packages.js  the package decks' copy — EDIT: all package text lives here
+    deck.js      client package decks
     stage.js     kaku
 
   Editable copy is marked "EDIT:" inline below. Implementation detail,
@@ -53,6 +54,10 @@
      local preview, and there is nothing to import between these files. -->
 <script src="cards.js" defer></script>
 <script src="contact.js" defer></script>
+<!-- REQUIRED: packages.js must precede deck.js — deck.js reads the data it
+     defines at run time. Deferred scripts run in document order, so this line's
+     position is what guarantees it. -->
+<script src="packages.js" defer></script>
 <script src="deck.js" defer></script>
 <script src="stage.js" defer></script>
 <script src="grid.js" defer></script>
@@ -106,6 +111,194 @@
   </header>
 
   <main>
+    <!-- Packages — one intro, three client packages. Every deck's cards come
+         from its own entry in packages.js; the three sets start out identical. -->
+    <section class="section" id="packages">
+      <div class="wrap">
+        <h2 class="section__title">What can NEL do for you?</h2>
+        <p class="section__lede">Every business needs a tech stack. Not every
+          business needs to spend big bucks to build and maintain it. </p>
+        
+        <h2 class="section__title">Human Intellgience</h2>
+        <p class="section__lede">Deploy with confidence that your software is modern,
+          robust and has a human in control. Computers are fast, but they don't
+          understand our emotional experiences and the problems we all face day-to-day. </br>
+          Talk to a human who can. </p>
+        
+        <h3 class="section__prompt">Click on the cards below to learn more about my services</h3>
+
+        <div class="grid">
+          <!-- Package column: the deck, with room reserved above it for the
+               per-package copy still to come. -->
+          <!-- data-deck is the scope root deck.js iterates; data-package is the
+               short name for this package (design / website / app) and is the
+               key deck.js looks its content up by in packages.js — the two must
+               match or the deck renders nothing. State stays on the inner deck. -->
+          <div class="package" data-deck data-package="design">
+            <!-- Interactive package deck. Layers are built by deck.js; the deck
+                 fans open / collapses via the toggle at its centre-left, and a
+                 layer pops its inscription on click while the deck is open.
+                 deck.js runs once per [data-deck], so each of the three decks
+                 below opens and collapses independently. -->
+            <div class="package-deck" data-deck-stack data-state="init" data-sel="-1"
+                 aria-label="Design My Idea package">
+
+              <!-- Deck toggle: fans open / collapses. Absolutely positioned to the
+                   deck's centre-left, inside the column's reserved lane — it must
+                   stay clear of the open fan, which reaches to within 11px of the
+                   stage's left edge. reset.svg is pulled in as a recoloured mask
+                   via the shared .package-deck__glyph (--icon). aria-expanded and
+                   aria-label track state (see deck.js). -->
+              <div class="package-deck__toggle">
+                <button class="package-deck__toggle-btn" type="button" data-deck-toggle
+                        aria-expanded="false" aria-label="Expand the Design My Idea package">
+                  <span class="package-deck__glyph" style="--icon: url('icons/reset.svg')"></span>
+                </button>
+              </div>
+
+              <div class="package-deck__scene" data-scene><!-- layers injected by JS --></div>
+
+              <!-- Face card — the only thing shown when the deck is collapsed
+                   (opacity driven by deck.js). Sits above the scene and never
+                   rotates. Icon, title and prompt are filled by deck.js from
+                   this package's entry in packages.js; the title it writes here
+                   is then the source of the toggle's accessible name. -->
+              <!-- EDIT: face copy for this deck lives in packages.js → design.face -->
+              <div class="package-deck__cover" data-cover>
+                <span class="package-deck__glyph package-deck__cover-icon" data-cover-icon></span>
+                <span class="package-deck__cover-title" data-package-title></span>
+                <span class="package-deck__cover-sub" data-cover-sub></span>
+              </div>
+
+              <div class="package-deck__detail" data-detail>
+                <span class="package-deck__d-name" data-d-name>// ORIGIN</span>
+                <!-- filled in by deck.js when a card pops; empty behind opacity:0 -->
+                <div class="package-deck__d-icon" data-d-icon></div>
+                <div class="package-deck__d-rule"></div>
+                <div class="package-deck__d-head" data-d-head>ORIGIN STONE</div>
+                <div class="package-deck__d-body" data-d-body>First slab quarried before the machines woke.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="package" data-deck data-package="website">
+            <div class="package-deck" data-deck-stack data-state="init" data-sel="-1"
+                 aria-label="Personal Website package">
+              <div class="package-deck__toggle">
+                <button class="package-deck__toggle-btn" type="button" data-deck-toggle
+                        aria-expanded="false" aria-label="Expand the Personal Website package">
+                  <span class="package-deck__glyph" style="--icon: url('icons/reset.svg')"></span>
+                </button>
+              </div>
+
+              <div class="package-deck__scene" data-scene><!-- layers injected by JS --></div>
+
+              <!-- EDIT: face copy for this deck lives in packages.js → website.face -->
+              <div class="package-deck__cover" data-cover>
+                <span class="package-deck__glyph package-deck__cover-icon" data-cover-icon></span>
+                <span class="package-deck__cover-title" data-package-title></span>
+                <span class="package-deck__cover-sub" data-cover-sub></span>
+              </div>
+
+              <div class="package-deck__detail" data-detail>
+                <span class="package-deck__d-name" data-d-name>// ORIGIN</span>
+                <div class="package-deck__d-icon" data-d-icon></div>
+                <div class="package-deck__d-rule"></div>
+                <div class="package-deck__d-head" data-d-head>ORIGIN STONE</div>
+                <div class="package-deck__d-body" data-d-body>First slab quarried before the machines woke.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="package" data-deck data-package="app">
+            <div class="package-deck" data-deck-stack data-state="init" data-sel="-1"
+                 aria-label="Desktop &amp; Mobile Apps package">
+              <div class="package-deck__toggle">
+                <button class="package-deck__toggle-btn" type="button" data-deck-toggle
+                        aria-expanded="false" aria-label="Expand the Desktop &amp; Mobile Apps package">
+                  <span class="package-deck__glyph" style="--icon: url('icons/reset.svg')"></span>
+                </button>
+              </div>
+
+              <div class="package-deck__scene" data-scene><!-- layers injected by JS --></div>
+
+              <!-- EDIT: face copy for this deck lives in packages.js → app.face -->
+              <div class="package-deck__cover" data-cover>
+                <span class="package-deck__glyph package-deck__cover-icon" data-cover-icon></span>
+                <span class="package-deck__cover-title" data-package-title></span>
+                <span class="package-deck__cover-sub" data-cover-sub></span>
+              </div>
+
+              <div class="package-deck__detail" data-detail>
+                <span class="package-deck__d-name" data-d-name>// ORIGIN</span>
+                <div class="package-deck__d-icon" data-d-icon></div>
+                <div class="package-deck__d-rule"></div>
+                <div class="package-deck__d-head" data-d-head>ORIGIN STONE</div>
+                <div class="package-deck__d-body" data-d-body>First slab quarried before the machines woke.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact — its own row. .grid centres the single 598px card. -->
+    <section class="section" id="contact">
+      <div class="wrap">
+        <div class="grid">
+          <!-- Contact card — static stone island. Form structure only; fields TBD. -->
+          <section class="contact-card" aria-label="Contact">
+            <div class="contact-card__inner">
+              <!-- EDIT: contact-heading -->
+              <h3 class="contact-card__title">Ask NEL about building your software</h3>
+              <form class="contact-form">
+                <!-- EDIT: contact-fields -->
+                <div class="contact-form__field">
+                  <label class="contact-form__label" for="cf-name">Name</label>
+                  <input class="contact-form__input" id="cf-name" name="name" type="text" autocomplete="name">
+                </div>
+
+                <div class="contact-form__field">
+                  <label class="contact-form__label" for="cf-email">Email</label>
+                  <input class="contact-form__input" id="cf-email" name="email" type="email" autocomplete="email">
+                </div>
+
+                <fieldset class="contact-form__field contact-form__topics">
+                  <legend class="contact-form__label">What's this about?</legend>
+                  <label class="contact-form__topic">
+                    <input type="radio" name="topic" value="app">
+                    <span>app</span>
+                  </label>
+                  <label class="contact-form__topic">
+                    <input type="radio" name="topic" value="website">
+                    <span>website</span>
+                  </label>
+                  <label class="contact-form__topic">
+                    <input type="radio" name="topic" value="both">
+                    <span>both</span>
+                  </label>
+                  <label class="contact-form__topic">
+                    <input type="radio" name="topic" value="chat">
+                    <span>just a chat</span>
+                  </label>
+                </fieldset>
+
+                <div class="contact-form__field">
+                  <label class="contact-form__label" for="cf-message">Message</label>
+                  <textarea class="contact-form__message" id="cf-message" name="message"></textarea>
+                </div>
+
+                <button class="contact-form__submit" type="submit" data-magnetic><span class="contact-form__submit-label">Get in touch</span></button>
+
+                <!-- failure message only; success shows on the button itself -->
+                <p class="contact-form__status" role="alert" hidden></p>
+              </form>
+            </div>
+          </section>
+        </div>
+      </div>
+    </section>
+
     <!-- Software -->
     <section class="section" id="software">
       <div class="wrap">
@@ -176,103 +369,6 @@
               </div>
             </div>
           </article>
-        </div>
-      </div>
-    </section>
-
-    <!-- Studio / "as a developer" -->
-    <section class="section" id="studio">
-      <div class="wrap">
-        <div class="grid">
-          <!-- Deck column: intro copy pinned to the top, the deck centred in
-               whatever height the contact card beside it sets. -->
-          <div class="rune-column">
-            <h3 class="rune-column__title">What can NEL do for you?</h3>
-            <p class="rune-column__body">Every business needs a tech stack. Not every
-              business needs to spend big bucks to build and maintain it.</p>
-
-            <!-- Interactive rune stack. Layers are built by deck.js;
-                 the deck fans open / collapses via the top-right toggle button, and a
-                 layer pops its inscription on click while the deck is open. -->
-            <div class="rune-stack" data-rune-stack data-state="init" data-sel="-1"
-                 aria-label="Studio NEL — interactive rune stack">
-              <div class="rune-stack__scene" data-scene><!-- layers injected by JS --></div>
-
-              <!-- Deck toggle: fans open / collapses. reset.svg is pulled in as a
-                   recoloured mask via the shared .rune-stack__glyph (--icon). The
-                   label + aria-expanded track state (see deck.js). -->
-              <div class="rune-stack__toggle">
-                <button class="rune-stack__toggle-btn" type="button" data-deck-toggle
-                        aria-expanded="false" aria-label="Expand the deck">
-                  <span class="rune-stack__glyph" style="--icon: url('icons/reset.svg')"></span>
-                </button>
-                <span class="rune-stack__toggle-label" data-deck-label>Expand</span>
-              </div>
-
-              <!-- Unique cover shown only when the deck is collapsed (opacity driven
-                   by deck.js). Sits above the scene and never rotates. -->
-              <div class="rune-stack__cover" data-cover>Studio NEL</div>
-
-              <div class="rune-stack__detail" data-detail>
-                <span class="rune-stack__d-name" data-d-name>// ORIGIN</span>
-                <!-- filled in by deck.js when a card pops; empty behind opacity:0 -->
-                <div class="rune-stack__d-rune" data-d-rune></div>
-                <div class="rune-stack__d-rule"></div>
-                <div class="rune-stack__d-head" data-d-head>ORIGIN STONE</div>
-                <div class="rune-stack__d-body" data-d-body>First slab quarried before the machines woke.</div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Contact card — static stone island. Form structure only; fields TBD. -->
-          <section class="contact-card" aria-label="Contact">
-            <div class="contact-card__inner">
-              <!-- EDIT: contact-heading -->
-              <h3 class="contact-card__title">Ask NEL about building your software</h3>
-              <form class="contact-form">
-                <!-- EDIT: contact-fields -->
-                <div class="contact-form__field">
-                  <label class="contact-form__label" for="cf-name">Name</label>
-                  <input class="contact-form__input" id="cf-name" name="name" type="text" autocomplete="name">
-                </div>
-
-                <div class="contact-form__field">
-                  <label class="contact-form__label" for="cf-email">Email</label>
-                  <input class="contact-form__input" id="cf-email" name="email" type="email" autocomplete="email">
-                </div>
-
-                <fieldset class="contact-form__field contact-form__topics">
-                  <legend class="contact-form__label">What's this about?</legend>
-                  <label class="contact-form__topic">
-                    <input type="radio" name="topic" value="app">
-                    <span>app</span>
-                  </label>
-                  <label class="contact-form__topic">
-                    <input type="radio" name="topic" value="website">
-                    <span>website</span>
-                  </label>
-                  <label class="contact-form__topic">
-                    <input type="radio" name="topic" value="both">
-                    <span>both</span>
-                  </label>
-                  <label class="contact-form__topic">
-                    <input type="radio" name="topic" value="chat">
-                    <span>just a chat</span>
-                  </label>
-                </fieldset>
-
-                <div class="contact-form__field">
-                  <label class="contact-form__label" for="cf-message">Message</label>
-                  <textarea class="contact-form__message" id="cf-message" name="message"></textarea>
-                </div>
-
-                <button class="contact-form__submit" type="submit" data-magnetic><span class="contact-form__submit-label">Get in touch</span></button>
-
-                <!-- failure message only; success shows on the button itself -->
-                <p class="contact-form__status" role="alert" hidden></p>
-              </form>
-            </div>
-          </section>
         </div>
       </div>
     </section>

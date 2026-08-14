@@ -2,7 +2,7 @@
 
 `SPECS.md` owns all implementation detail: the file map, design tokens and the
 theme restore path, layout derivations, the kaku phase timeline and scale maths,
-the rune deck's fan maths and state model, the contact form's contract,
+the client package decks' fan maths and state model, the contact form's contract,
 accessibility behaviour, and a list of known quirks that look like bugs but are
 not. Read it before changing anything non-trivial, and update it when a fact it
 records stops being true.
