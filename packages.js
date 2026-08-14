@@ -30,7 +30,7 @@ window.PACKAGE_DECKS = {
 
   design: {
     face: {
-      icon:  'reset',
+      icon:  'idea',
       title: 'Design My Idea',
       sub:   'Click to learn more'
     },
@@ -51,7 +51,7 @@ window.PACKAGE_DECKS = {
 
   website: {
     face: {
-      icon:  'reset',
+      icon:  'website',
       title: 'Build A Personal Website',
       sub:   'Click to learn more'
     },
@@ -76,7 +76,7 @@ window.PACKAGE_DECKS = {
 
   app: {
     face: {
-      icon:  'reset',
+      icon:  'app',
       title: 'Develope Desktop & Mobile Apps',
       sub:   'Click to learn more'
     },
