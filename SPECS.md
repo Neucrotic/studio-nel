@@ -15,15 +15,15 @@ anything below.
 |---|---|
 | `index.html` | Markup only, plus the pre-paint theme lock |
 | `styles.css` | All styling, in 13 numbered groups |
-| `cards.js` | WriteLite card magnet/tilt + the first-paint `body.ready` gate |
-| `contact.js` | Submit-button magnet/ripple + the form's POST |
-| `packages.js` | The three package decks' content — face cards and layer cards |
-| `deck.js` | Client package decks |
-| `stage.js` | kaku |
-| `grid.js` | Cursor feed for the background grid glow |
+| `scripts/cards.js` | WriteLite card magnet/tilt + the first-paint `body.ready` gate |
+| `scripts/contact.js` | Submit-button magnet/ripple + the form's POST |
+| `scripts/packages.js` | The three package decks' content — face cards and layer cards |
+| `scripts/deck.js` | Client package decks |
+| `scripts/stage.js` | kaku |
+| `scripts/grid.js` | Cursor feed for the background grid glow |
 | `icons/` | Deck icons: `analytics`, `architecture`, `debugging`, `design`, `human`, `reset` |
-| `wl_logo.svg` | WriteLite mark (`<img>`) |
-| `kaku_logo.svg` | Source for the kaku glyph, which is **inlined** into `index.html` |
+| `icons/wl_logo.svg` | WriteLite mark (`<img>`) |
+| `icons/kaku_logo.svg` | Source for the kaku glyph, which is **inlined** into `index.html` |
 
 Scripts load as classic `defer` in `<head>`, in the order the inline blocks used
 to run: `cards.js`, `contact.js`, `packages.js`, `deck.js`, `stage.js`, then

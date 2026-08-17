@@ -52,15 +52,15 @@
 <!-- Classic deferred scripts, in the order the inline blocks used to run.
      NOT type="module": modules fail under file:// (CORS), which would break
      local preview, and there is nothing to import between these files. -->
-<script src="cards.js" defer></script>
-<script src="contact.js" defer></script>
+<script src="scripts/cards.js" defer></script>
+<script src="scripts/contact.js" defer></script>
 <!-- REQUIRED: packages.js must precede deck.js — deck.js reads the data it
      defines at run time. Deferred scripts run in document order, so this line's
      position is what guarantees it. -->
-<script src="packages.js" defer></script>
-<script src="deck.js" defer></script>
-<script src="stage.js" defer></script>
-<script src="grid.js" defer></script>
+<script src="scripts/packages.js" defer></script>
+<script src="scripts/deck.js" defer></script>
+<script src="scripts/stage.js" defer></script>
+<script src="scripts/grid.js" defer></script>
 </head>
 
 <body>
@@ -310,7 +310,7 @@
             <div class="writelite-card__inner">
               <div class="writelite-card__logo">
                 <!-- Real WriteLite logo, fixed colours — does not recolour with the theme -->
-                <img src="wl_logo.svg" alt="WriteLite logo">
+                <img src="icons/wl_logo.svg" alt="WriteLite logo">
               </div>
 
               <div class="writelite-card__body">
