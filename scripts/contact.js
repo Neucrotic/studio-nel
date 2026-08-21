@@ -56,7 +56,7 @@
   var label  = form.querySelector('.contact-form__submit-label');
   var status = form.querySelector('.contact-form__status');
 
-  var ACCESS_KEY    = 'e0733441b70b4294b054be68fcd426e5';
+  var ACCESS_KEY    = '47948b371cae4b858b74513f16d691c4';
   var ENDPOINT      = 'https://splitforms.com/api/submit';
   var DEFAULT_LABEL = label.textContent;             // restore on retry
 
