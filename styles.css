@@ -1186,8 +1186,21 @@ body.ready .package-deck__toggle-btn {
   outline-offset: 3px;
 }
 
-.contact-form__submit {
+/* submit row — button with the email fallback beside it */
+.contact-form__actions {
   align-self: flex-start;        /* form layout, not part of the button's identity */
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  flex-wrap: wrap;               /* hint drops below the button on narrow viewports */
+  gap: 18px;
+}
+
+/* MUST stay below .contact-form__label — same specificity, so this margin reset
+   only wins on position. */
+.contact-form__hint { margin: 0; }
+
+.contact-form__submit {
   font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
   font-weight: 700;
   font-size: 14px;
