@@ -4,7 +4,7 @@ How the site is built. Every number here was read from the code, not from a
 previous comment. The code is the authority; if the two disagree, the code is
 right and this file is stale.
 
-`CLAUDE.md` owns agent behaviour and working preferences. It does not repeat
+`AGENTS.md` owns agent behaviour and working preferences. It does not repeat
 anything below.
 
 ---
@@ -50,6 +50,17 @@ Four constraints on that arrangement:
 `stage.js` gates kaku's boot on an `animationend` from `.writelite-card`, whose
 glide is 2.2s. Every script runs in the same tick, far ahead of that, and
 there is a 2,500ms fallback regardless.
+
+### Task RPG (product page)
+
+Separate from the Studio NEL homepage. GitHub Pages maps root `task-rpg.html` → `/task-rpg` (WriteLite-style clean URL).
+
+| File | Owns |
+|---|---|
+| `task-rpg.html` | Markup + LOOK tokens in an inline `<style>` (does not load `styles.css`) |
+| `scripts/task-rpg.js` | Classic `defer`; Stripe stub URL, amount chips, validation, Support open |
+
+Support amount: default `5`; chips prefill only; valid = finite number, ≥ 1, ≤ 500, ≤ 2 decimal places. Invalid amount never navigates. Valid Support opens `STRIPE_SUPPORT_URL` in a new tab with no amount query param. Download hrefs and final Stripe URL stay `EDIT:` stubs. No link from the homepage.
 
 ### Cascade constraints
 

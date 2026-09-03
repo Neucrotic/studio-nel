@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Task RPG</title>
+<meta name="description" content="Desktop task-gamification RPG — real-world quests earn Action Points; AP fuels turn-based monster battles.">
+
+<!--
+  Task RPG — product about / download page.
+  LOOK tokens live in this file's <style> only; do not link styles.css.
+  Classic defer (not type="module") so file:// preview works.
+  Editable copy is marked "EDIT:" inline. Implementation facts live in SPECS.md.
+-->
+
+<style>
+  :root {
+    --bg: #0d0d18;
+    --panel: #161628;
+    --panel-2: #1e1e36;
+    --border: #33334d;
+    --accent: #4af0c8;
+    --accent-2: #f0c04a;
+    --danger: #f04a6a;
+    --text: #e6e6f0;
+    --muted: #8888aa;
+    --well: #0a0a14;
+    --hover: #2a2a4a;
+  }
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: var(--text);
+    background:
+      radial-gradient(circle at 20% 0%, #1a1a30 0%, transparent 45%),
+      radial-gradient(circle at 80% 100%, #16162e 0%, transparent 45%),
+      var(--bg);
+  }
+
+  .page {
+    width: min(100% - 2rem, 620px);
+    margin: 0 auto;
+    padding: 3rem 0 4rem;
+  }
+
+  .intro {
+    display: grid;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  @media (min-width: 520px) {
+    .intro {
+      grid-template-columns: 1fr 1fr;
+      align-items: start;
+    }
+  }
+
+  .intro__copy {
+    min-width: 0;
+  }
+
+  .hero__brand {
+    margin: 0 0 0.5rem;
+    font-size: clamp(1.75rem, 4vw, 2.25rem);
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 0.02em;
+  }
+
+  .hero__hook {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+
+  .stack {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .panel {
+    background: var(--panel);
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    padding: 1rem;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.4);
+  }
+
+  .panel--cta {
+    border-radius: 14px;
+    padding: 1.25rem 1rem;
+  }
+
+  .panel--cta .panel__title {
+    text-align: center;
+  }
+
+  .panel__title {
+    margin: 0 0 0.75rem;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 4px;
+  }
+
+  .panel__body {
+    margin: 0;
+    font-size: 0.95rem;
+    color: var(--text);
+  }
+
+  .downloads {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    margin-bottom: 1.25rem;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.65rem 1.1rem;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 0.95rem;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease, filter 0.15s ease;
+  }
+
+  .btn--ghost {
+    flex: 0 1 auto;
+    background: var(--panel-2);
+    border-color: var(--border);
+    color: var(--text);
+  }
+
+  .btn--ghost:hover {
+    background: var(--hover);
+    border-color: var(--accent);
+    transform: translateY(-2px);
+  }
+
+  .btn--primary {
+    width: 100%;
+    background: var(--accent);
+    color: var(--well);
+    border-color: var(--accent);
+  }
+
+  .btn--primary:hover {
+    filter: brightness(1.1);
+  }
+
+  .support__amount-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .support__label {
+    flex: 0 0 100%;
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .support__currency {
+    color: var(--muted);
+    font-weight: 700;
+  }
+
+  .support__input {
+    width: 5.5rem;
+    padding: 0.5rem 0.65rem;
+    background: var(--well);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 1rem;
+  }
+
+  .support__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .chip {
+    min-width: 2.5rem;
+    padding: 0.4rem 0.65rem;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease;
+  }
+
+  .chip:hover {
+    background: var(--hover);
+    border-color: var(--accent);
+  }
+
+  .support__hint {
+    margin: 0 0 0.75rem;
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+
+  .support__error {
+    margin: 0 0 0.75rem;
+    font-size: 0.85rem;
+    color: var(--danger);
+  }
+
+  .support__error[hidden] {
+    display: none;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .btn,
+    .chip {
+      transition: none;
+    }
+
+    .btn--ghost:hover {
+      transform: none;
+    }
+  }
+</style>
+
+<script src="scripts/task-rpg.js" defer></script>
+</head>
+
+<body>
+
+  <main class="page">
+    <div class="intro">
+      <header class="intro__copy">
+        <h1 class="hero__brand">Task RPG</h1>
+        <!-- EDIT: hook line -->
+        <p class="hero__hook">Turn your to-do list into a quest log. Earn Action Points, then defeat the gauntlet.</p>
+      </header>
+
+      <section class="panel panel--cta" aria-labelledby="get-title">
+        <h2 class="panel__title" id="get-title">FREE DOWNLOAD</h2>
+
+        <div class="downloads">
+          <!-- EDIT: macOS build URL -->
+          <a class="btn btn--ghost" href="#">macOS</a>
+          <!-- EDIT: Windows build URL -->
+          <a class="btn btn--ghost" href="#">Windows</a>
+        </div>
+
+        <div class="support">
+          <div class="support__amount-row">
+            <label class="support__label" for="support-amount">Amount</label>
+            <!-- EDIT: currency glyph ($ stub — AUD vs USD not decided; display only) -->
+            <span class="support__currency" aria-hidden="true">$</span>
+            <input
+              class="support__input"
+              id="support-amount"
+              name="amount"
+              type="text"
+              inputmode="decimal"
+              value="5"
+              autocomplete="off"
+              aria-describedby="support-hint support-error"
+            >
+            <div class="support__chips" role="group" aria-label="Suggested amounts">
+              <button class="chip" type="button" data-amount="5">5</button>
+              <button class="chip" type="button" data-amount="10">10</button>
+              <button class="chip" type="button" data-amount="15">15</button>
+            </div>
+          </div>
+          <!-- EDIT: Stripe amount helper -->
+          <p class="support__hint" id="support-hint">Final amount is confirmed on Stripe.</p>
+          <p class="support__error" id="support-error" role="alert" hidden></p>
+          <button class="btn btn--primary" type="button" id="support-submit">Support the Developer</button>
+        </div>
+      </section>
+    </div>
+
+    <div class="stack">
+      <section class="panel" aria-labelledby="about-title">
+        <h2 class="panel__title" id="about-title">ABOUT</h2>
+        <!-- EDIT: about body -->
+        <p class="panel__body">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Complete real-world quests, bank Action Points, and spend them in turn-based battles.</p>
+      </section>
+
+      <section class="panel" aria-labelledby="howto-title">
+        <h2 class="panel__title" id="howto-title">HOW TO PLAY</h2>
+        <!-- EDIT: how-to-play body -->
+        <p class="panel__body">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Log tasks, claim AP when you finish them, then pick your moves against the next monster.</p>
+      </section>
+    </div>
+  </main>
+
+</body>
+</html>
