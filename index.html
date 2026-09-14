@@ -1,66 +1,67 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Studio NEL — tools for creatives</title>
-<meta name="description" content="Studio NEL builds software that puts ownership, freedom, and creative expression back in the hands of the people who use it.">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Studio NEL — tools for creatives</title>
+  <meta name="description" content="Studio NEL builds software that puts ownership, freedom, and creative expression back in the hands of the people who use it.">
+  <link rel="icon" href="icons/nel.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/nel-logo.png">
+  <!--
+    ============================================================================
+    Studio NEL — index.html (markup only)
+    Static, GitHub Pages friendly. No server, no build step.
 
-<!--
-  ============================================================================
-  Studio NEL — index.html (markup only)
-  Static, GitHub Pages friendly. No server, no build step.
+      styles.css   all styling
+      cards.js     WriteLite card motion + the first-paint gate
+      contact.js   submit-button motion + the form's POST
+      packages.js  the package decks' copy — EDIT: all package text lives here
+      deck.js      client package decks
+      stage.js     kaku
 
-    styles.css   all styling
-    cards.js     WriteLite card motion + the first-paint gate
-    contact.js   submit-button motion + the form's POST
-    packages.js  the package decks' copy — EDIT: all package text lives here
-    deck.js      client package decks
-    stage.js     kaku
+    Editable copy is marked "EDIT:" inline below. Implementation detail,
+    derivations and the theme restore path all live in SPECS.md.
+    ============================================================================
+  -->
 
-  Editable copy is marked "EDIT:" inline below. Implementation detail,
-  derivations and the theme restore path all live in SPECS.md.
-  ============================================================================
--->
+  <!-- Set theme BEFORE first paint so there's no flash of the wrong colour -->
+  <script>
+    (function () {
+      // THEME LOCK (temporary): force dark for everyone, ignore saved/system choice.
+      // Restore the block below to re-enable theme detection + the toggle button.
+      document.documentElement.setAttribute('data-theme', 'dark');
 
-<!-- Set theme BEFORE first paint so there's no flash of the wrong colour -->
-<script>
-  (function () {
-    // THEME LOCK (temporary): force dark for everyone, ignore saved/system choice.
-    // Restore the block below to re-enable theme detection + the toggle button.
-    document.documentElement.setAttribute('data-theme', 'dark');
+      // try {
+      //   var t = localStorage.getItem('studio-nel-theme');
+      //   if (t !== 'light' && t !== 'dark') {
+      //     t = (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches)
+      //       ? 'light' : 'dark';
+      //   }
+      //   document.documentElement.setAttribute('data-theme', t);
+      // } catch (e) {
+      //   document.documentElement.setAttribute('data-theme', 'dark');
+      // }
+    })();
+  </script>
 
-    // try {
-    //   var t = localStorage.getItem('studio-nel-theme');
-    //   if (t !== 'light' && t !== 'dark') {
-    //     t = (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches)
-    //       ? 'light' : 'dark';
-    //   }
-    //   document.documentElement.setAttribute('data-theme', t);
-    // } catch (e) {
-    //   document.documentElement.setAttribute('data-theme', 'dark');
-    // }
-  })();
-</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Public+Sans:wght@500;600;700&family=Cinzel:wght@500;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Public+Sans:wght@500;600;700&family=Cinzel:wght@500;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
 
-<link rel="stylesheet" href="styles.css">
-
-<!-- Classic deferred scripts, in the order the inline blocks used to run.
-     NOT type="module": modules fail under file:// (CORS), which would break
-     local preview, and there is nothing to import between these files. -->
-<script src="scripts/cards.js" defer></script>
-<script src="scripts/contact.js" defer></script>
-<!-- REQUIRED: packages.js must precede deck.js — deck.js reads the data it
-     defines at run time. Deferred scripts run in document order, so this line's
-     position is what guarantees it. -->
-<script src="scripts/packages.js" defer></script>
-<script src="scripts/deck.js" defer></script>
-<script src="scripts/stage.js" defer></script>
-<script src="scripts/grid.js" defer></script>
+  <!-- Classic deferred scripts, in the order the inline blocks used to run.
+      NOT type="module": modules fail under file:// (CORS), which would break
+      local preview, and there is nothing to import between these files. -->
+  <script src="scripts/cards.js" defer></script>
+  <script src="scripts/contact.js" defer></script>
+  <!-- REQUIRED: packages.js must precede deck.js — deck.js reads the data it
+      defines at run time. Deferred scripts run in document order, so this line's
+      position is what guarantees it. -->
+  <script src="scripts/packages.js" defer></script>
+  <script src="scripts/deck.js" defer></script>
+  <script src="scripts/stage.js" defer></script>
+  <script src="scripts/grid.js" defer></script>
 </head>
 
 <body>
