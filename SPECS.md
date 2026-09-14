@@ -272,9 +272,9 @@ because stacked there is no kaku beside it to align to.
 ### Section gaps
 
 `.section` is `40px` top / `27px` bottom. Where two sections meet, the gap is
-the sum of both paddings — `27 + 40 = 67px`. Document order is `#packages`,
-`#contact`, `#software`. To tune *only* the packages → contact gap without
-touching hero → packages or contact → software, `#packages` sets its own end and
+the sum of both paddings — `27 + 40 = 67px`. Document order is `#software`,
+`#packages`, `#contact`. To tune *only* the packages → contact gap without
+touching software → packages, `#packages` sets its own end and
 `#contact` its own start; every other boundary stays at the default `67px`.
 
 That gap is **90px** (`50 + 40`), and unlike the rest of the vertical rhythm it
