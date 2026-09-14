@@ -62,6 +62,8 @@ Separate from the Studio NEL homepage. GitHub Pages maps root `task-rpg.html` �
 
 Support amount: default `5`; chips prefill only; valid = finite number, ≥ 1, ≤ 500, ≤ 2 decimal places. Invalid amount never navigates. Valid Support opens `STRIPE_SUPPORT_URL` in a new tab with no amount query param. Download hrefs and final Stripe URL stay `EDIT:` stubs. No link from the homepage.
 
+Layout: centered `h1` only (no hook lines). Mid row is ABOUT (`minmax(0, 620px)`, may shrink) + `1rem` gap + FREE DOWNLOAD (fixed `310px`); page max width is `946px` (`620 + 16 + 310`). Side by side from `700px` up (both panels stretch to the same row height); below that, stack about → download → how-to at full available width. HOW TO PLAY always spans the full page width under the mid row. Support/JS behaviour unchanged.
+
 ### Cascade constraints
 
 Rule order in `styles.css` is load-bearing in exactly two places. Both are
