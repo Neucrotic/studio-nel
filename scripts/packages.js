@@ -70,7 +70,7 @@ window.PACKAGE_DECKS = {
 
       { file: 'design',        col: '#39e6b0', name: 'design',
         head: 'DESIGN',
-        body: 'Note sure what you want yet? We can work on your idea until you do. See Design My Idea for more details.' }
+        body: 'Note sure what you want yet? We can work on your idea until you do. See Design An Idea for more details.' }
     ]
   },
 
