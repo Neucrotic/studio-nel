@@ -31,7 +31,7 @@ window.PACKAGE_DECKS = {
   design: {
     face: {
       icon:  'idea',
-      title: 'Design My Idea',
+      title: 'Design An Idea',
       sub:   'Click to learn more'
     },
     cards: [
