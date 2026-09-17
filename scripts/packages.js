@@ -106,8 +106,8 @@ window.PACKAGE_DECKS = {
         body: 'Ensure your idea works in a controlled environment, test ideas before you build and gather feedback before you make a commitment.' },
 
       { file: 'human',        col: '#39e6b0', name: 'design your idea',
-        head: 'DESIGN YOUR CONCEPT',
-        body: 'Iterate on a concept until you are ready to build a prototype. See Design My Idea for more details.' }
+        head: 'DESIGN YOUR IDEA',
+        body: 'Iterate on a concept until you are ready to build a prototype. See Design An Idea for more details.' }
     ]
   }
 
