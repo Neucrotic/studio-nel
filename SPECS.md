@@ -51,19 +51,6 @@ Four constraints on that arrangement:
 glide is 2.2s. Every script runs in the same tick, far ahead of that, and
 there is a 2,500ms fallback regardless.
 
-### Task RPG (product page)
-
-Separate from the Studio NEL homepage. GitHub Pages maps root `task-rpg.html` → `/task-rpg` (WriteLite-style clean URL).
-
-| File | Owns |
-|---|---|
-| `task-rpg.html` | Markup + LOOK tokens in an inline `<style>` (does not load `styles.css`) |
-| `scripts/task-rpg.js` | Classic `defer`; Stripe stub URL, amount chips, validation, Support open |
-
-Support amount: default `5`; chips prefill only; valid = finite number, ≥ 1, ≤ 500, ≤ 2 decimal places. Invalid amount never navigates. Valid Support opens `STRIPE_SUPPORT_URL` in a new tab with no amount query param. Download hrefs and final Stripe URL stay `EDIT:` stubs. No link from the homepage.
-
-Layout: centered `h1` only (no hook lines). Mid row is ABOUT (`minmax(0, 620px)`, may shrink) + `1rem` gap + FREE DOWNLOAD (fixed `310px`); page max width is `946px` (`620 + 16 + 310`). Side by side from `700px` up (both panels stretch to the same row height); below that, stack about → download → how-to at full available width. HOW TO PLAY always spans the full page width under the mid row. Support/JS behaviour unchanged.
-
 ### Cascade constraints
 
 Rule order in `styles.css` is load-bearing in exactly two places. Both are
