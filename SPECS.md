@@ -22,6 +22,7 @@ anything below.
 | `scripts/stage.js` | kaku |
 | `scripts/grid.js` | Cursor feed for the background grid glow |
 | `icons/` | Deck icons: `analytics`, `architecture`, `debugging`, `design`, `human`, `reset` |
+| `icons/instagram.svg`, `tiktok.svg`, `twitter.svg`, `bluesky.svg`, `youtube.svg` | Footer social marks — **fill-based**, footer-only; not subject to the deck stroke / `fill="none"` rule |
 | `icons/wl_logo.svg` | WriteLite mark (`<img>`) |
 | `icons/kaku_logo.svg` | Source for the kaku glyph, which is **inlined** into `index.html` |
 
@@ -240,6 +241,27 @@ in its own row rather than sitting beside the deck. Every card uses
 footer text to the packages row, reproducing exactly what flex centring leaves
 at each side. Below 1337px it floors at 0.
 
+The footer is a **three-column grid** (`1fr auto 1fr`): tagline start-aligned,
+social nav centred, © end-aligned. Icon order is Instagram → TikTok → X →
+Bluesky → YouTube. Each control is a link whose visible shape comes from a CSS
+mask (`url('icons/….svg')`) plus `background: currentColor`, the same idiom as
+`.package-deck__glyph`, so the icons stay on `--muted` and recolour with the
+theme. Links override the global accent colour so they stay subtle at rest.
+
+Those five SVGs are **fill-based** (`fill="currentColor"`) and footer-only.
+They are **not** subject to the deck-icon rule that requires stroke /
+`fill="none"` — that rule is for package glyphs only. Do not “fix” them into
+stroke icons.
+
+At `max-width: 720px` the footer stacks to one column and centres tagline,
+nav, and ©. That stacking is intentional new behaviour; previously `.foot` only
+reduced `padding-block` there.
+
+The footer carries **no top border**. It had a `1px solid var(--line)` rule from
+before the glowing grid background existed; against a page that is already ruled,
+a hairline across it read as a stray grid line. Its only separation now is its
+`padding-block: 23px`. `--line` is still used by `.toggle`, so the token stays.
+
 ### The 1336px step
 
 `#packages .grid` drops its gap to 37px below 1337px, giving
@@ -247,11 +269,6 @@ at each side. Below 1337px it floors at 0.
 included — would wrap the three decks into a vertical stack. Inside that step
 each toggle sits 48px from the neighbouring fan against 28px from its own:
 tighter than the 4× at full width, still readable.
-
-The footer carries **no top border**. It had a `1px solid var(--line)` rule from
-before the glowing grid background existed; against a page that is already ruled,
-a hairline across it read as a stray grid line. Its only separation now is its
-`padding-block: 23px`. `--line` is still used by `.toggle`, so the token stays.
 
 `.writelite-card { margin-top: 25px }` drops the card so its top meets the kaku
 chip's top: the chip is centred in the 434px stage at 384px, so its top sits
@@ -777,13 +794,17 @@ adds the glow. That is what lets one file recolour per card.
 Sizes: 60px on a deck face, 72px in the popped slab, 40px on the face card,
 22px on the toggle button.
 
-**To add an icon:**
+**To add a deck icon:**
 
 1. Save a stroke-based SVG into `icons/`. It **must** be `fill="none"`
    `stroke="currentColor"`, or its shape will not mask cleanly.
 2. Put its basename in a card's `file` (or a face's `icon`) in `packages.js`.
 
 It then inherits colour and glow with no per-icon CSS.
+
+Footer social icons (`instagram`, `tiktok`, `twitter`, `bluesky`, `youtube`)
+are a separate set: fill-based, masked the same way, but **not** governed by
+the stroke rule above. See §Layout & measurements for their layout.
 
 ### Deck data
 
