@@ -241,8 +241,8 @@ in its own row rather than sitting beside the deck. Every card uses
 footer text to the packages row, reproducing exactly what flex centring leaves
 at each side. Below 1337px it floors at 0.
 
-The footer is a **three-column grid** (`1fr auto 1fr`): tagline start-aligned,
-social nav centred, © end-aligned. Icon order is Instagram → TikTok → X →
+The footer is a **three-column grid** (`1fr auto 1fr`): social nav start-aligned,
+tagline centred, © end-aligned. Icon order is Instagram → TikTok → X →
 Bluesky → YouTube. Each control is a link whose visible shape comes from a CSS
 mask (`url('icons/….svg')`) plus `background: currentColor`, the same idiom as
 `.package-deck__glyph`, so the icons stay on `--muted` and recolour with the
@@ -253,8 +253,8 @@ They are **not** subject to the deck-icon rule that requires stroke /
 `fill="none"` — that rule is for package glyphs only. Do not “fix” them into
 stroke icons.
 
-At `max-width: 720px` the footer stacks to one column and centres tagline,
-nav, and ©. That stacking is intentional new behaviour; previously `.foot` only
+At `max-width: 720px` the footer stacks to one column and centres nav,
+tagline, and ©. That stacking is intentional new behaviour; previously `.foot` only
 reduced `padding-block` there.
 
 The footer carries **no top border**. It had a `1px solid var(--line)` rule from
