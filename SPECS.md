@@ -25,6 +25,9 @@ anything below.
 | `icons/instagram.svg`, `tiktok.svg`, `twitter.svg`, `bluesky.svg`, `youtube.svg` | Footer social marks — **fill-based**, footer-only; not subject to the deck stroke / `fill="none"` rule |
 | `icons/wl_logo.svg` | WriteLite mark (`<img>`) |
 | `icons/kaku_logo.svg` | Source for the kaku glyph, which is **inlined** into `index.html` |
+| `icons/favicon.svg` | Tab favicon — `{NEL}` from `nel.svg`, viewBox cropped so the glyph spans ~96% width (as large as a square tile allows without clipping); dark plate `#0D0E0F` kept for light-tab contrast |
+| `icons/nel.svg` | Full-pad source mark (not the tab icon) |
+| `icons/nel-logo.png` | Apple touch icon (1024²) |
 
 Scripts load as classic `defer` in `<head>`, in the order the inline blocks used
 to run: `cards.js`, `contact.js`, `packages.js`, `deck.js`, `stage.js`, then
