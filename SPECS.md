@@ -21,7 +21,7 @@ anything below.
 | `scripts/deck.js` | Client package decks |
 | `scripts/stage.js` | kaku |
 | `scripts/grid.js` | Cursor feed for the background grid glow |
-| `icons/` | Deck icons: `analytics`, `architecture`, `debugging`, `design`, `human`, `reset` |
+| `icons/` | Deck icons: `analytics`, `architecture`, `debugging`, `design`, `human`, `reset`. `human` also fronts the Human Intelligence `.section__title` (1em glyph) |
 | `icons/instagram.svg`, `tiktok.svg`, `twitter.svg`, `bluesky.svg`, `youtube.svg` | Footer social marks — **fill-based**, footer-only; not subject to the deck stroke / `fill="none"` rule |
 | `icons/wl_logo.svg` | WriteLite mark (`<img>`) |
 | `icons/kaku_logo.svg` | Source for the kaku glyph, which is **inlined** into `index.html` |
@@ -497,13 +497,13 @@ in `#packs .grid` as a column with `align-items: center` (required once the
 grid is a column — `justify-content` only centres on the main axis). Each
 shell is `width: min(100%, 1337px)` only — no stone, padding, or min-height;
 those belonged to the old shared card. Headings sit on the page: icon left of
-title (40px glyph, Public Sans 600 **28px**), left-aligned,
+title (40px glyph, Public Sans 600 **28px**), centred over the cards,
 icons `website` / `app`, colour `var(--blue-fill)`.
 `#packs .grid` gap is **72px** (48px below 720px) — not the shared `.grid`
 36/24, not `#packages`'s 103px.
 
-Inside each shell, `.packs__offers` is a horizontal flex row (gap **16px**,
-same as the shell’s sibling gap) of Design, bridge, Build. Face-stone
+Inside each shell, heading-to-offers gap is **20px**; `.packs__offers` is a
+horizontal flex row (gap **16px**) of Design, bridge, Build. Face-stone
 (same recipe as `.package-deck__face`) lives on each `.packs__offer--detail`;
 the purple/blue offer border is the only rim, and the cover's `0 0 18px -6px` glow is keyed to that rim colour. The heading and bridge stay
 uncarded. Offers `flex: 1 1 0`; the bridge is `flex: 0 0 auto` and centred

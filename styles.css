@@ -215,6 +215,20 @@ main { flex: 1 0 auto; }           /* grow so the footer sits at the viewport bo
   margin: 0 0 11px;
 }
 
+/* Icon at the front of a section title; 1em tracks the title size (24 / 18). */
+.section__title--icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.section__title-icon {
+  width: 1em;
+  height: 1em;
+  flex: 0 0 auto;
+}
+
 /* Intro paragraph under a section title. max-width is a measure cap, not a
    derived number — without it the line runs the full 1034px row. */
 .section__lede {
@@ -1043,20 +1057,21 @@ body.ready .package-deck__toggle-btn {
   width: min(100%, 1337px);
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
 }
 
-/* Icon → title, left-aligned; title at 2× cover size. */
+/* Icon → title, centred over the cards; title at 2× cover size. */
 .packs__heading {
   display: flex;
   flex-direction: row;
   align-items: center;
+  justify-content: center;
   gap: 8px;
-  text-align: left;
+  text-align: center;
   color: var(--blue-fill);
 }
 
-/* Design | bridge | Build — gap matches the shell’s 16px sibling spacing. */
+/* Design | bridge | Build — 16px between siblings (shell heading gap is 20px). */
 .packs__offers {
   display: flex;
   flex-direction: row;
