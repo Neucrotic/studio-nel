@@ -496,8 +496,8 @@ inside `#packages` are untouched. Two layout shells (Website, then Apps) stack
 in `#packs .grid` as a column with `align-items: center` (required once the
 grid is a column — `justify-content` only centres on the main axis). Each
 shell is `width: min(100%, 1337px)` only — no stone, padding, or min-height;
-those belonged to the old shared card. Headings sit on the page: title above
-icon (40px glyph, Public Sans 600 **28px** with title glow), left-aligned,
+those belonged to the old shared card. Headings sit on the page: icon left of
+title (40px glyph, Public Sans 600 **28px** with title glow), left-aligned,
 icons `website` / `app`, colour `var(--blue-fill)`.
 `#packs .grid` gap is **72px** (48px below 720px) — not the shared `.grid`
 36/24, not `#packages`'s 103px.

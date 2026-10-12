@@ -1046,11 +1046,11 @@ body.ready .package-deck__toggle-btn {
   gap: 16px;
 }
 
-/* Title → icon; cover face stack, title at 2× cover size. */
+/* Icon → title, left-aligned; title at 2× cover size. */
 .packs__heading {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+  flex-direction: row;
+  align-items: center;
   gap: 8px;
   text-align: left;
   color: var(--blue-fill);
