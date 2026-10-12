@@ -505,7 +505,7 @@ icons `website` / `app`, colour `var(--blue-fill)`.
 Inside each shell, `.packs__offers` is a horizontal flex row (gap **16px**,
 same as the shell’s sibling gap) of Design, bridge, Build. Face-stone
 (same recipe as `.package-deck__face`) lives on each `.packs__offer--detail`;
-the purple/blue offer border is the only rim. The heading and bridge stay
+the purple/blue offer border is the only rim, and a short drop shadow matches that rim colour. The heading and bridge stay
 uncarded. Offers `flex: 1 1 0`; the bridge is `flex: 0 0 auto` and centred
 on the cross axis. Below 720px the offers stack and the bridge reads ↓.
 
