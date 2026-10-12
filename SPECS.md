@@ -282,13 +282,14 @@ because stacked there is no kaku beside it to align to.
 
 `.section` is `40px` top / `27px` bottom. Where two sections meet, the gap is
 the sum of both paddings — `27 + 40 = 67px`. Document order is `#software`,
-`#packages`, `#contact`. To tune *only* the packages → contact gap without
-touching software → packages, `#packages` sets its own end and
+`#packages`, `#packs`, `#contact`. To tune *only* the packages → next-section
+gap without touching software → packages, `#packages` sets its own end and
 `#contact` its own start; every other boundary stays at the default `67px`.
 
 That gap is **90px** (`50 + 40`), and unlike the rest of the vertical rhythm it
 is derived, not chosen. An open fan overhangs its box's bottom edge by 49px
-(§Fan extent), so 90px leaves `90 − 49 = 41px` of air above the contact card.
+(§Fan extent), so 90px leaves `90 − 49 = 41px` of air above the next section
+(`#packs` today).
 The earlier value was `13.5px`, giving 53.5px total and just 4.5px of clearance —
 tight enough that an open deck all but touched the card below it.
 
@@ -487,6 +488,63 @@ Three packages, one deck each: a stack of stone layers — five today — that f
 open from a collapsed face card. `packages.js` holds every deck's content,
 `deck.js` computes every layout transform, and `styles.css` owns only the
 resting look.
+
+### Packs
+
+`#packs` sits after `#packages` and before `#contact`. The three existing decks
+inside `#packages` are untouched. Two layout shells (Website, then Apps) stack
+in `#packs .grid` as a column with `align-items: center` (required once the
+grid is a column — `justify-content` only centres on the main axis). Each
+shell is `width: min(100%, 1337px)` only — no stone, padding, or min-height;
+those belonged to the old shared card. Headings sit on the page: title above
+icon (40px glyph, Public Sans 600 **28px** with title glow), left-aligned,
+icons `website` / `app`, colour `var(--blue-fill)`.
+`#packs .grid` gap is **72px** (48px below 720px) — not the shared `.grid`
+36/24, not `#packages`'s 103px.
+
+Inside each shell, `.packs__offers` is a horizontal flex row (gap **16px**,
+same as the shell’s sibling gap) of Design, bridge, Build. Face-stone
+(same recipe as `.package-deck__face`) lives on each `.packs__offer--detail`;
+the purple/blue offer border is the only rim. The heading and bridge stay
+uncarded. Offers `flex: 1 1 0`; the bridge is `flex: 0 0 auto` and centred
+on the cross axis. Below 720px the offers stack and the bridge reads ↓.
+
+**Website** is filled: Design and Build as `.packs__offer--detail` blocks
+(`#b06bff` / `var(--blue-fill)`, icons `brief` / `prototype`). Each offer
+head is icon + stacked titles, **left-aligned** (not centred): name
+(`Design Package` / `Build Package`) in Cinzel 500 22px / 0.5px tracking
+(same as `.package-deck__d-head`), then a price line (`Starting from $200` /
+`Starting from $500`) in the same Cinzel + accent at **16px** — between the
+22px head and the 13px body info. Lede, Includes label, and list are stone
+white `#ece8df`. Design’s Includes + Not included stay stacked; Design uses
+`min-height: var(--packs-design-height)` (**366px** at the full 1337 shell)
+plus `align-self: flex-start` so it does not stretch to Build, while
+`height: auto` keeps the same **16px 20px** padding inset as Build. Below
+720, offers stack and Design resets to `align-self: stretch` /
+`min-height: 0`. Build’s head stays full-width; ledes share one
+`.packs__offer-col` measure (`calc((100% - 16px) / 2)`, same gap as the
+cols row). Includes sits in the left `.packs__offer-col`, Extra features +
+Not included in the right.
+Extra / Not included share the label + bullet layout (10px / 12px):
+labels `#ffb27a` (app deck build & test), lists muted `#a49e90`.
+The bridge is empty in markup; CSS `::before` supplies **→** on desktop and
+**↓** below 720px (18px, `#ece8df` at 0.55, 8px padding-block,
+`aria-hidden`). Body type is Space Grotesk.
+
+**Apps** is filled the same way: Design and Build as `.packs__offer--detail`
+blocks (same geometry, accents, icons `brief` / `prototype`). Design price
+`Starting from $500` (same dollar floor as Website **Build**, not Website
+Design); Build price `Quoted from the design scope`. Design is single-column
+(head → lede → Includes → Not included); Build is head → two ledes →
+`.packs__offer-cols` with Includes | Extra + Not included. Extra label is
+`Extra / ongoing` + `All quoted to specification` (not Website’s “Extra
+features available”). Do not raise `--packs-design-height` for a taller Apps
+Includes list — Design cards live in separate shells; `height: auto` grows
+past the min-height. Client-facing cards omit payment-stage %, store account
+fees, maintenance %, and privacy/paperwork (those stay Nel-side facts).
+Talking point for the $500 Design floor: a website shows the business; an
+app is something customers use — this design works out how they’ll use it,
+and if they go ahead with the build the whole $500 comes off the price.
 
 The packages are `design`, `website` and `app` — left to right — carried on
 `data-package` on each `[data-deck]` root. That attribute is the **key** each

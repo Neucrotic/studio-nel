@@ -60,6 +60,9 @@
   /* Hero subheading words — fixed colours, do NOT follow the theme */
   --accent-artists: #39e6b0;      /* "artists" — teal */
   --accent-thinkers: #b06bff;  /* "thinkers" — purple */
+
+  /* Packs Design offer min-height at 1337 shell; see SPECS.md §Packs */
+  --packs-design-height: 366px;
 }
 
 
@@ -1023,6 +1026,248 @@ body.ready .package-deck__toggle-btn {
 
 
 /* ===========================================================================
+   PACKS — Website | Apps offer cards
+   Face-stone on each Design/Build offer; heading and bridge sit on the page.
+   Website and Apps offers are both filled (glanceable copy).
+   Existing #packages decks are untouched. See SPECS.md §Client packages.
+   =========================================================================== */
+
+/* Stacked shells, 72 desktop / 48 below 720 (see responsive block). */
+#packs .grid {
+  flex-direction: column;
+  align-items: center;
+  gap: 72px;
+}
+
+.packs__shell {
+  width: min(100%, 1337px);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Title → icon; cover face stack, title at 2× cover size. */
+.packs__heading {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  text-align: left;
+  color: var(--blue-fill);
+}
+
+/* Design | bridge | Build — gap matches the shell’s 16px sibling spacing. */
+.packs__offers {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  gap: 16px;
+}
+
+.packs__offers > .packs__offer {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.packs__title-icon {
+  width: 40px;
+  height: 40px;
+  filter: drop-shadow(0 0 10px var(--blue-fill));
+}
+
+.packs__title {
+  margin: 0;
+  font-family: 'Public Sans', var(--font-body);
+  font-weight: 600;
+  font-size: 28px;
+  line-height: 1.25;
+  text-wrap: balance;
+  text-shadow: 0 0 12px var(--blue-fill);
+  color: inherit;
+}
+
+/* Base offer: icon + label row. Detail offers override to a column. */
+.packs__offer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 16px 20px;
+  border-radius: 12px;
+  border: 1px solid;
+  font-family: 'Cinzel', serif;
+  font-weight: 500;
+  font-size: 22px;
+  letter-spacing: 0.5px;
+  line-height: 1.25;
+  box-sizing: border-box;
+}
+
+.packs__offer .package-deck__glyph {
+  flex: 0 0 auto;
+  width: 40px;
+  height: 40px;
+}
+
+.packs__offer[data-offer="design"] {
+  border-color: #b06bff;
+  color: #b06bff;
+}
+
+/* Don’t stretch to Build; grow with content so 16/20 padding stays intact.
+   align-self reset at 720 when offers stack (cross axis becomes width). */
+.packs__offer--detail[data-offer="design"] {
+  min-height: var(--packs-design-height);
+  height: auto;
+  align-self: flex-start;
+  padding: 16px 20px;
+}
+
+.packs__offer[data-offer="build"] {
+  border-color: var(--blue-fill);
+  color: var(--blue-fill);
+}
+
+/* Filled offers: face-stone card; head keeps the offer accent; body stays stone white. */
+.packs__offer--detail {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
+  color: #ece8df;
+  font-weight: 400;
+  background: linear-gradient(150deg, #3b404a, #191c22);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.67), inset 0 0 26px rgba(0, 0, 0, 0.44);
+}
+
+/* Build only: Includes | Extra + Not included. */
+.packs__offer-cols {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.packs__offer-col {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.packs__offer--detail[data-offer="design"] .packs__offer-head { color: #b06bff; }
+.packs__offer--detail[data-offer="build"]  .packs__offer-head { color: var(--blue-fill); }
+
+.packs__offer-head {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+  font-weight: 500;
+  font-size: 22px;
+  letter-spacing: 0.5px;
+  line-height: 1.25;
+}
+
+.packs__offer-titles {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  text-align: left;
+}
+
+.packs__offer-name {
+  margin: 0;
+  font: inherit;
+  color: inherit;
+}
+
+/* Between offer head (22px) and body info (13px); same Cinzel + accent. */
+.packs__offer-price {
+  margin: 0;
+  font-family: inherit;
+  font-weight: 500;
+  font-size: 16px;
+  letter-spacing: 0.5px;
+  line-height: 1.25;
+  color: inherit;
+}
+
+.packs__lede {
+  margin: 0;
+  /* Same measure as one .packs__offer-col (gap 16px). */
+  width: calc((100% - 16px) / 2);
+  max-width: 100%;
+  font-family: 'Space Grotesk', monospace;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #ece8df;
+}
+
+.packs__label {
+  margin: 4px 0 0;
+  font-family: 'Space Grotesk', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  opacity: 0.65;
+  color: #ece8df;
+}
+
+.packs__list {
+  margin: 0;
+  padding-inline-start: 1.15em;
+  font-family: 'Space Grotesk', monospace;
+  font-size: 13px;
+  line-height: 1.55;
+  color: #ece8df;
+}
+
+.packs__list li + li { margin-top: 2px; }
+
+.packs__list ul {
+  margin: 2px 0 0;
+  padding-inline-start: 1.15em;
+}
+
+.packs__wrap {
+  margin: 4px 0 0;
+  font-family: 'Space Grotesk', monospace;
+  font-size: 12px;
+  line-height: 1.45;
+  color: #a49e90;
+}
+
+.packs__label.packs__wrap {
+  opacity: 1;
+  font-size: 10px;
+  color: #ffb27a; /* same warm accent as app deck build & test */
+}
+
+.packs__list.packs__wrap {
+  font-size: 12px;
+  line-height: 1.45;
+  margin-top: -10px;
+}
+
+/* Arrow between Design and Build — glyph from CSS (→ desktop, ↓ at 720). */
+.packs__bridge {
+  flex: 0 0 auto;
+  align-self: center;
+  margin: 0;
+  padding-block: 8px;
+  text-align: center;
+  font-size: 18px;
+  line-height: 1;
+  color: #ece8df;
+  opacity: 0.55;
+}
+
+.packs__bridge::before {
+  content: "→";
+}
+
+
+/* ===========================================================================
    10. CONTACT — static fixed-dark island + the form
    Shares the deck cards' cool stone gradient and the WriteLite card's surface
    treatment, but is deliberately STATIC: no accent rim glow, and none of the
@@ -1298,6 +1543,15 @@ body.ready .package-deck__toggle-btn {
   .section         { padding-block-end: 20px; }
   .section__title  { font-size: 18px; margin-bottom: 8px; }
   .grid            { gap: 24px; }
+  #packs .grid     { gap: 48px; }
+  .packs__offers   { flex-direction: column; }
+  .packs__bridge::before { content: "↓"; }
+  /* Stacked: full width again; let content define height. */
+  .packs__offer--detail[data-offer="design"] {
+    align-self: stretch;
+    min-height: 0;
+    height: auto;
+  }
   .foot {
     padding-block: 16px;
     grid-template-columns: 1fr;

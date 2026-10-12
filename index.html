@@ -200,30 +200,16 @@
           understand our emotional experiences and the problems we all face day-to-day. </br>
           Talk to a human who comprehends, not an LLM that guesses. </p>
         
+        <!-- ARCHIVED: click prompt + three package decks. Inner HTML comment
+             lines removed so this block can wrap cleanly. Restore: uncomment. -->
+        <!--
         <h3 class="section__prompt">Click on the cards below to learn more about my services</h3>
 
         <div class="grid">
-          <!-- Package column: the deck, with room reserved above it for the
-               per-package copy still to come. -->
-          <!-- data-deck is the scope root deck.js iterates; data-package is the
-               short name for this package (design / website / app) and is the
-               key deck.js looks its content up by in packages.js — the two must
-               match or the deck renders nothing. State stays on the inner deck. -->
           <div class="package" data-deck data-package="design">
-            <!-- Interactive package deck. Layers are built by deck.js; the deck
-                 fans open / collapses via the toggle at its centre-left, and a
-                 layer pops its inscription on click while the deck is open.
-                 deck.js runs once per [data-deck], so each of the three decks
-                 below opens and collapses independently. -->
             <div class="package-deck" data-deck-stack data-state="init" data-sel="-1"
                  aria-label="Design An Idea package">
 
-              <!-- Deck toggle: fans open / collapses. Absolutely positioned to the
-                   deck's centre-left, inside the column's reserved lane — it must
-                   stay clear of the open fan, which reaches to within 11px of the
-                   stage's left edge. reset.svg is pulled in as a recoloured mask
-                   via the shared .package-deck__glyph (--icon). aria-expanded and
-                   aria-label track state (see deck.js). -->
               <div class="package-deck__toggle">
                 <button class="package-deck__toggle-btn" type="button" data-deck-toggle
                         aria-expanded="false" aria-label="Expand the Design An Idea package">
@@ -231,14 +217,8 @@
                 </button>
               </div>
 
-              <div class="package-deck__scene" data-scene><!-- layers injected by JS --></div>
+              <div class="package-deck__scene" data-scene></div>
 
-              <!-- Face card — the only thing shown when the deck is collapsed
-                   (opacity driven by deck.js). Sits above the scene and never
-                   rotates. Icon, title and prompt are filled by deck.js from
-                   this package's entry in packages.js; the title it writes here
-                   is then the source of the toggle's accessible name. -->
-              <!-- EDIT: face copy for this deck lives in packages.js → design.face -->
               <div class="package-deck__cover" data-cover>
                 <span class="package-deck__glyph package-deck__cover-icon" data-cover-icon></span>
                 <span class="package-deck__cover-title" data-package-title></span>
@@ -247,7 +227,6 @@
 
               <div class="package-deck__detail" data-detail>
                 <span class="package-deck__d-name" data-d-name>// ORIGIN</span>
-                <!-- filled in by deck.js when a card pops; empty behind opacity:0 -->
                 <div class="package-deck__d-icon" data-d-icon></div>
                 <div class="package-deck__d-rule"></div>
                 <div class="package-deck__d-head" data-d-head>ORIGIN STONE</div>
@@ -266,9 +245,8 @@
                 </button>
               </div>
 
-              <div class="package-deck__scene" data-scene><!-- layers injected by JS --></div>
+              <div class="package-deck__scene" data-scene></div>
 
-              <!-- EDIT: face copy for this deck lives in packages.js → website.face -->
               <div class="package-deck__cover" data-cover>
                 <span class="package-deck__glyph package-deck__cover-icon" data-cover-icon></span>
                 <span class="package-deck__cover-title" data-package-title></span>
@@ -295,9 +273,8 @@
                 </button>
               </div>
 
-              <div class="package-deck__scene" data-scene><!-- layers injected by JS --></div>
+              <div class="package-deck__scene" data-scene></div>
 
-              <!-- EDIT: face copy for this deck lives in packages.js → app.face -->
               <div class="package-deck__cover" data-cover>
                 <span class="package-deck__glyph package-deck__cover-icon" data-cover-icon></span>
                 <span class="package-deck__cover-title" data-package-title></span>
@@ -311,6 +288,182 @@
                 <div class="package-deck__d-head" data-d-head>ORIGIN STONE</div>
                 <div class="package-deck__d-body" data-d-body>First slab quarried before the machines woke.</div>
               </div>
+            </div>
+          </div>
+        </div>
+        -->
+
+        <div class="grid"></div>
+      </div>
+    </section>
+
+    <!-- Packs — Website + Apps filled.
+         Independent of #packages so the old decks can be cut later in one go. -->
+    <section class="section" id="packs">
+      <div class="wrap">
+        <div class="grid">
+          <div class="packs__shell">
+            <div class="packs__heading">
+              <h3 class="packs__title">Design & Build Your Website</h3>
+              <span class="package-deck__glyph packs__title-icon" style="--icon: url('icons/website.svg')"></span>
+            </div>
+
+            <div class="packs__offers">
+              <!-- EDIT: Website Design offer copy -->
+              <article class="packs__offer packs__offer--detail" data-offer="design">
+                <div class="packs__offer-head">
+                  <span class="package-deck__glyph" style="--icon: url('icons/brief.svg')"></span>
+                  <div class="packs__offer-titles">
+                    <h4 class="packs__offer-name">Design Package</h4>
+                    <p class="packs__offer-price">Starting from $200</p>
+                  </div>
+                </div>
+                <p class="packs__lede">A design for your website — colours, fonts, and a mockup you can click through.</p>
+                <p class="packs__label">Includes</p>
+                <ul class="packs__list">
+                  <li>Colour palette + fonts</li>
+                  <li>One mockup page</li>
+                  <li>A working button</li>
+                  <li>One other interactive element of your choice</li>
+                  <li>Handoff file for a developer</li>
+                  <li>3 x revisions</li>
+                </ul>
+                <p class="packs__label packs__wrap">Not included</p>
+                <ul class="packs__list packs__wrap">
+                  <li>logos</li>
+                  <li>mobile layout</li>
+                  <li>any changes after the third revision, including colour or font tweaks</li>
+                </ul>
+              </article>
+
+              <p class="packs__bridge" aria-hidden="true"></p>
+
+              <!-- EDIT: Website Build offer copy -->
+              <article class="packs__offer packs__offer--detail" data-offer="build">
+                <div class="packs__offer-head">
+                  <span class="package-deck__glyph" style="--icon: url('icons/prototype.svg')"></span>
+                  <div class="packs__offer-titles">
+                    <h4 class="packs__offer-name">Build Package</h4>
+                    <p class="packs__offer-price">Starting from $500</p>
+                  </div>
+                </div>
+                <p class="packs__lede">Your website live — design, three pages, domain and hosting.</p>
+                <p class="packs__lede">If you prefer, <strong>design</strong> first and <strong>build</strong> later.</p>
+                <div class="packs__offer-cols">
+                  <div class="packs__offer-col">
+                    <p class="packs__label">Includes</p>
+                    <ul class="packs__list">
+                      <li>Design your website (see design package)</li>
+                      <li>Domain name + year 1 hosting</li>
+                      <li>3 pages
+                        <ul>
+                          <li>Home</li>
+                          <li>Services</li>
+                          <li>Contact</li>
+                        </ul>
+                      </li>
+                      <li>Works on both phones and desktops</li>
+                      <li>3 x design revisions</li>
+                      <li>3 x build revisions</li>
+                    </ul>
+                  </div>
+                  <div class="packs__offer-col">
+                    <p class="packs__label packs__wrap">Extra features available</br>All quoted to specification</p>
+                    <ul class="packs__list packs__wrap">
+                      <li>Pages</li>
+                      <li>Custom Components</li>
+                      <li>Bookings, shop or blog </li>
+                      <li>Copywriting, available on request</li>
+                      <li>Hosting after year 1</li>
+                    </ul>
+                    <p class="packs__label packs__wrap">Not included</p>
+                    <ul class="packs__list packs__wrap">
+                      <li>logos</li>
+                      <li>any changes after the included revisions, including colour or font tweaks</li>
+                    </ul>
+                  </div>
+                </div>
+              </article>
+            </div>
+          </div>
+
+          <div class="packs__shell">
+            <div class="packs__heading">
+              <h3 class="packs__title">Develop Desktop & Mobile Apps</h3>
+              <span class="package-deck__glyph packs__title-icon" style="--icon: url('icons/app.svg')"></span>
+            </div>
+
+            <div class="packs__offers">
+              <!-- EDIT: Apps Design offer copy -->
+              <article class="packs__offer packs__offer--detail" data-offer="design">
+                <div class="packs__offer-head">
+                  <span class="package-deck__glyph" style="--icon: url('icons/brief.svg')"></span>
+                  <div class="packs__offer-titles">
+                    <h4 class="packs__offer-name">Design Package</h4>
+                    <p class="packs__offer-price">Starting from $500</p>
+                  </div>
+                </div>
+                <p class="packs__lede">A written scope, clickable prototype and feature list.</p>
+                <p class="packs__label">Includes</p>
+                <ul class="packs__list">
+                  <li>Up to 5 screens + connection map</li>
+                  <li>Colours + fonts</li>
+                  <li>Icons (Material, or another set you prefer)</li>
+                  <li>Clickable HTML prototype (no hosting)</li>
+                  <li>Style brief for an AI agent or developer</li>
+                  <li>Written build scope</li>
+                  <li>3 x revisions</li>
+                </ul>
+                <p class="packs__label packs__wrap">Not included</p>
+                <ul class="packs__list packs__wrap">
+                  <li>Logos and text (you supply these)</li>
+                  <li>Working features (prototype only moves between screens)</li>
+                  <li>Any changes after the third revision</li>
+                </ul>
+              </article>
+
+              <p class="packs__bridge" aria-hidden="true"></p>
+
+              <!-- EDIT: Apps Build offer copy -->
+              <article class="packs__offer packs__offer--detail" data-offer="build">
+                <div class="packs__offer-head">
+                  <span class="package-deck__glyph" style="--icon: url('icons/prototype.svg')"></span>
+                  <div class="packs__offer-titles">
+                    <h4 class="packs__offer-name">Build Package</h4>
+                    <p class="packs__offer-price">Quoted from the design scope</p>
+                  </div>
+                </div>
+                <p class="packs__lede">Both platforms at one price, starting with the platform the client owns.</p>
+                <p class="packs__lede">Bring your own design, or work out your idea in the <strong>design</strong> package first.</p>
+                <div class="packs__offer-cols">
+                  <div class="packs__offer-col">
+                    <p class="packs__label">Includes</p>
+                    <ul class="packs__list">
+                      <li>Design package credited in full</li>
+                      <li>Both platforms (start with the one you own)</li>
+                      <li>Build cycles with demos → alpha → beta → release</li>
+                      <li>3 rounds of adjustments at demos</li>
+                      <li>30-day bug warranty after release</li>
+                      <li>Source code on final payment (your app code; Nel keeps pre-existing libraries)</li>
+                    </ul>
+                  </div>
+                  <div class="packs__offer-col">
+                    <p class="packs__label packs__wrap">Extra / ongoing</br>All quoted to specification</p>
+                    <ul class="packs__list packs__wrap">
+                      <li>New screens or features (change order)</li>
+                      <li>Back end when the app stores or syncs data</li>
+                      <li>Store accounts in your name (you pay Apple / Google fees)</li>
+                      <li>Maintenance retainer after the warranty</li>
+                    </ul>
+                    <p class="packs__label packs__wrap">Not included</p>
+                    <ul class="packs__list packs__wrap">
+                      <li>Logos and copy</li>
+                      <li>Additions outside the approved scope</li>
+                      <li>Changes to an approved design once code is built around it (counts as an addition)</li>
+                    </ul>
+                  </div>
+                </div>
+              </article>
             </div>
           </div>
         </div>
