@@ -1082,7 +1082,6 @@ body.ready .package-deck__toggle-btn {
   font-size: 28px;
   line-height: 1.25;
   text-wrap: balance;
-  text-shadow: 0 0 12px var(--blue-fill);
   color: inherit;
 }
 
