@@ -1121,8 +1121,8 @@ body.ready .package-deck__toggle-btn {
   height: auto;
   align-self: flex-start;
   padding: 16px 20px;
-  box-shadow: 0 3px 8px color-mix(in srgb, #b06bff 40%, transparent),
-              inset 0 0 26px rgba(0, 0, 0, 0.44);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.67), inset 0 0 26px rgba(0, 0, 0, 0.44),
+              0 0 18px -6px #b06bff;
 }
 
 .packs__offer[data-offer="build"] {
@@ -1131,8 +1131,8 @@ body.ready .package-deck__toggle-btn {
 }
 
 .packs__offer--detail[data-offer="build"] {
-  box-shadow: 0 3px 8px color-mix(in srgb, var(--blue-fill) 40%, transparent),
-              inset 0 0 26px rgba(0, 0, 0, 0.44);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.67), inset 0 0 26px rgba(0, 0, 0, 0.44),
+              0 0 18px -6px var(--blue-fill);
 }
 
 /* Filled offers: face-stone card; head keeps the offer accent; body stays stone white. */
