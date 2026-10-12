@@ -516,15 +516,13 @@ head is icon + stacked titles, **left-aligned** (not centred): name
 (same as `.package-deck__d-head`), then a price line (`Starting from $200` /
 `Starting from $500`) in the same Cinzel + accent at **16px** — between the
 22px head and the 13px body info. Lede, Includes label, and list are stone
-white `#ece8df`. Design’s Includes + Not included stay stacked; Design uses
-`min-height: var(--packs-design-height)` (**366px** at the full 1337 shell)
-plus `align-self: flex-start` so it does not stretch to Build, while
-`height: auto` keeps the same **16px 20px** padding inset as Build. Below
-720, offers stack and Design resets to `align-self: stretch` /
-`min-height: 0`. Build’s head stays full-width; ledes share one
-`.packs__offer-col` measure (`calc((100% - 16px) / 2)`, same gap as the
-cols row). Includes sits in the left `.packs__offer-col`, Extra features +
-Not included in the right.
+white `#ece8df`. Design’s Includes + Not included stay stacked. In the
+offers row (`align-items: stretch`), Design and Build share the row’s
+cross-size so Design matches Build’s height; below 720, offers stack and
+each card is content-height again. Build’s head stays full-width; ledes
+share one `.packs__offer-col` measure (`calc((100% - 16px) / 2)`, same gap
+as the cols row). Includes sits in the left `.packs__offer-col`, Extra
+features + Not included in the right.
 Extra / Not included share the label + bullet layout (10px / 12px):
 labels `#ffb27a` (app deck build & test), lists muted `#a49e90`.
 The bridge is empty in markup; CSS `::before` supplies **→** on desktop and
@@ -538,10 +536,10 @@ Design); Build price `Quoted from the design scope`. Design is single-column
 (head → lede → Includes → Not included); Build is head → two ledes →
 `.packs__offer-cols` with Includes | Extra + Not included. Extra label is
 `Extra / ongoing` + `All quoted to specification` (not Website’s “Extra
-features available”). Do not raise `--packs-design-height` for a taller Apps
-Includes list — Design cards live in separate shells; `height: auto` grows
-past the min-height. Client-facing cards omit payment-stage %, store account
-fees, maintenance %, and privacy/paperwork (those stay Nel-side facts).
+features available”). Website and Apps each stretch Design to that shell’s
+Build in their own row. Client-facing cards omit payment-stage %, store
+account fees, maintenance %, and privacy/paperwork (those stay Nel-side
+facts).
 Talking point for the $500 Design floor: a website shows the business; an
 app is something customers use — this design works out how they’ll use it,
 and if they go ahead with the build the whole $500 comes off the price.

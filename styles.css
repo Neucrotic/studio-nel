@@ -61,8 +61,6 @@
   --accent-artists: #39e6b0;      /* "artists" — teal */
   --accent-thinkers: #b06bff;  /* "thinkers" — purple */
 
-  /* Packs Design offer min-height at 1337 shell; see SPECS.md §Packs */
-  --packs-design-height: 366px;
 }
 
 
@@ -1128,13 +1126,7 @@ body.ready .package-deck__toggle-btn {
   color: #b06bff;
 }
 
-/* Don’t stretch to Build; grow with content so 16/20 padding stays intact.
-   align-self reset at 720 when offers stack (cross axis becomes width). */
 .packs__offer--detail[data-offer="design"] {
-  min-height: var(--packs-design-height);
-  height: auto;
-  align-self: flex-start;
-  padding: 16px 20px;
   box-shadow: 0 8px 22px rgba(0, 0, 0, 0.67), inset 0 0 26px rgba(0, 0, 0, 0.44),
               0 0 18px -6px #b06bff;
 }
@@ -1567,12 +1559,6 @@ body.ready .package-deck__toggle-btn {
   #packs .grid     { gap: 48px; }
   .packs__offers   { flex-direction: column; }
   .packs__bridge::before { content: "↓"; }
-  /* Stacked: full width again; let content define height. */
-  .packs__offer--detail[data-offer="design"] {
-    align-self: stretch;
-    min-height: 0;
-    height: auto;
-  }
   .foot {
     padding-block: 16px;
     grid-template-columns: 1fr;
