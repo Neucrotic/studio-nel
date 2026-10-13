@@ -518,7 +518,10 @@ head is icon + stacked titles, **left-aligned** (not centred): name
 22px head and the 13px body info. Lede, Includes label, and list are stone
 white `#ece8df`. Design’s Includes + Not included stay stacked. In the
 offers row (`align-items: stretch`), Design and Build share the row’s
-cross-size so Design matches Build’s height; below 720, offers stack and
+cross-size so Design matches Build’s height; copy inside each detail card
+is top-aligned (`justify-content: flex-start` on `.packs__offer--detail`,
+overriding the base offer’s centre) so spare height sits below Design’s
+stack, not equally above and below. Below 720, offers stack and
 each card is content-height again. Build’s head stays full-width; ledes
 share one `.packs__offer-col` measure (`calc((100% - 16px) / 2)`, same gap
 as the cols row). Includes sits in the left `.packs__offer-col`, Extra

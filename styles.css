@@ -1145,6 +1145,7 @@ body.ready .package-deck__toggle-btn {
 .packs__offer--detail {
   flex-direction: column;
   align-items: stretch;
+  justify-content: flex-start; /* beat .packs__offer’s centre — stretch leaves spare height on Design */
   gap: 10px;
   color: #ece8df;
   font-weight: 400;
