@@ -1223,7 +1223,6 @@ body.ready .package-deck__toggle-btn {
   font-size: 10px;
   letter-spacing: 2px;
   text-transform: uppercase;
-  opacity: 0.65;
   color: var(--accent-artists);
 }
 
