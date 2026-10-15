@@ -188,9 +188,10 @@ main { flex: 1 0 auto; }           /* grow so the footer sits at the viewport bo
 .section__lede {
   max-width: 640px;
   margin: 0 auto 11px;
-  text-align: center;
+  text-align: justify;
   color: var(--muted);
   text-wrap: pretty;
+  padding-bottom: 30px;
 }
 
 .section__list
