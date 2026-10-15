@@ -9,8 +9,6 @@
      • plays once, then rests in "hold" (no loop, no click-to-restart)
      • honours prefers-reduced-motion (jumps straight to a lit, static state)
 
-   See SPECS.md §kaku for the phase durations, the scale derivation and the
-   face-reveal beats.
    =========================================================================== */
 
 (function () {

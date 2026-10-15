@@ -1,7 +1,6 @@
 /* ===========================================================================
    grid.js — cursor feed for the background grid glow
    Writes --mx/--my onto <body>; the mask in styles.css reads them.
-   See SPECS.md §Grid background.
    =========================================================================== */
 
 (function () {

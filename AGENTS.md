@@ -22,11 +22,11 @@ and thinkers.
 **Current software (`#software`)**  
 Software NEL makes: WriteLite (live) and kaku (shown as work in progress).
 
-**Studio pitch + contact (`#packages` / `#contact`)**  
+**Studio pitch + contact (`#studio-intro` / `#contact`)**  
 Why work with NEL, plus the contact form (and `hello@nel.studio`) to start a
 conversation about building software.
 
-**Client packages (`#packs`)**  
+**Client packages (`#client-package`)**  
 Commercial Website and Apps offerings (Design / Build). What a client can buy,
 not the studio’s own shipped products.
 

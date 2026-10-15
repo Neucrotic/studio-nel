@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,34 +15,13 @@
       styles.css   all styling
       cards.js     WriteLite card motion + the first-paint gate
       contact.js   submit-button motion + the form's POST
-      packages.js  the package decks' copy — EDIT: all package text lives here
-      deck.js      client package decks
       stage.js     kaku
+      grid.js      cursor feed for the background grid
 
     Editable copy is marked "EDIT:" inline below. Site purpose and hosting:
     AGENTS.md. Implementation detail lives in the code.
     ============================================================================
   -->
-
-  <!-- Set theme BEFORE first paint so there's no flash of the wrong colour -->
-  <script>
-    (function () {
-      // THEME LOCK (temporary): force dark for everyone, ignore saved/system choice.
-      // Restore the block below to re-enable theme detection + the toggle button.
-      document.documentElement.setAttribute('data-theme', 'dark');
-
-      // try {
-      //   var t = localStorage.getItem('studio-nel-theme');
-      //   if (t !== 'light' && t !== 'dark') {
-      //     t = (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches)
-      //       ? 'light' : 'dark';
-      //   }
-      //   document.documentElement.setAttribute('data-theme', t);
-      // } catch (e) {
-      //   document.documentElement.setAttribute('data-theme', 'dark');
-      // }
-    })();
-  </script>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -55,11 +34,6 @@
       local preview, and there is nothing to import between these files. -->
   <script src="scripts/cards.js" defer></script>
   <script src="scripts/contact.js" defer></script>
-  <!-- REQUIRED: packages.js must precede deck.js — deck.js reads the data it
-      defines at run time. Deferred scripts run in document order, so this line's
-      position is what guarantees it. -->
-  <script src="scripts/packages.js" defer></script>
-  <script src="scripts/deck.js" defer></script>
   <script src="scripts/stage.js" defer></script>
   <script src="scripts/grid.js" defer></script>
 </head>
@@ -85,7 +59,7 @@
           <article class="writelite-card" data-magnet>
             <div class="writelite-card__inner">
               <div class="writelite-card__logo">
-                <!-- Real WriteLite logo, fixed colours — does not recolour with the theme -->
+                <!-- Real WriteLite logo, fixed colours -->
                 <img src="icons/wl_logo.svg" alt="WriteLite logo">
               </div>
 
@@ -149,11 +123,11 @@
       </div>
     </section>
 
-    <!-- Packages — intro copy left, contact form right. -->
-    <section class="section" id="packages">
+    <!-- Studio intro — pitch copy left, contact form right. -->
+    <section class="section" id="studio-intro">
       <div class="wrap">
         <div class="grid">
-          <div class="packages-intro">
+          <div class="studio-intro">
             <h2 class="section__title">What can NEL do for you?</h2>
             <p class="section__lede">Every business needs a tech stack. Not every
               business needs to spend big bucks to build and maintain it. </p>
@@ -165,7 +139,7 @@
             </ul>
 
             <h2 class="section__title section__title--icon">
-              <span class="package-deck__glyph section__title-icon" style="--icon: url('icons/human.svg')" aria-hidden="true"></span>
+              <span class="glyph section__title-icon" style="--icon: url('icons/human.svg')" aria-hidden="true"></span>
               Human Intelligence
             </h2>
             <p class="section__lede">Deploy with confidence that your software is modern,
@@ -226,30 +200,33 @@
               </form>
             </div>
           </section>
+        </div>
+      </div>
+    </section>
 
-    <!-- Packs — Website + Apps filled. -->
-    <section class="section" id="packs">
+    <!-- Client packages — Website + Apps filled. -->
+    <section class="section" id="client-package">
       <div class="wrap">
         <div class="grid">
-          <div class="packs__shell">
-            <div class="packs__heading">
-              <span class="package-deck__glyph packs__title-icon" style="--icon: url('icons/website.svg')"></span>
-              <h3 class="packs__title">Design & Build Your Website</h3>
+          <div class="client-package__shell">
+            <div class="client-package__heading">
+              <span class="glyph client-package__title-icon" style="--icon: url('icons/website.svg')"></span>
+              <h3 class="client-package__title">Design & Build Your Website</h3>
             </div>
 
-            <div class="packs__offers">
+            <div class="client-package__offers">
               <!-- EDIT: Website Design offer copy -->
-              <article class="packs__offer packs__offer--detail" data-offer="design">
-                <div class="packs__offer-head">
-                  <span class="package-deck__glyph" style="--icon: url('icons/brief.svg')"></span>
-                  <div class="packs__offer-titles">
-                    <h4 class="packs__offer-name">Design Package</h4>
-                    <p class="packs__offer-price">Starting from $200</p>
+              <article class="client-package__offer client-package__offer--detail" data-offer="design">
+                <div class="client-package__offer-head">
+                  <span class="glyph" style="--icon: url('icons/brief.svg')"></span>
+                  <div class="client-package__offer-titles">
+                    <h4 class="client-package__offer-name">Design Package</h4>
+                    <p class="client-package__offer-price">Starting from $200</p>
                   </div>
                 </div>
-                <p class="packs__lede">A design for your website — colours, fonts, and a mockup you can click through.</p>
-                <p class="packs__label">A Design Includes</p>
-                <ul class="packs__list">
+                <p class="client-package__lede">A design for your website — colours, fonts, and a mockup you can click through.</p>
+                <p class="client-package__label">A Design Includes</p>
+                <ul class="client-package__list">
                   <li>Colour palette + fonts</li>
                   <li>One mockup page</li>
                   <li>A working button</li>
@@ -257,31 +234,31 @@
                   <li>Build spec for any developer</li>
                   <li>3 x revisions</li>
                 </ul>
-                <p class="packs__label packs__wrap">Not included</p>
-                <ul class="packs__list packs__wrap">
+                <p class="client-package__label client-package__wrap">Not included</p>
+                <ul class="client-package__list client-package__wrap">
                   <li>logos</li>
                   <li>mobile layout</li>
                   <li>any changes after the third revision, including colour or font tweaks</li>
                 </ul>
               </article>
 
-              <p class="packs__bridge" aria-hidden="true"></p>
+              <p class="client-package__bridge" aria-hidden="true"></p>
 
               <!-- EDIT: Website Build offer copy -->
-              <article class="packs__offer packs__offer--detail" data-offer="build">
-                <div class="packs__offer-head">
-                  <span class="package-deck__glyph" style="--icon: url('icons/prototype.svg')"></span>
-                  <div class="packs__offer-titles">
-                    <h4 class="packs__offer-name">Build Package</h4>
-                    <p class="packs__offer-price">Starting from $500</p>
+              <article class="client-package__offer client-package__offer--detail" data-offer="build">
+                <div class="client-package__offer-head">
+                  <span class="glyph" style="--icon: url('icons/prototype.svg')"></span>
+                  <div class="client-package__offer-titles">
+                    <h4 class="client-package__offer-name">Build Package</h4>
+                    <p class="client-package__offer-price">Starting from $500</p>
                   </div>
                 </div>
-                <p class="packs__lede">Your website, live — design, three pages, domain and hosting.</p>
-                <p class="packs__lede">If you prefer, <strong>design</strong> first and <strong>build</strong> later.</p>
-                <div class="packs__offer-cols">
-                  <div class="packs__offer-col">
-                    <p class="packs__label">A Build Includes</p>
-                    <ul class="packs__list">
+                <p class="client-package__lede">Your website, live — design, three pages, domain and hosting.</p>
+                <p class="client-package__lede">If you prefer, <strong>design</strong> first and <strong>build</strong> later.</p>
+                <div class="client-package__offer-cols">
+                  <div class="client-package__offer-col">
+                    <p class="client-package__label">A Build Includes</p>
+                    <ul class="client-package__list">
                       <li>Design your website (see Design Package)</li>
                       <li>Domain name + year 1 hosting</li>
                       <li>3 pages
@@ -296,17 +273,17 @@
                       <li>3 x build revisions</li>
                     </ul>
                   </div>
-                  <div class="packs__offer-col">
-                    <p class="packs__label packs__wrap">Extra features available</br>All quoted to specification</p>
-                    <ul class="packs__list packs__wrap">
+                  <div class="client-package__offer-col">
+                    <p class="client-package__label client-package__wrap">Extra features available</br>All quoted to specification</p>
+                    <ul class="client-package__list client-package__wrap">
                       <li>Pages</li>
                       <li>Custom Components</li>
                       <li>Bookings, shop or blog </li>
                       <li>Copywriting, available on request</li>
                       <li>Hosting after year 1</li>
                     </ul>
-                    <p class="packs__label packs__wrap">Not included</p>
-                    <ul class="packs__list packs__wrap">
+                    <p class="client-package__label client-package__wrap">Not included</p>
+                    <ul class="client-package__list client-package__wrap">
                       <li>logos</li>
                       <li>any changes after the included revisions, including colour or font tweaks</li>
                     </ul>
@@ -316,56 +293,56 @@
             </div>
           </div>
 
-          <div class="packs__shell">
-            <div class="packs__heading">
-              <span class="package-deck__glyph packs__title-icon" style="--icon: url('icons/app.svg')"></span>
-              <h3 class="packs__title">Develop Desktop & Mobile Apps</h3>
+          <div class="client-package__shell">
+            <div class="client-package__heading">
+              <span class="glyph client-package__title-icon" style="--icon: url('icons/app.svg')"></span>
+              <h3 class="client-package__title">Develop Desktop & Mobile Apps</h3>
             </div>
 
-            <div class="packs__offers">
+            <div class="client-package__offers">
               <!-- EDIT: Apps Design offer copy -->
-              <article class="packs__offer packs__offer--detail" data-offer="design">
-                <div class="packs__offer-head">
-                  <span class="package-deck__glyph" style="--icon: url('icons/brief.svg')"></span>
-                  <div class="packs__offer-titles">
-                    <h4 class="packs__offer-name">Design Package</h4>
-                    <p class="packs__offer-price">Starting from $500</p>
+              <article class="client-package__offer client-package__offer--detail" data-offer="design">
+                <div class="client-package__offer-head">
+                  <span class="glyph" style="--icon: url('icons/brief.svg')"></span>
+                  <div class="client-package__offer-titles">
+                    <h4 class="client-package__offer-name">Design Package</h4>
+                    <p class="client-package__offer-price">Starting from $500</p>
                   </div>
                 </div>
-                <p class="packs__lede">A written scope, clickable prototype and feature list.</p>
-                <p class="packs__label">A Design Includes</p>
-                <ul class="packs__list">
+                <p class="client-package__lede">A written scope, clickable prototype and feature list.</p>
+                <p class="client-package__label">A Design Includes</p>
+                <ul class="client-package__list">
                   <li>Up to 5 screens + connection map</li>
                   <li>Colours + fonts + icons</li>
                   <li>Interactive HTML prototype (no hosting)</li>
                   <li>Build scope and style brief for a developer</li>
                   <li>Up to 3 x revisions once your idea is locked in</li>
                 </ul>
-                <p class="packs__label packs__wrap">Not included</p>
-                <ul class="packs__list packs__wrap">
+                <p class="client-package__label client-package__wrap">Not included</p>
+                <ul class="client-package__list client-package__wrap">
                   <li>Logos and copy</li>
                   <li>Working features (prototype only moves between screens)</li>
                   <li>Any changes after the third revision</li>
                 </ul>
               </article>
 
-              <p class="packs__bridge" aria-hidden="true"></p>
+              <p class="client-package__bridge" aria-hidden="true"></p>
 
               <!-- EDIT: Apps Build offer copy -->
-              <article class="packs__offer packs__offer--detail" data-offer="build">
-                <div class="packs__offer-head">
-                  <span class="package-deck__glyph" style="--icon: url('icons/prototype.svg')"></span>
-                  <div class="packs__offer-titles">
-                    <h4 class="packs__offer-name">Build Package</h4>
-                    <p class="packs__offer-price">Quoted from the design scope</p>
+              <article class="client-package__offer client-package__offer--detail" data-offer="build">
+                <div class="client-package__offer-head">
+                  <span class="glyph" style="--icon: url('icons/prototype.svg')"></span>
+                  <div class="client-package__offer-titles">
+                    <h4 class="client-package__offer-name">Build Package</h4>
+                    <p class="client-package__offer-price">Quoted from the design scope</p>
                   </div>
                 </div>
-                <p class="packs__lede">Both platforms at one price, starting with the platform the client owns.</p>
-                <p class="packs__lede">Bring your own design, or work out your idea in the <strong>design</strong> package first.</p>
-                <div class="packs__offer-cols">
-                  <div class="packs__offer-col">
-                    <p class="packs__label">A Build Includes</p>
-                    <ul class="packs__list">
+                <p class="client-package__lede">Both platforms at one price, starting with the platform the client owns.</p>
+                <p class="client-package__lede">Bring your own design, or work out your idea in the <strong>design</strong> package first.</p>
+                <div class="client-package__offer-cols">
+                  <div class="client-package__offer-col">
+                    <p class="client-package__label">A Build Includes</p>
+                    <ul class="client-package__list">
                       <li>Design package credited in full</li>
                       <li>Cross-platform or one native target</li>
                       <li>Build cycles with demos → alpha → beta → release</li>
@@ -374,16 +351,16 @@
                       <li>Source code on final payment (your app code; Nel keeps pre-existing libraries)</li>
                     </ul>
                   </div>
-                  <div class="packs__offer-col">
-                    <p class="packs__label packs__wrap">Extra / ongoing</br>All quoted to specification</p>
-                    <ul class="packs__list packs__wrap">
+                  <div class="client-package__offer-col">
+                    <p class="client-package__label client-package__wrap">Extra / ongoing</br>All quoted to specification</p>
+                    <ul class="client-package__list client-package__wrap">
                       <li>New screens or features (change order)</li>
                       <li>Back end when the app stores or syncs data</li>
                       <li>Store accounts in your name (you pay Apple / Google fees)</li>
                       <li>Maintenance retainer after the warranty</li>
                     </ul>
-                    <p class="packs__label packs__wrap">Not included</p>
-                    <ul class="packs__list packs__wrap">
+                    <p class="client-package__label client-package__wrap">Not included</p>
+                    <ul class="client-package__list client-package__wrap">
                       <li>Logos and copy</li>
                       <li>Additions outside the approved scope</li>
                       <li>Changes to an approved design once code is built around it (counts as an addition)</li>

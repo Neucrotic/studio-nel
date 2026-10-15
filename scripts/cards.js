@@ -1,6 +1,5 @@
 /* ===========================================================================
    cards.js — first-paint gate + WriteLite card magnet
-   See SPECS.md §WriteLite card for the motion design and the magnet maths.
    =========================================================================== */
 
 (function () {

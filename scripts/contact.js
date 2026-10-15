@@ -1,6 +1,5 @@
 /* ===========================================================================
    contact.js — submit-button motion, and the form's POST
-   See SPECS.md §Contact form for the endpoint contract and the button states.
 
    The two IIFEs below are independent but coupled by one deliberate omission:
    the ripple handler does NOT preventDefault, so the native submit reaches the
