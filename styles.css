@@ -181,7 +181,7 @@ main { flex: 1 0 auto; }           /* grow so the footer sits at the viewport bo
 
 
 /* ===========================================================================
-   4. LAYOUT — sections and the packages/contact/software rows
+   4. LAYOUT — sections and the packs/packages/software rows
    =========================================================================== */
 
 .section {
@@ -189,20 +189,12 @@ main { flex: 1 0 auto; }           /* grow so the footer sits at the viewport bo
   padding-block-end: 27px;                        /* space above the footer */
 }
 
-/* Tune only the packages → contact gap, without touching hero→packages or
-   contact→software. The 50px is fan clearance, not rhythm: an open deck spills
-   49px below its box, so 50 + #contact's 40 leaves 41px of air above the contact
-   card. Drop it back and an open fan lands on the card. See SPECS.md §Section gaps. */
-#packages { padding-block-end: 50px; }
-#contact  { padding-block-start: 40px; }
+/* Packages row: intro copy | contact card. Shared 36px gap (24px under 720);
+   flex-start so the tall form does not stretch the copy column. See SPECS.md §Layout. */
+#packages .grid { align-items: flex-start; }
 
-/* The packages row: three package columns, evenly spaced.
-   103px, NOT the shared 36px gap: 3×377 + 2×103 = 1337, the row width the
-   footer is aligned to. The gap is also what makes each toggle read as
-   belonging to the deck on its right — 114px to the neighbouring fan against
-   28px to its own. Change the column and you must re-derive the gap against
-   1337. See SPECS.md §Layout. */
-#packages .grid { margin-top: 40px; gap: 103px; }
+/* Intro column sizes to content; lede/list already cap at 640px. */
+.packages-intro { min-width: 0; }
 
 .section__title {
   font-family: var(--font-display);
@@ -233,6 +225,15 @@ main { flex: 1 0 auto; }           /* grow so the footer sits at the viewport bo
   max-width: 640px;
   margin: 0 auto 11px;
   text-align: center;
+  color: var(--muted);
+  text-wrap: pretty;
+}
+
+.section__list
+{
+  max-width: 640px;
+  margin: 0 auto 11px;
+  text-align: left;
   color: var(--muted);
   text-wrap: pretty;
   padding-bottom: 30px;
@@ -1041,7 +1042,7 @@ body.ready .package-deck__toggle-btn {
    PACKS — Website | Apps offer cards
    Face-stone on each Design/Build offer; heading and bridge sit on the page.
    Website and Apps offers are both filled (glanceable copy).
-   Existing #packages decks are untouched. See SPECS.md §Client packages.
+   See SPECS.md §Client packages.
    =========================================================================== */
 
 /* Stacked shells, 72 desktop / 48 below 720 (see responsive block). */
@@ -1538,14 +1539,6 @@ body.ready .package-deck__toggle-btn {
 /* ===========================================================================
    12. RESPONSIVE — must stay after every base rule it overrides
    =========================================================================== */
-
-/* Below the full 1337px row, trade the ownership gap for keeping three decks
-   across: 3×377 + 2×37 = 1205, so a 1280px laptop still gets the row instead of
-   three stacked decks. Each toggle then sits 48px from the neighbouring fan
-   against 28px from its own — tighter, still readable. */
-@media (max-width: 1336px) {
-  #packages .grid { gap: 37px; }
-}
 
 @media (max-width: 720px) {
   /* Small-screen spacing + type. Keeps narrow viewports from inheriting the

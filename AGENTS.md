@@ -1,14 +1,39 @@
-# Where things live
+# Specs
 
-`SPECS.md` owns all implementation detail: the file map, design tokens and the
-theme restore path, layout derivations, the kaku phase timeline and scale maths,
-the client package decks' fan maths and state model, the contact form's contract,
-accessibility behaviour, and a list of known quirks that look like bugs but are
-not. Read it before changing anything non-trivial, and update it when a fact it
-records stops being true.
+What the site is for and how it is hosted.
 
-Do not restate any of that here. This file is for how to work on the project,
-not what the project is.
+**The code is the source of truth.** Agents must never repeat information in
+docs (including this file) that already lives in the HTML, CSS, or JS. Read the
+code for implementation detail. Docs stay at purpose and hosting only.
+
+## Hosting
+
+- Public URL: `https://nel.studio`
+- Static site from this repo, served with GitHub Pages
+- Custom domain via root `CNAME` (`nel.studio`)
+- No server and no build step; `index.html` is the entry point
+
+## Sections
+
+**Studio intro (hero)**  
+Brand and one-line positioning: Studio NEL builds creative tools for artists
+and thinkers.
+
+**Current software (`#software`)**  
+Software NEL makes: WriteLite (live) and kaku (shown as work in progress).
+
+**Studio pitch + contact (`#packages` / `#contact`)**  
+Why work with NEL, plus the contact form (and `hello@nel.studio`) to start a
+conversation about building software.
+
+**Client packages (`#packs`)**  
+Commercial Website and Apps offerings (Design / Build). What a client can buy,
+not the studio’s own shipped products.
+
+**Footer**  
+Social links, studio tagline, and copyright.
+
+---
 
 # Working with files
 
@@ -36,19 +61,21 @@ Keep the existing conventions in place — BEM class names, CSS custom-property 
 semantic HTML, and the accessibility features (aria labels, focus-visible,
 prefers-reduced-motion). Don't strip or "simplify" these away.
 
-Rule order in `styles.css` is load-bearing in two places, and moving a rule out of
-its group can silently change the page. The constraints are recorded in
-SPECS.md §Cascade constraints — check them before reordering CSS.
+Rule order in `styles.css` is load-bearing in places noted in that file's own
+header — check there before reordering CSS. Do not restate those constraints in
+docs.
 
-# Comments carry the what; SPECS.md carries the why
+# Comments
 
 When you write or move a comment, follow the split already in the codebase:
 
 - **What it is** → one short line, inline.
-- **Why this value, where a number came from, design history** → SPECS.md.
+- **Why this value, where a number came from, design history** → short inline
+  comment next to the code if needed — never a second copy in docs.
 - **A warning** — anything stating a consequence of getting it wrong — stays
-  inline, in full. A warning read in a spec file is a warning read too late.
-- Mixed comments get split: the warning half stays, the derivation half moves.
+  inline, in full. A warning read in a doc is a warning read too late.
+- Mixed comments get split: the warning half stays, the derivation half stays
+  with the code (not moved into docs).
 
 Never leave a decoded or paraphrased copy of a value that also exists in code.
 Two copies drift, and the stale one becomes a misleading authority.

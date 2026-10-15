@@ -19,8 +19,8 @@
       deck.js      client package decks
       stage.js     kaku
 
-    Editable copy is marked "EDIT:" inline below. Implementation detail,
-    derivations and the theme restore path all live in SPECS.md.
+    Editable copy is marked "EDIT:" inline below. Site purpose and hosting:
+    AGENTS.md. Implementation detail lives in the code.
     ============================================================================
   -->
 
@@ -65,43 +65,6 @@
 </head>
 
 <body>
-
-  <!-- Theme toggle — TEMPORARILY DISABLED (site locked to dark). Uncomment to restore. -->
-  <!--
-  <button class="toggle" id="themeToggle" type="button" aria-label="Switch colour theme" aria-pressed="false">
-    <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-      <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>
-    </svg>
-    <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-      <circle cx="12" cy="12" r="4.2"/>
-      <path d="M12 2v2.5M12 19.5V22M4.2 4.2l1.8 1.8M18 18l1.8 1.8M2 12h2.5M19.5 12H22M4.2 19.8 6 18M18 6l1.8-1.8"/>
-    </svg>
-  </button>
-  -->
-  <script>
-    // Theme toggle handler — DISABLED with the button above. Uncomment both,
-    // plus the detection block in the pre-paint script in <head>, to restore
-    // the light/dark switch. See SPECS.md §The dark lock.
-    // (function () {
-    //   var root = document.documentElement;
-    //   var btn = document.getElementById('themeToggle');
-    //
-    //   function sync() {
-    //     var isLight = root.getAttribute('data-theme') === 'light';
-    //     btn.setAttribute('aria-pressed', String(isLight));
-    //   }
-    //
-    //   btn.addEventListener('click', function () {
-    //     var next = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
-    //     root.setAttribute('data-theme', next);
-    //     try { localStorage.setItem('studio-nel-theme', next); } catch (e) {}
-    //     sync();
-    //   });
-    //
-    //   sync();
-    // })();
-  </script>
-
   <!-- Hero -->
   <header class="hero">
     <div class="wrap">
@@ -186,122 +149,85 @@
       </div>
     </section>
 
-    <!-- Packages — one intro, three client packages. Every deck's cards come
-         from its own entry in packages.js; the three sets start out identical. -->
+    <!-- Packages — intro copy left, contact form right. -->
     <section class="section" id="packages">
       <div class="wrap">
-        <h2 class="section__title">What can NEL do for you?</h2>
-        <p class="section__lede">Every business needs a tech stack. Not every
-          business needs to spend big bucks to build and maintain it. </p>
-        
-        <h2 class="section__title section__title--icon">
-          <span class="package-deck__glyph section__title-icon" style="--icon: url('icons/human.svg')" aria-hidden="true"></span>
-          Human Intelligence
-        </h2>
-        <p class="section__lede">Deploy with confidence that your software is modern,
-          robust and has a human in control. Computers are fast, but they don't
-          understand our emotional experiences and the problems we all face day-to-day. </br>
-          Talk to a human who comprehends, not an LLM that guesses. </p>
-        
-        <!-- ARCHIVED: click prompt + three package decks. Inner HTML comment
-             lines removed so this block can wrap cleanly. Restore: uncomment. -->
-        <!--
-        <h3 class="section__prompt">Click on the cards below to learn more about my services</h3>
-
         <div class="grid">
-          <div class="package" data-deck data-package="design">
-            <div class="package-deck" data-deck-stack data-state="init" data-sel="-1"
-                 aria-label="Design An Idea package">
+          <div class="packages-intro">
+            <h2 class="section__title">What can NEL do for you?</h2>
+            <p class="section__lede">Every business needs a tech stack. Not every
+              business needs to spend big bucks to build and maintain it. </p>
+            <ul class="section__list">
+              <li>I can help to design your idea with realistic expectations and a clear plan.</li>
+              <li>I build websites for small businesses, creatives and entrepreneurs</li>
+              <li>I build cross-platform applications for both <strong>desktop</strong> and <strong>mobile</strong></li>
+              <li>Work with me long-term and have a realiable support for the technoogy your business relies on</li>
+            </ul>
 
-              <div class="package-deck__toggle">
-                <button class="package-deck__toggle-btn" type="button" data-deck-toggle
-                        aria-expanded="false" aria-label="Expand the Design An Idea package">
-                  <span class="package-deck__glyph" style="--icon: url('icons/reset.svg')"></span>
-                </button>
-              </div>
-
-              <div class="package-deck__scene" data-scene></div>
-
-              <div class="package-deck__cover" data-cover>
-                <span class="package-deck__glyph package-deck__cover-icon" data-cover-icon></span>
-                <span class="package-deck__cover-title" data-package-title></span>
-                <span class="package-deck__cover-sub" data-cover-sub></span>
-              </div>
-
-              <div class="package-deck__detail" data-detail>
-                <span class="package-deck__d-name" data-d-name>// ORIGIN</span>
-                <div class="package-deck__d-icon" data-d-icon></div>
-                <div class="package-deck__d-rule"></div>
-                <div class="package-deck__d-head" data-d-head>ORIGIN STONE</div>
-                <div class="package-deck__d-body" data-d-body>First slab quarried before the machines woke.</div>
-              </div>
-            </div>
+            <h2 class="section__title section__title--icon">
+              <span class="package-deck__glyph section__title-icon" style="--icon: url('icons/human.svg')" aria-hidden="true"></span>
+              Human Intelligence
+            </h2>
+            <p class="section__lede">Deploy with confidence that your software is modern,
+              robust and has a human in control. Computers are fast, but they don't
+              understand our emotional experiences and the problems we all face day-to-day. </br>
+              Talk to a human who comprehends, not an LLM that guesses. </p>
           </div>
 
-          <div class="package" data-deck data-package="website">
-            <div class="package-deck" data-deck-stack data-state="init" data-sel="-1"
-                 aria-label="Personal Website package">
-              <div class="package-deck__toggle">
-                <button class="package-deck__toggle-btn" type="button" data-deck-toggle
-                        aria-expanded="false" aria-label="Expand the Personal Website package">
-                  <span class="package-deck__glyph" style="--icon: url('icons/reset.svg')"></span>
-                </button>
-              </div>
+          <!-- Contact card — static stone island. Form structure only; fields TBD. -->
+          <section class="contact-card" id="contact" aria-label="Contact">
+            <div class="contact-card__inner">
+              <!-- EDIT: contact-heading -->
+              <h3 class="contact-card__title">Ask NEL about building your software</h3>
+              <form class="contact-form">
+                <!-- EDIT: contact-fields -->
+                <div class="contact-form__field">
+                  <label class="contact-form__label" for="cf-name">Name</label>
+                  <input class="contact-form__input" id="cf-name" name="name" type="text" autocomplete="name">
+                </div>
 
-              <div class="package-deck__scene" data-scene></div>
+                <div class="contact-form__field">
+                  <label class="contact-form__label" for="cf-email">Email</label>
+                  <input class="contact-form__input" id="cf-email" name="email" type="email" autocomplete="email">
+                </div>
 
-              <div class="package-deck__cover" data-cover>
-                <span class="package-deck__glyph package-deck__cover-icon" data-cover-icon></span>
-                <span class="package-deck__cover-title" data-package-title></span>
-                <span class="package-deck__cover-sub" data-cover-sub></span>
-              </div>
+                <fieldset class="contact-form__field contact-form__topics">
+                  <legend class="contact-form__label">What's this about?</legend>
+                  <label class="contact-form__topic">
+                    <input type="radio" name="topic" value="app">
+                    <span>app</span>
+                  </label>
+                  <label class="contact-form__topic">
+                    <input type="radio" name="topic" value="website">
+                    <span>website</span>
+                  </label>
+                  <label class="contact-form__topic">
+                    <input type="radio" name="topic" value="both">
+                    <span>both</span>
+                  </label>
+                  <label class="contact-form__topic">
+                    <input type="radio" name="topic" value="chat">
+                    <span>just a chat</span>
+                  </label>
+                </fieldset>
 
-              <div class="package-deck__detail" data-detail>
-                <span class="package-deck__d-name" data-d-name>// ORIGIN</span>
-                <div class="package-deck__d-icon" data-d-icon></div>
-                <div class="package-deck__d-rule"></div>
-                <div class="package-deck__d-head" data-d-head>ORIGIN STONE</div>
-                <div class="package-deck__d-body" data-d-body>First slab quarried before the machines woke.</div>
-              </div>
+                <div class="contact-form__field">
+                  <label class="contact-form__label" for="cf-message">Message</label>
+                  <textarea class="contact-form__message" id="cf-message" name="message"></textarea>
+                </div>
+
+                <div class="contact-form__actions">
+                  <button class="contact-form__submit" type="submit" data-magnetic><span class="contact-form__submit-label">Get in touch</span></button>
+                  <p class="contact-form__label contact-form__hint">or send an email to hello@nel.studio</p>
+                </div>
+
+                <!-- failure message only; success shows on the button itself -->
+                <p class="contact-form__status" role="alert" hidden></p>
+              </form>
             </div>
-          </div>
+          </section>
 
-          <div class="package" data-deck data-package="app">
-            <div class="package-deck" data-deck-stack data-state="init" data-sel="-1"
-                 aria-label="Desktop &amp; Mobile Apps package">
-              <div class="package-deck__toggle">
-                <button class="package-deck__toggle-btn" type="button" data-deck-toggle
-                        aria-expanded="false" aria-label="Expand the Desktop &amp; Mobile Apps package">
-                  <span class="package-deck__glyph" style="--icon: url('icons/reset.svg')"></span>
-                </button>
-              </div>
-
-              <div class="package-deck__scene" data-scene></div>
-
-              <div class="package-deck__cover" data-cover>
-                <span class="package-deck__glyph package-deck__cover-icon" data-cover-icon></span>
-                <span class="package-deck__cover-title" data-package-title></span>
-                <span class="package-deck__cover-sub" data-cover-sub></span>
-              </div>
-
-              <div class="package-deck__detail" data-detail>
-                <span class="package-deck__d-name" data-d-name>// ORIGIN</span>
-                <div class="package-deck__d-icon" data-d-icon></div>
-                <div class="package-deck__d-rule"></div>
-                <div class="package-deck__d-head" data-d-head>ORIGIN STONE</div>
-                <div class="package-deck__d-body" data-d-body>First slab quarried before the machines woke.</div>
-              </div>
-            </div>
-          </div>
-        </div>
-        -->
-
-        <div class="grid"></div>
-      </div>
-    </section>
-
-    <!-- Packs — Website + Apps filled.
-         Independent of #packages so the old decks can be cut later in one go. -->
+    <!-- Packs — Website + Apps filled. -->
     <section class="section" id="packs">
       <div class="wrap">
         <div class="grid">
@@ -471,65 +397,6 @@
       </div>
     </section>
 
-    <!-- Contact — its own row. .grid centres the single 598px card. -->
-    <section class="section" id="contact">
-      <div class="wrap">
-        <div class="grid">
-          <!-- Contact card — static stone island. Form structure only; fields TBD. -->
-          <section class="contact-card" aria-label="Contact">
-            <div class="contact-card__inner">
-              <!-- EDIT: contact-heading -->
-              <h3 class="contact-card__title">Ask NEL about building your software</h3>
-              <form class="contact-form">
-                <!-- EDIT: contact-fields -->
-                <div class="contact-form__field">
-                  <label class="contact-form__label" for="cf-name">Name</label>
-                  <input class="contact-form__input" id="cf-name" name="name" type="text" autocomplete="name">
-                </div>
-
-                <div class="contact-form__field">
-                  <label class="contact-form__label" for="cf-email">Email</label>
-                  <input class="contact-form__input" id="cf-email" name="email" type="email" autocomplete="email">
-                </div>
-
-                <fieldset class="contact-form__field contact-form__topics">
-                  <legend class="contact-form__label">What's this about?</legend>
-                  <label class="contact-form__topic">
-                    <input type="radio" name="topic" value="app">
-                    <span>app</span>
-                  </label>
-                  <label class="contact-form__topic">
-                    <input type="radio" name="topic" value="website">
-                    <span>website</span>
-                  </label>
-                  <label class="contact-form__topic">
-                    <input type="radio" name="topic" value="both">
-                    <span>both</span>
-                  </label>
-                  <label class="contact-form__topic">
-                    <input type="radio" name="topic" value="chat">
-                    <span>just a chat</span>
-                  </label>
-                </fieldset>
-
-                <div class="contact-form__field">
-                  <label class="contact-form__label" for="cf-message">Message</label>
-                  <textarea class="contact-form__message" id="cf-message" name="message"></textarea>
-                </div>
-
-                <div class="contact-form__actions">
-                  <button class="contact-form__submit" type="submit" data-magnetic><span class="contact-form__submit-label">Get in touch</span></button>
-                  <p class="contact-form__label contact-form__hint">or send an email to hello@nel.studio</p>
-                </div>
-
-                <!-- failure message only; success shows on the button itself -->
-                <p class="contact-form__status" role="alert" hidden></p>
-              </form>
-            </div>
-          </section>
-        </div>
-      </div>
-    </section>
   </main>
 
   <footer class="foot wrap">
