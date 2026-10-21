@@ -1,0 +1,466 @@
+/* ============ Madame Sourdough — site styles ============ */
+
+:root {
+  --accent: #84B067;
+  --accent-footer: #E8AE58;
+  --footer-text: #111417;
+  --ink: #111417;
+  --bg: #ffffff;
+  --black: #000000;
+  --star: #fbcb04;
+  --muted: #5a5f66;
+  --dot: #c9ccd2;
+  --divider-light: rgba(17, 20, 23, 0.12);
+  --divider-dark: rgba(255, 255, 255, 0.15);
+  --serif: Georgia, "Times New Roman", Times, serif;
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  line-height: 1.6;
+}
+
+img {
+  max-width: 100%;
+}
+
+.container {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* ---------- Header / logo ---------- */
+
+.site-header {
+  padding: 0 24px 32px;
+  text-align: center;
+}
+
+.site-logo {
+  display: block;
+  width: min(480px, 82vw);
+  margin: 24px auto 0;
+  height: auto;
+}
+
+.site-hours {
+  min-width: 240px;
+}
+
+/* Hours block sitting below the slideshow */
+.site-hours--below {
+  width: 240px;
+  margin: 32px auto 0;
+  text-align: center;
+}
+
+.site-hours__title {
+  margin: 0 0 6px;
+  font-family: var(--serif);
+  font-size: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink);
+}
+
+.hours--light li {
+  padding: 3px 0;
+  font-size: 16px;
+  border-bottom: 1px solid var(--divider-light);
+}
+
+.hours--light li:last-child {
+  border-bottom: none;
+}
+
+/* ---------- Hero photo slideshow ---------- */
+
+.hero-slideshow {
+  overflow: hidden;
+}
+
+.hero-slideshow__track {
+  display: flex;
+  width: max-content;
+  animation: hero-slide 160s linear infinite;
+}
+
+/* Pause the drift while the mouse is over the strip —
+   only on devices that genuinely hover (no sticky tap-hover on phones) */
+@media (hover: hover) and (pointer: fine) {
+  .hero-slideshow:hover .hero-slideshow__track {
+    animation-play-state: paused;
+  }
+}
+
+.hero-slideshow__set {
+  display: flex;
+}
+
+.hero-slideshow__set img {
+  display: block;
+  height: 480px;
+  width: auto;
+  transition: transform 0.4s ease;
+}
+
+/* While the strip is paused under the mouse, nudge the hovered photo up slightly */
+@media (hover: hover) and (pointer: fine) {
+  .hero-slideshow__set img:hover {
+    transform: scale(1.15);
+  }
+}
+
+@keyframes hero-slide {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* ---------- Menu ---------- */
+
+.menu {
+  padding: 40px 0 80px;
+}
+
+.menu__title {
+  font-family: var(--serif);
+  font-size: clamp(1.6rem, 2.8vw, 2.1rem);
+  font-weight: 400;
+  text-align: center;
+  color: var(--ink);
+  margin: 0 0 8px;
+}
+
+/* Accent underline mark under the title */
+.menu__title::after {
+  content: "";
+  display: block;
+  width: 56px;
+  height: 3px;
+  background: var(--accent);
+  margin: 14px auto 0;
+}
+
+.menu__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  max-width: 880px;
+  margin: 40px auto 0;
+}
+
+.menu__group {
+  border: 1px solid var(--ink);
+  padding: 20px 24px 8px;
+}
+
+.menu__group-title {
+  position: relative;
+  font-family: var(--serif);
+  font-size: 1.25rem;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink);
+  margin: 0 0 4px;
+  padding-bottom: 14px;
+}
+
+/* small accent square swatch next to the group name */
+.menu__group-title::before {
+  content: "";
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  background: var(--accent);
+  margin-right: 10px;
+}
+
+.menu__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.menu__row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 10px 0;
+}
+
+.menu__name {
+  order: 1;
+  color: var(--ink);
+  font-size: 0.98rem;
+}
+
+.menu__sub {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+/* dotted leader between name and price (true round dots) */
+.menu__row::before {
+  content: "";
+  order: 2;
+  flex: 1 0 auto;
+  height: 4px;
+  background-image: radial-gradient(circle, rgba(17, 20, 23, 0.55) 1px, transparent 1.4px);
+  background-size: 9px 4px;
+  background-repeat: repeat-x;
+  background-position: center left;
+  transform: translateY(-5px);
+}
+
+.menu__price {
+  order: 3;
+  color: var(--ink);
+  font-size: 0.98rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+/* ---------- Testimonials carousel ---------- */
+
+.testimonials {
+  padding: 40px 0 80px;
+}
+
+.testimonials__title {
+  font-family: var(--serif);
+  font-size: clamp(1.6rem, 2.8vw, 2.1rem);
+  font-weight: 400;
+  text-align: center;
+  margin: 0 0 32px;
+}
+
+.carousel {
+  position: relative;
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 0 56px;
+}
+
+.carousel__viewport {
+  overflow: hidden;
+  min-height: 180px;
+}
+
+.carousel__slide {
+  display: none;
+  text-align: center;
+  padding: 12px 8px;
+}
+
+.carousel__slide.is-active {
+  display: block;
+}
+
+.carousel__stars {
+  color: var(--star);
+  font-size: 1.05rem;
+  letter-spacing: 3px;
+  margin-bottom: 12px;
+}
+
+.carousel__text {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 1.3rem;
+  line-height: 1.5;
+  margin: 0 0 14px;
+  color: #4285f4;
+}
+
+.carousel__author {
+  font-size: 0.95rem;
+  color: var(--muted);
+}
+
+.carousel__btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  font-size: 2.6rem;
+  line-height: 1;
+  color: var(--accent);
+  cursor: pointer;
+  padding: 8px;
+}
+
+.carousel__btn--prev {
+  left: 4px;
+}
+
+.carousel__btn--next {
+  right: 4px;
+}
+
+.carousel__btn:hover,
+.carousel__btn:focus-visible {
+  color: var(--black);
+}
+
+.carousel__dots {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.carousel__dot {
+  width: 10px;
+  height: 10px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: var(--dot);
+  cursor: pointer;
+}
+
+.carousel__dot.is-active {
+  background: var(--accent);
+}
+
+/* ---------- Footer ---------- */
+
+.site-footer {
+  background: var(--accent-footer);
+  color: var(--footer-text);
+  padding: 88px 0;
+  margin-top: 16px;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 320px auto 320px;
+  gap: 8px;
+  align-items: start;
+  max-width: 1344px; /* 320 + 48 + 560 + 48 + 320 + 48 padding */
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.footer-findus {
+  margin-top: 32px;
+}
+
+.site-footer h3 {
+  font-family: var(--serif);
+  font-size: 1.3rem;
+  font-weight: 400;
+  margin: 0 0 16px;
+}
+
+.site-footer p {
+  margin: 0 0 10px;
+}
+
+.site-footer a {
+  color: var(--footer-text);
+}
+
+.site-footer a:hover,
+.site-footer a:focus-visible {
+  text-decoration-thickness: 2px;
+}
+
+.footer-tagline {
+  font-style: italic;
+}
+
+.footer-social {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.footer-social img {
+  width: 32px;
+  height: 32px;
+}
+
+.footer-address {
+  font-style: normal;
+  margin-top: 14px;
+}
+
+.footer-hours {
+  padding-left: 40px;
+}
+
+/* ---------- Footer map ---------- */
+
+/* A Google Maps iframe has no intrinsic ratio, so the square is imposed here
+   (stacked view) and by scripts.js (three-column view, where the map is sized
+   to the footer's content height). */
+.footer-map__frame {
+  display: block;
+  width: 300px;
+  height: 300px;
+  border: 0;
+  aspect-ratio: 1 / 1;
+}
+
+.hours {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.hours li {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--divider-dark);
+}
+
+.hours li:last-child {
+  border-bottom: none;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 800px) {
+  .hero-slideshow__set img {
+    height: 320px;
+  }
+
+  .menu__grid {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+
+  .carousel {
+    padding: 0 44px;
+  }
+
+  .footer-grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+
+  /* Stacked: scripts.js clears its inline sizes, CSS drives the square */
+  .footer-map__frame {
+    width: min(320px, 100%);
+    height: auto;
+  }
+
+  .site-footer {
+    padding: 64px 0;
+  }
+}

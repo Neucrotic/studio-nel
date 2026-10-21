@@ -32,7 +32,7 @@
   --granite-muted: #8d919d;    /* blue-grey muted */
 
   /* Cornflower — the site accent */
-  --blue-fill: #139fe8;   /* solid fill / buttons / title glow */
+  --blue-fill: #139fe8;   /* site accent / solid fill / buttons / title glow */
   --blue-kaku: #1c4bd9;   /* kaku's own energy accent — drives its glow, circuit + rim */
 
   /* Background grid. The two rgba values carry --blue-fill's channels by hand,
