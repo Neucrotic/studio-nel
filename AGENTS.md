@@ -19,16 +19,16 @@ code for implementation detail. Docs stay at purpose and hosting only.
 Brand and one-line positioning: Studio NEL builds creative tools for artists
 and thinkers.
 
-**Current software (`#software`)**  
-Software NEL makes: WriteLite (live) and kaku (shown as work in progress).
+**Client packages (`#client-package`)**  
+Commercial Website and Apps offerings (Design / Build). What a client can buy,
+not the studio’s own shipped products.
 
 **Studio pitch + contact (`#studio-intro` / `#contact`)**  
 Why work with NEL, plus the contact form (and `hello@nel.studio`) to start a
 conversation about building software.
 
-**Client packages (`#client-package`)**  
-Commercial Website and Apps offerings (Design / Build). What a client can buy,
-not the studio’s own shipped products.
+**Current software (`#software`)**  
+Software NEL makes: WriteLite (live) and kaku (shown as work in progress).
 
 **Footer**  
 Social links, studio tagline, and copyright.
