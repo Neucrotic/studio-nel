@@ -19,9 +19,15 @@ code for implementation detail. Docs stay at purpose and hosting only.
 Brand and one-line positioning: Studio NEL builds creative tools for artists
 and thinkers.
 
-**Client packages (`#client-package`)**  
-Commercial Website and Apps offerings (Design / Build). What a client can buy,
-not the studio’s own shipped products.
+**Process (`#process`)**  
+How a project runs: Idea → Design → Build.
+
+**Client services (`#client-services`)**  
+The small buys: Consultation and Basic Design.
+
+**Client packages (`#client-packages`)**  
+The big builds: Website and Desktop / Mobile. What a client can buy, not the
+studio’s own shipped products.
 
 **Studio pitch + contact (`#studio-intro` / `#contact`)**  
 Why work with NEL, plus the contact form (and `hello@nel.studio`) to start a

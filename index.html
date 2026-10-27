@@ -57,166 +57,202 @@
   </header>
 
   <main>
-    <!-- Client packages — Website + Apps filled. -->
-    <section class="section" id="client-package">
+    <!-- Process — one purple card, Idea → Design → Build. No row titles: the
+         cards carry their own headings. -->
+    <section class="section" id="process">
       <div class="wrap">
         <div class="grid">
           <div class="client-package__shell">
-            <div class="client-package__heading">
-              <span class="glyph client-package__title-icon" style="--icon: url('icons/website.svg')"></span>
-              <h3 class="client-package__title">Design & Build Your Website</h3>
-            </div>
-
             <div class="client-package__offers">
-              <!-- EDIT: Website Design offer copy -->
-              <article class="client-package__offer client-package__offer--detail" data-offer="design">
-                <div class="client-package__offer-head">
-                  <span class="glyph" style="--icon: url('icons/brief.svg')"></span>
-                  <div class="client-package__offer-titles">
-                    <h4 class="client-package__offer-name">Design Package</h4>
-                    <p class="client-package__offer-price">Starting from $200</p>
+              <!-- EDIT: process copy -->
+              <article class="client-package__offer client-package__offer--detail" data-accent="blue">
+                <div class="client-package__offer-cols">
+                  <div class="client-package__offer-col">
+                    <div class="client-package__offer-head">
+                      <span class="glyph" style="--icon: url('icons/idea.svg')"></span>
+                      <div class="client-package__offer-titles">
+                        <h3 class="client-package__offer-name">Idea</h3>
+                      </div>
+                    </div>
+                    <p class="client-package__lede">Book a consultation where we can flesh out your idea.</p>
+                    <ul class="client-package__list">
+                      <li>Focus on the essentials</li>
+                      <li>Figure out what is necessary and what will waste your time and money</li>
+                      <li>Get realistic about the technical constraints and estimated costs</li>
+                    </ul>
+                    <p class="client-package__wrap">This results in a list of technical requirements and a realistic understanding of what it might cost to build your website or application.</p>
+                  </div>
+
+                  <p class="client-package__bridge" aria-hidden="true"></p>
+
+                  <div class="client-package__offer-col">
+                    <div class="client-package__offer-head">
+                      <span class="glyph" style="--icon: url('icons/brief.svg')"></span>
+                      <div class="client-package__offer-titles">
+                        <h3 class="client-package__offer-name">Design</h3>
+                      </div>
+                    </div>
+                    <p class="client-package__lede">This is where your idea becomes fully realised.</p>
+                    <ul class="client-package__list">
+                      <li>Translate your business goals into features</li>
+                      <li>Perform user research and develop UI/UX for your customers</li>
+                      <li>Understand the flow of the software and test ideas before committing to a build</li>
+                    </ul>
+                    <p class="client-package__wrap">This results in a written scope, interactive prototype and feature list for a developer.</p>
+                  </div>
+
+                  <p class="client-package__bridge" aria-hidden="true"></p>
+
+                  <div class="client-package__offer-col">
+                    <div class="client-package__offer-head">
+                      <span class="glyph" style="--icon: url('icons/prototype.svg')"></span>
+                      <div class="client-package__offer-titles">
+                        <h3 class="client-package__offer-name">Build</h3>
+                      </div>
+                    </div>
+                    <p class="client-package__lede">I turn your idea into a reality. Results in a fully deployed website or application. You own the source code.</p>
+                    <p class="client-package__label">Developed in phases</p>
+                    <ul class="client-package__list">
+                      <li>Initial Build Testing</li>
+                      <li>Beta Build Delivery and Testing Phase 1 (your device)</li>
+                      <li>Beta Build Delivery and Testing Phase 2 (all platforms)</li>
+                      <li>Publishing</li>
+                    </ul>
+                    <p class="client-package__wrap">On-going maintenance and hosting available. Development is quoted per project. Available for both independent and collaborative work.</p>
                   </div>
                 </div>
-                <p class="client-package__lede">A design for your website — colours, fonts, and a mockup you can click through.</p>
-                <p class="client-package__label">A Design Includes</p>
-                <ul class="client-package__list">
-                  <li>Colour palette + fonts</li>
-                  <li>One mockup page</li>
-                  <li>A working button</li>
-                  <li>One other interactive element of your choice</li>
-                  <li>Build spec for any developer</li>
-                  <li>3 x revisions</li>
-                </ul>
-                <p class="client-package__label client-package__wrap">Not included</p>
-                <ul class="client-package__list client-package__wrap">
-                  <li>logos</li>
-                  <li>mobile layout</li>
-                  <li>any changes after the third revision, including colour or font tweaks</li>
-                </ul>
+              </article>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Services — the small packages, both blue. -->
+    <section class="section" id="client-services">
+      <div class="wrap">
+        <div class="grid">
+          <div class="client-package__shell">
+            <div class="client-package__offers">
+              <!-- EDIT: Consultation offer copy -->
+              <article class="client-package__offer client-package__offer--detail" data-accent="blue">
+                <div class="client-package__offer-head">
+                  <span class="glyph" style="--icon: url('icons/human.svg')"></span>
+                  <div class="client-package__offer-titles">
+                    <h3 class="client-package__offer-name">Consultation</h3>
+                    <p class="client-package__offer-price">$89 per hour</p>
+                  </div>
+                </div>
+                <p class="client-package__lede">Not sure if a project is worth pursuing? Want to talk to a developer about AI in your business?</p>
+                <p class="client-package__lede">I provide technical consultation and expertise for navigating the noisy world of software.</p>
               </article>
 
-              <p class="client-package__bridge" aria-hidden="true"></p>
-
-              <!-- EDIT: Website Build offer copy -->
-              <article class="client-package__offer client-package__offer--detail" data-offer="build">
+              <!-- EDIT: Basic Design offer copy -->
+              <article class="client-package__offer client-package__offer--detail" data-accent="blue">
                 <div class="client-package__offer-head">
-                  <span class="glyph" style="--icon: url('icons/prototype.svg')"></span>
+                  <span class="glyph" style="--icon: url('icons/design.svg')"></span>
                   <div class="client-package__offer-titles">
-                    <h4 class="client-package__offer-name">Build Package</h4>
+                    <h3 class="client-package__offer-name">Basic Design</h3>
+                    <p class="client-package__offer-price">$200</p>
+                  </div>
+                </div>
+                <p class="client-package__lede">A simple design which allows you to see how your business might be expressed on the web. Bring your logo and an idea of what you want.</p>
+                <p class="client-package__lede">I will create a simple one-page mockup with colours, fonts, one CTA (call-to-action) button and a build brief for a developer.</p>
+                <p class="client-package__wrap">Example copy about your business available on request.</p>
+              </article>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Packages — the big builds, includes left, extras right. -->
+    <section class="section" id="client-packages">
+      <div class="wrap">
+        <div class="grid">
+          <div class="client-package__shell">
+            <div class="client-package__offers">
+              <!-- EDIT: Website package copy -->
+              <article class="client-package__offer client-package__offer--detail" data-accent="blue">
+                <div class="client-package__offer-head">
+                  <span class="glyph" style="--icon: url('icons/website.svg')"></span>
+                  <div class="client-package__offer-titles">
+                    <h3 class="client-package__offer-name">Website</h3>
                     <p class="client-package__offer-price">Starting from $500</p>
                   </div>
                 </div>
-                <p class="client-package__lede">Your website, live — design, three pages, domain and hosting.</p>
-                <p class="client-package__lede">If you prefer, <strong>design</strong> first and <strong>build</strong> later.</p>
                 <div class="client-package__offer-cols">
                   <div class="client-package__offer-col">
-                    <p class="client-package__label">A Build Includes</p>
+                    <p class="client-package__label">Basic Package</p>
                     <ul class="client-package__list">
-                      <li>Design your website (see Design Package)</li>
-                      <li>Domain name + year 1 hosting</li>
-                      <li>3 pages
+                      <li>1 year hosting at your domain name (DNS)</li>
+                      <li>3 essential pages
                         <ul>
                           <li>Home</li>
                           <li>Services</li>
                           <li>Contact</li>
                         </ul>
                       </li>
-                      <li>Works on both mobile and desktop devices</li>
-                      <li>3 x design revisions</li>
-                      <li>3 x build revisions</li>
+                      <li>Works on both desktop and mobile</li>
+                      <li>3 x revisions</li>
                     </ul>
                   </div>
                   <div class="client-package__offer-col">
-                    <p class="client-package__label client-package__wrap">Extra features available</br>All quoted to specification</p>
+                    <p class="client-package__label client-package__wrap">Extras, quoted to spec</p>
                     <ul class="client-package__list client-package__wrap">
-                      <li>Pages</li>
-                      <li>Custom Components</li>
-                      <li>Bookings, shop or blog </li>
+                      <li>Additional pages</li>
+                      <li>Custom components</li>
+                      <li>Bookings, shop or blog (CMS)</li>
                       <li>Copywriting, available on request</li>
-                      <li>Hosting after year 1</li>
+                      <li>Hosting after 1 year</li>
                     </ul>
                     <p class="client-package__label client-package__wrap">Not included</p>
                     <ul class="client-package__list client-package__wrap">
-                      <li>logos</li>
-                      <li>any changes after the included revisions, including colour or font tweaks</li>
+                      <li>Logos</li>
+                      <li>Any changes after the included revisions, including colour or font tweaks</li>
+                      <li>Domain name fees</li>
                     </ul>
                   </div>
                 </div>
               </article>
-            </div>
-          </div>
 
-          <div class="client-package__shell">
-            <div class="client-package__heading">
-              <span class="glyph client-package__title-icon" style="--icon: url('icons/app.svg')"></span>
-              <h3 class="client-package__title">Develop Desktop & Mobile Apps</h3>
-            </div>
-
-            <div class="client-package__offers">
-              <!-- EDIT: Apps Design offer copy -->
-              <article class="client-package__offer client-package__offer--detail" data-offer="design">
+              <!-- EDIT: Desktop / Mobile package copy -->
+              <article class="client-package__offer client-package__offer--detail" data-accent="blue">
                 <div class="client-package__offer-head">
-                  <span class="glyph" style="--icon: url('icons/brief.svg')"></span>
+                  <span class="glyph" style="--icon: url('icons/app.svg')"></span>
                   <div class="client-package__offer-titles">
-                    <h4 class="client-package__offer-name">Design Package</h4>
-                    <p class="client-package__offer-price">Starting from $500</p>
+                    <h3 class="client-package__offer-name">Desktop / Mobile</h3>
+                    <p class="client-package__offer-price">Quoted per build</p>
                   </div>
                 </div>
-                <p class="client-package__lede">A written scope, clickable prototype and feature list.</p>
-                <p class="client-package__label">A Design Includes</p>
-                <ul class="client-package__list">
-                  <li>Up to 5 screens + connection map</li>
-                  <li>Colours + fonts + icons</li>
-                  <li>Interactive HTML prototype (no hosting)</li>
-                  <li>Build scope and style brief for a developer</li>
-                  <li>Up to 3 x revisions once your idea is locked in</li>
-                </ul>
-                <p class="client-package__label client-package__wrap">Not included</p>
-                <ul class="client-package__list client-package__wrap">
-                  <li>Logos and copy</li>
-                  <li>Working features (prototype only moves between screens)</li>
-                  <li>Any changes after the third revision</li>
-                </ul>
-              </article>
-
-              <p class="client-package__bridge" aria-hidden="true"></p>
-
-              <!-- EDIT: Apps Build offer copy -->
-              <article class="client-package__offer client-package__offer--detail" data-offer="build">
-                <div class="client-package__offer-head">
-                  <span class="glyph" style="--icon: url('icons/prototype.svg')"></span>
-                  <div class="client-package__offer-titles">
-                    <h4 class="client-package__offer-name">Build Package</h4>
-                    <p class="client-package__offer-price">Quoted from the design scope</p>
-                  </div>
-                </div>
-                <p class="client-package__lede">Both platforms at one price, starting with the platform the client owns.</p>
-                <p class="client-package__lede">Bring your own design, or work out your idea in the <strong>design</strong> package first.</p>
                 <div class="client-package__offer-cols">
                   <div class="client-package__offer-col">
                     <p class="client-package__label">A Build Includes</p>
                     <ul class="client-package__list">
-                      <li>Design package credited in full</li>
-                      <li>Cross-platform or one native target</li>
                       <li>Build cycles with demos → alpha → beta → release</li>
-                      <li>3 rounds of adjustments at demos</li>
-                      <li>30-day bug warranty after release</li>
-                      <li>Source code on final payment (your app code; Nel keeps pre-existing libraries)</li>
+                      <li>Cross-platform or one native target</li>
+                      <li>3 revisions available in the demo and alpha phases</li>
+                      <li>Standard 30-day bug warranty after release</li>
+                      <li>Source code on final payment (your app code)</li>
                     </ul>
                   </div>
                   <div class="client-package__offer-col">
-                    <p class="client-package__label client-package__wrap">Extra / ongoing</br>All quoted to specification</p>
+                    <p class="client-package__label client-package__wrap">Extra / on-going costs, all quoted to specification</p>
                     <ul class="client-package__list client-package__wrap">
-                      <li>New screens or features (change order)</li>
-                      <li>Back end when the app stores or syncs data</li>
-                      <li>Store accounts in your name (you pay Apple / Google fees)</li>
-                      <li>Maintenance retainer after the warranty</li>
+                      <li>New screens or features</li>
+                      <li>Store accounts in your name (Apple / Google fees)</li>
+                      <li>Maintenance retainer after the warranty period</li>
+                    </ul>
+                    <p class="client-package__label client-package__wrap">On-going maintenance options</p>
+                    <ul class="client-package__list client-package__wrap">
+                      <li>Additional features</li>
+                      <li>Porting to other platforms</li>
                     </ul>
                     <p class="client-package__label client-package__wrap">Not included</p>
                     <ul class="client-package__list client-package__wrap">
-                      <li>Logos and copy</li>
-                      <li>Additions outside the approved scope</li>
-                      <li>Changes to an approved design once code is built around it (counts as an addition)</li>
+                      <li>Any features not in the finalised brief</li>
+                      <li>Logos and store-page copy</li>
+                      <li>Changes to an approved design once code is built around it</li>
                     </ul>
                   </div>
                 </div>
@@ -232,7 +268,7 @@
       <div class="wrap">
         <div class="grid">
           <div class="studio-intro">
-            <h2 class="section__title section__title--icon">Who is NEL?</h2>  
+            <h2 class="section__title section__title--icon">Who is NEL?</h2>
               <p class="section__lede">I am a creative software engineer who has been building
                 software on-and-off for over 10 years. I have had a wide-spread of software
                 development experience across games, desktop apps, websites and mobile apps.</p>
@@ -245,7 +281,7 @@
                 <li>I build websites for small businesses, creatives and entrepreneurs</li>
                 <li>I build cross-platform applications for both <strong>desktop</strong> and <strong>mobile</strong></li>
               </ul>
-            
+
             <h2 class="section__title section__title--icon">
               <span class="glyph section__title-icon" style="--icon: url('icons/human.svg')" aria-hidden="true"></span>
               Human Intelligence
@@ -255,7 +291,7 @@
               understand our emotional experiences and the problems we all face day-to-day.
               Talk to a human who comprehends, not an LLM that guesses. </p>
 
-              
+
           </div>
 
           <!-- Contact card — static stone island. Form structure only; fields TBD. -->
