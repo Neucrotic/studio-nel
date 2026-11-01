@@ -196,7 +196,7 @@ main { flex: 1 0 auto; }           /* grow so the footer sits at the viewport bo
   text-align: justify;
   color: var(--muted);
   text-wrap: pretty;
-  padding-bottom: 30px;
+  padding-bottom: 15px;
 }
 
 .section__list
