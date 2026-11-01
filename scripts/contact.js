@@ -8,35 +8,17 @@
    =========================================================================== */
 
 (function () {
-  // Submit button: magnetic pull toward the cursor + a click ripple.
-  // Skipped entirely under prefers-reduced-motion.
+  // Submit button: a click ripple. Skipped entirely under prefers-reduced-motion.
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var btn = document.querySelector('[data-magnetic]');
+  var btn = document.querySelector('.contact-form__submit');
   if (!btn || reduce) return;
-
-  var RANGE = 180;   // px from centre where the pull begins
-  var PULL  = 6;     // base intensity
-
-  // Magnet: drift the button toward the cursor within RANGE, else rest.
-  window.addEventListener('pointermove', function (e) {
-    var r = btn.getBoundingClientRect();
-    var cx = r.left + r.width / 2, cy = r.top + r.height / 2;
-    var dx = e.clientX - cx, dy = e.clientY - cy;
-    var dist = Math.hypot(dx, dy) || 1;
-    if (dist < RANGE) {
-      var f = (1 - dist / RANGE) * PULL * 1.6;
-      btn.style.transform = 'translate(' + ((dx / dist) * f) + 'px,' + ((dy / dist) * f) + 'px)';
-    } else {
-      btn.style.transform = 'translate(0,0)';
-    }
-  }, { passive: true });
 
   // Ripple: bloom an accent circle from the click point, then remove it.
   btn.addEventListener('click', function (e) {
     var r = btn.getBoundingClientRect();
     var rp = document.createElement('span');
     rp.style.cssText = 'position:absolute; left:' + (e.clientX - r.left) + 'px; top:' + (e.clientY - r.top) +
-      'px; width:6px; height:6px; border-radius:50%; background:var(--accent); transform:translate(-50%,-50%); pointer-events:none; opacity:.8;';
+      'px; width:6px; height:6px; border-radius:50%; background:var(--blue-kaku); transform:translate(-50%,-50%); pointer-events:none; opacity:.8;';
     btn.appendChild(rp);
     rp.animate(
       [{ width: '6px', height: '6px', opacity: 0.8 }, { width: '320px', height: '320px', opacity: 0 }],
